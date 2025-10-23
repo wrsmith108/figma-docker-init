@@ -1,0 +1,50 @@
+{
+  "name": "figma-docker-init",
+  "version": "1.0.0",
+  "description": "Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects",
+  "main": "figma-docker-init.js",
+  "type": "module",
+  "bin": {
+    "figma-docker-init": "./figma-docker-init.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node figma-docker-init.js"
+  },
+  "keywords": [
+    "figma",
+    "docker",
+    "react",
+    "vite",
+    "typescript",
+    "quick-start",
+    "template",
+    "cli",
+    "containerization",
+    "devops",
+    "frontend",
+    "development"
+  ],
+  "author": "Figma Docker Init Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/figma-docker-init.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/figma-docker-init/issues"
+  },
+  "homepage": "https://github.com/your-username/figma-docker-init#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "figma-docker-init.js",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "preferGlobal": true
+}

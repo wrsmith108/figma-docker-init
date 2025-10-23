@@ -1,0 +1,98 @@
+# Dependency directories
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+{{BUILD_OUTPUT_DIR}}/
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# Git
+.git/
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Documentation (keep README.md but exclude others)
+docs/
+
+# Test files
+**/*.test.*
+**/*.spec.*
+__tests__/
+tests/
+
+# Development configuration
+.eslintrc*
+.prettierrc*
+jest.config.*
+vitest.config.*
+
+# Docker files (avoid infinite recursion)
+Dockerfile*
+.dockerignore
+
+# Temporary files
+tmp/
+temp/
+
+# Package manager files that aren't needed in container
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files (except example)
+.env*
+!.env.example
+
+# Figma-specific files that shouldn't be in container
+*.fig
+*.sketch
+
+# UI library specific cache/build artifacts
+.next/
+.nuxt/
+.cache/
+storybook-static/
+
+# Miscellaneous
+*.tgz
+*.tar.gz
+.npm
+.eslintcache
+.stylelintcache
+
+# Figma Docker Init tool files
+figma-docker-init.js
+templates/
