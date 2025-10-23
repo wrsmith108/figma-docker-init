@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
+Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
 
 ## 🚀 Features
 
