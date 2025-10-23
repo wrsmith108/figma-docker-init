@@ -1,36 +1,63 @@
 services:
-  # Development service with hot reload
-  # Optimized for Figma projects with complex UI dependencies
-  app-dev:
-    image: node:18-alpine
-    container_name: "{{PROJECT_NAME}}-dev"
-    working_dir: /app
-    ports:
-      - "3000:3000"
-    volumes:
-      # Mount source code for hot reload
-      - .:/app
-      # Use named volume for node_modules to avoid cross-platform issues
-      - node_modules:/app/node_modules
-      # Exclude node_modules from source mount using anonymous volume
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - VITE_HOST=0.0.0.0
-      - VITE_PORT=3000
-      - CHOKIDAR_USEPOLLING=true
-      # Increase memory for complex UI builds
-      - NODE_OPTIONS=--max-old-space-size=4096
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    networks:
-      - "{{PROJECT_NAME}}-network"
+    # Development service with hot reload
+    # Optimized for Figma projects with complex UI dependencies
+    app-dev:
+      image: node:18-alpine
+      container_name: "{{PROJECT_NAME}}-dev"
+      working_dir: /app
+      ports:
+        - "{{DEV_PORT}}:3000"
+      volumes:
+        # Mount source code for hot reload
+        - .:/app
+        # Use named volume for node_modules to avoid cross-platform issues
+        - node_modules:/app/node_modules
+        # Exclude node_modules from source mount using anonymous volume
+        - /app/node_modules
+      environment:
+        - NODE_ENV=development
+        - VITE_HOST=0.0.0.0
+        - VITE_PORT=3000
+        - CHOKIDAR_USEPOLLING=true
+        # Increase memory for complex UI builds
+        - NODE_OPTIONS=--max-old-space-size=4096
+        # Platform detection for resource optimization
+        - DOCKER_PLATFORM=${DOCKER_PLATFORM:-linux/amd64}
+      command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
+      restart: unless-stopped
+      # Enhanced security and resource limits for development
+      security_opt:
+        - no-new-privileges:true
+      cap_drop:
+        - ALL
+      cap_add:
+        - NET_BIND_SERVICE
+      read_only: true
+      tmpfs:
+        - /tmp
+        - /app/node_modules/.cache
+      # Resource limits for development with platform detection
+      deploy:
+        resources:
+          limits:
+            cpus: '${DEV_CPU_LIMIT:-2.0}'
+            memory: ${DEV_MEM_LIMIT:-4G}
+          reservations:
+            cpus: '${DEV_CPU_RESERVE:-0.5}'
+            memory: ${DEV_MEM_RESERVE:-512M}
+      healthcheck:
+        test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "10m"
+          max-file: "3"
+      networks:
+        - "{{PROJECT_NAME}}-network"
 
   # Production service using the local Dockerfile
   app-prod:
@@ -38,19 +65,48 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NODE_ENV=development
+        - NODE_ENV=production
     container_name: "{{PROJECT_NAME}}-prod"
     ports:
-      - "8080:80"
+      - "{{PROD_PORT}}:80"
+      - "{{PROD_SSL_PORT:-443}}:443"
     environment:
       - NODE_ENV=production
+      # Platform detection for resource optimization
+      - DOCKER_PLATFORM=${DOCKER_PLATFORM:-linux/amd64}
     restart: unless-stopped
+    # Enhanced security and resource limits for production
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /var/cache/nginx
+    # Resource limits for production with platform detection
+    deploy:
+      resources:
+        limits:
+          cpus: '${PROD_CPU_LIMIT:-1.0}'
+          memory: ${PROD_MEM_LIMIT:-1G}
+        reservations:
+          cpus: '${PROD_CPU_RESERVE:-0.25}'
+          memory: ${PROD_MEM_RESERVE:-256M}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
     networks:
       - "{{PROJECT_NAME}}-network"
     profiles:
@@ -61,24 +117,149 @@ services:
     image: nginx:alpine
     container_name: "{{PROJECT_NAME}}-nginx"
     ports:
-      - "80:80"
+      - "{{NGINX_PORT}}:80"
+      - "{{NGINX_SSL_PORT:-8443}}:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # SSL certificates (optional - mount if available)
+      - ./ssl:/etc/ssl/certs:ro
     depends_on:
       - app-dev
     restart: unless-stopped
+    # Enhanced security for nginx proxy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /var/cache/nginx
+    # Resource limits for nginx proxy with platform detection
+    deploy:
+      resources:
+        limits:
+          cpus: '${NGINX_CPU_LIMIT:-0.5}'
+          memory: ${NGINX_MEM_LIMIT:-256M}
+        reservations:
+          cpus: '${NGINX_CPU_RESERVE:-0.1}'
+          memory: ${NGINX_MEM_RESERVE:-64M}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/nginx-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - "{{PROJECT_NAME}}-network"
     profiles:
       - proxy
+
+  # Optional: Monitoring service with Prometheus metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: "{{PROJECT_NAME}}-prometheus"
+    ports:
+      - "{{PROMETHEUS_PORT:-9090}}:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - "{{PROJECT_NAME}}-network"
+    profiles:
+      - monitoring
+
+  # Optional: Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: "{{PROJECT_NAME}}-grafana"
+    ports:
+      - "{{GRAFANA_PORT:-3001}}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - prometheus
+    networks:
+      - "{{PROJECT_NAME}}-network"
+    profiles:
+      - monitoring
 
 volumes:
   # Named volume for node_modules to improve performance
   # Critical for projects with large UI dependency trees
   node_modules:
     driver: local
+  # Monitoring volumes
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
 
 networks:
   "{{PROJECT_NAME}}-network":
     driver: bridge
     name: "{{PROJECT_NAME}}-network"
+    # Enhanced network security
+    internal: false
+    driver_opts:
+      com.docker.network.bridge.name: "{{PROJECT_NAME}}-bridge"

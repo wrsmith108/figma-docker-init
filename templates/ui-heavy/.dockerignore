@@ -96,3 +96,43 @@ storybook-static/
 # Figma Docker Init tool files
 figma-docker-init.js
 templates/
+
+# Additional performance optimizations
+# Large media files that aren't needed in container
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+*.mkv
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.wma
+*.m4a
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+
+# Lock files (keep package-lock.json)
+yarn-error.log
+.pnpm-debug.log*
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Jenkinsfile
+
+# Performance monitoring and profiling files
+*.cpuprofile
+*.heapprofile
+*.trace

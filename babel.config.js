@@ -6,7 +6,7 @@ export default {
         targets: {
           node: 'current',
         },
-        modules: 'commonjs',
+        modules: false, // Keep ES modules for Jest
       },
     ],
   ],
