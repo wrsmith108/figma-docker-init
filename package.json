@@ -33,20 +33,20 @@
   "author": {
     "name": "Figma Docker Init Team",
     "email": "support@figma-docker-init.dev",
-    "url": "https://github.com/figma-docker-init"
+    "url": "https://github.com/wrsmith108"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/figma-docker-init/figma-docker-init.git"
+    "url": "https://github.com/wrsmith108/figma-docker-init.git"
   },
   "bugs": {
-    "url": "https://github.com/figma-docker-init/figma-docker-init/issues"
+    "url": "https://github.com/wrsmith108/figma-docker-init/issues"
   },
-  "homepage": "https://github.com/figma-docker-init/figma-docker-init#readme",
+  "homepage": "https://github.com/wrsmith108/figma-docker-init",
   "funding": {
     "type": "github",
-    "url": "https://github.com/sponsors/figma-docker-init"
+    "url": "https://github.com/sponsors/wrsmith108"
   },
   "engines": {
     "node": ">=18.0.0"
