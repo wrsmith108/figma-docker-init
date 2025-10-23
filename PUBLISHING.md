@@ -1,6 +1,6 @@
 # Publishing Instructions for figma-docker-init
 
-This document provides comprehensive instructions for publishing the `figma-docker-init` CLI tool to npm.
+This document provides comprehensive instructions for publishing the `figma-docker-init` CLI tool to npm using automated semantic-release.
 
 ## 🔧 Prerequisites
 
@@ -10,6 +10,63 @@ Before publishing, ensure you have:
 2. **npm account** with publishing permissions
 3. **Git** repository set up with proper remotes
 4. **Two-factor authentication** enabled on npm account
+5. **GitHub repository** with Actions enabled
+6. **NPM_TOKEN** and **GITHUB_TOKEN** configured in repository secrets
+
+## 🤖 Automated Publishing with Semantic Release
+
+This project uses [semantic-release](https://github.com/semantic-release/semantic-release) for automated versioning and publishing. The release process is fully automated through GitHub Actions.
+
+### How It Works
+
+- **Conventional Commits**: Follow [conventional commit](https://conventionalcommits.org/) format for commit messages
+- **Automatic Versioning**: Versions are determined based on commit types (fix:, feat:, BREAKING CHANGE)
+- **Automated Publishing**: Releases are published to npm and GitHub automatically
+- **Changelog Generation**: CHANGELOG.md is updated automatically
+
+### Commit Message Format
+
+```bash
+# Patch release (1.0.0 -> 1.0.1)
+git commit -m "fix: resolve issue with template validation"
+
+# Minor release (1.0.0 -> 1.1.0)
+git commit -m "feat: add new docker template option"
+
+# Major release (1.0.0 -> 2.0.0)
+git commit -m "feat!: breaking change in CLI interface
+
+BREAKING CHANGE: CLI argument structure has changed"
+```
+
+### Release Branches
+
+- `main`: Production releases
+- `beta`: Pre-releases with `-beta.x` suffix
+- `alpha`: Pre-releases with `-alpha.x` suffix
+
+### Plugins Used
+
+- `@semantic-release/commit-analyzer`: Analyzes commits to determine release type
+- `@semantic-release/release-notes-generator`: Generates release notes
+- `@semantic-release/changelog`: Updates CHANGELOG.md
+- `@semantic-release/npm`: Publishes to npm registry
+- `@semantic-release/github`: Creates GitHub releases
+- `@semantic-release/git`: Commits version changes back to repository
+
+### GitHub Actions Secrets Setup
+
+Configure the following secrets in your GitHub repository settings:
+
+1. **NPM_TOKEN**: Your npm authentication token
+   - Generate at: https://www.npmjs.com/settings/tokens
+   - Token type: Automation (recommended) or Classic
+
+2. **GITHUB_TOKEN**: Automatically provided by GitHub Actions (no setup required)
+
+### Manual Publishing (Fallback)
+
+⚠️ **Manual publishing is now deprecated.** Use semantic-release for automated publishing. Manual steps are provided below for emergency situations only.
 
 ## 📋 Pre-publishing Checklist
 
@@ -201,27 +258,36 @@ npm owner ls figma-docker-init
 
 ## 📋 Release Checklist
 
-### Pre-Release
-- [ ] All tests pass
-- [ ] Documentation is updated
-- [ ] Version is incremented
-- [ ] CHANGELOG is updated
-- [ ] Security audit passes
-- [ ] Dry-run successful
+### Automated Release Process
+With semantic-release, the following happens automatically on pushes to main:
 
-### Publishing
-- [ ] Logged into npm
-- [ ] Published successfully
-- [ ] Package visible on npm
-- [ ] Installation test successful
-- [ ] CLI functionality verified
+1. **Analysis**: Commits are analyzed for release type
+2. **Version Bump**: Version is incremented based on commit types
+3. **Changelog**: CHANGELOG.md is updated with release notes
+4. **Build**: Package is built and tested
+5. **Publish**: Package published to npm
+6. **GitHub Release**: Release created with assets
+7. **Git Commit**: Version changes committed back to repository
 
-### Post-Release
-- [ ] Git tags pushed
-- [ ] GitHub release created
-- [ ] Documentation updated
-- [ ] Community notified
-- [ ] Monitoring set up
+### Manual Verification (After Automated Release)
+- [ ] Package visible on npm registry
+- [ ] GitHub release created with proper notes
+- [ ] CHANGELOG.md updated correctly
+- [ ] Version tags created in repository
+- [ ] Installation test successful: `npm install -g figma-docker-init`
+- [ ] CLI functionality verified: `figma-docker-init --version`
+
+### Troubleshooting Automated Releases
+
+**Release not triggered:**
+- Ensure commits follow conventional commit format
+- Check that CI pipeline passes completely
+- Verify repository secrets are configured
+
+**Publishing failed:**
+- Check NPM_TOKEN validity
+- Verify npm account has publishing permissions
+- Review GitHub Actions logs for specific errors
 
 ## 🔗 Resources
 

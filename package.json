@@ -5,11 +5,16 @@
   "main": "figma-docker-init.js",
   "type": "module",
   "bin": {
-    "figma-docker-init": "./figma-docker-init.js"
+    "figma-docker-init": "figma-docker-init.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node figma-docker-init.js"
+    "start": "node figma-docker-init.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:watch": "jest --coverage --watch",
+    "coverage:report": "jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
+    "coverage:open": "jest --coverage && open coverage/lcov-report/index.html",
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "figma",
@@ -25,16 +30,24 @@
     "frontend",
     "development"
   ],
-  "author": "Figma Docker Init Team",
+  "author": {
+    "name": "Figma Docker Init Team",
+    "email": "support@figma-docker-init.dev",
+    "url": "https://github.com/figma-docker-init"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/figma-docker-init.git"
+    "url": "git+https://github.com/figma-docker-init/figma-docker-init.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/figma-docker-init/issues"
+    "url": "https://github.com/figma-docker-init/figma-docker-init/issues"
   },
-  "homepage": "https://github.com/your-username/figma-docker-init#readme",
+  "homepage": "https://github.com/figma-docker-init/figma-docker-init#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/figma-docker-init"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -42,9 +55,66 @@
     "figma-docker-init.js",
     "templates/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "package-lock.json"
   ],
-  "dependencies": {},
-  "devDependencies": {},
-  "preferGlobal": true
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "semantic-release": "^24.2.9"
+  },
+  "preferGlobal": true,
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true,
+          "tarballDir": "dist"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "dist/*.tgz",
+              "label": "npm package"
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json",
+            "package-lock.json"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
+  }
 }
