@@ -5,6 +5,11 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+  statuses: write
 
 env:
   NODE_ENV: test
@@ -29,15 +34,15 @@ jobs:
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high
 
       - name: Run security scan with CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v3.25.15
         with:
           languages: javascript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v3.25.15
 
   # Linting and code quality
   lint:
@@ -92,7 +97,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18, 20, 21]
+        node-version: [18, 20, 22]
         include:
           - os: ubuntu-latest
             node-version: 18
@@ -117,14 +122,15 @@ jobs:
       - name: Test CLI functionality
         shell: bash
         run: |
+          set -e  # Exit on any error to ensure tests actually fail
           echo "Testing CLI help command..."
-          node figma-docker-init.js --help || echo "Help command test completed"
-          
+          node figma-docker-init.js --help
+
           echo "Testing CLI version command..."
-          node figma-docker-init.js --version || echo "Version command test completed"
-          
+          node figma-docker-init.js --version
+
           echo "Testing CLI list templates..."
-          node figma-docker-init.js --list || echo "List templates test completed"
+          node figma-docker-init.js --list
 
       - name: Upload coverage to Codecov
         if: matrix.upload-coverage
@@ -134,7 +140,7 @@ jobs:
           file: coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: false
+          fail_ci_if_error: ${{ secrets.CODECOV_TOKEN != '' }}
 
   # Build and package verification
   build:
@@ -197,12 +203,17 @@ jobs:
               # Check docker-compose.yml is valid YAML
               if [ -f "$template_dir/docker-compose.yml" ]; then
                 echo "✅ docker-compose.yml found for $template_name"
-                # Install yq for YAML validation if not present
-                if command -v yq >/dev/null 2>&1; then
-                  yq eval . "$template_dir/docker-compose.yml" > /dev/null
-                  echo "✅ docker-compose.yml is valid YAML"
+                # Install jq for YAML validation if not present
+                if command -v jq >/dev/null 2>&1; then
+                  # Use jq to validate YAML structure (jq can parse YAML)
+                  if jq -e . "$template_dir/docker-compose.yml" >/dev/null 2>&1; then
+                    echo "✅ docker-compose.yml is valid YAML"
+                  else
+                    echo "❌ Invalid YAML in docker-compose.yml for $template_name"
+                    exit 1
+                  fi
                 else
-                  echo "⚠️ YAML validation skipped (yq not available)"
+                  echo "⚠️ YAML validation skipped (jq not available)"
                 fi
               fi
               
@@ -231,6 +242,14 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Verify semantic-release script exists
+        run: |
+          if ! npm run | grep -q "semantic-release"; then
+            echo "❌ semantic-release script not found in package.json"
+            exit 1
+          fi
+          echo "✅ semantic-release script found"
+
       - name: Install dependencies
         run: npm ci
 
@@ -245,9 +264,9 @@ jobs:
         with:
           name: release-artifacts
           path: |
-            dist/*.tgz
+            *.tgz  # semantic-release creates tarball in root directory
           retention-days: 30
-          if-no-files-found: warn
+          if-no-files-found: error
 
   # Notification and status reporting
   notify:
@@ -265,10 +284,16 @@ jobs:
           echo "Build & Package: ${{ needs.build.result }}"
           echo ""
           
-          if [[ "${{ needs.security.result }}" == "success" && 
-                "${{ needs.lint.result }}" == "success" && 
-                "${{ needs.test.result }}" == "success" && 
-                "${{ needs.build.result }}" == "success" ]]; then
+          # Evaluate each job result separately in bash (GitHub expressions don't work in [[ ]])
+          SECURITY_SUCCESS=$([ "${{ needs.security.result }}" = "success" ] && echo true || echo false)
+          LINT_SUCCESS=$([ "${{ needs.lint.result }}" = "success" ] && echo true || echo false)
+          TEST_SUCCESS=$([ "${{ needs.test.result }}" = "success" ] && echo true || echo false)
+          BUILD_SUCCESS=$([ "${{ needs.build.result }}" = "success" ] && echo true || echo false)
+
+          if [[ "$SECURITY_SUCCESS" == "true" &&
+                "$LINT_SUCCESS" == "true" &&
+                "$TEST_SUCCESS" == "true" &&
+                "$BUILD_SUCCESS" == "true" ]]; then
             echo "🎉 All pipeline stages completed successfully!"
             echo "Package is ready for deployment."
           else
