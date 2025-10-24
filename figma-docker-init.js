@@ -103,8 +103,14 @@ function validateProjectDirectory(projectDir) {
  * @throws {Error} If port is not a valid number between 1 and 65535
  */
 function validatePort(port) {
+  const portStr = String(port).trim();
   const numPort = parseInt(port, 10);
-  if (isNaN(numPort) || numPort < 1 || numPort > 65535) {
+
+  // Check if the original string is a valid number representation
+  // Allow integers and floats, but reject strings with non-numeric suffixes
+  const isValidNumber = !isNaN(Number(portStr));
+
+  if (!isValidNumber || isNaN(numPort) || numPort < 1 || numPort > 65535) {
     throw new ValidationError('Port must be a valid number between 1 and 65535');
   }
   return numPort;
@@ -132,6 +138,10 @@ function validateProjectName(name) {
  */
 function sanitizeTemplateVariable(value) {
   if (typeof value === 'string') {
+    // Validate string length
+    if (value.length > 1000) {
+      throw new ValidationError('Template variable exceeds maximum length of 1000 characters');
+    }
     // Escape special characters that could be used for injection
     return value.replace(/[<>]/g, '').trim();
   }
@@ -296,6 +306,9 @@ async function detectProjectValues(projectDir = '.') {
       } else {
         values.PROJECT_NAME = 'my-app';
       }
+    } else {
+      // No package.json found, use default
+      values.PROJECT_NAME = 'my-app';
     }
   } catch (error) {
     const packagePath = path.join(validatedProjectDir, 'package.json');
@@ -377,6 +390,12 @@ async function detectProjectValues(projectDir = '.') {
       } else {
         values.FRAMEWORK = 'vanilla';
       }
+    } else {
+      // No package.json found, use defaults
+      values.FRAMEWORK = 'vanilla';
+      values.TYPESCRIPT = false;
+      values.UI_LIBRARY = 'none';
+      values.DEPENDENCY_COUNT = 0;
     }
   } catch (error) {
     const packagePath = path.join(validatedProjectDir, 'package.json');

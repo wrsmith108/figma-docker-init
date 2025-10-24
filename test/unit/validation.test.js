@@ -4,6 +4,7 @@
  * Coverage Target: 100% of validation code (lines 50-154)
  */
 
+import { jest } from '@jest/globals';
 import {
   sanitizeString,
   validateTemplateName,
