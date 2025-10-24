@@ -565,7 +565,11 @@ function checkPortAvailability(port) {
     try {
       validatePort(port);
     } catch (error) {
-      log(`Invalid port for availability check: ${error.message}`, colors.red);
+      // Only log validation errors in non-test environments
+      const isTestEnv = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
+      if (!isTestEnv) {
+        log(`Invalid port for availability check: ${error.message}`, colors.red);
+      }
       resolve(false);
       return;
     }
@@ -579,7 +583,11 @@ function checkPortAvailability(port) {
     });
 
     server.on('error', (error) => {
-      log(`Port ${port} availability check failed: ${error.message}`, colors.yellow);
+      // Suppress logging during test runs to avoid noise
+      const isTestEnv = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
+      if (!isTestEnv) {
+        log(`Port ${port} availability check failed: ${error.message}`, colors.yellow);
+      }
       resolve(false); // Port is in use or invalid
     });
   });
@@ -593,12 +601,68 @@ function checkPortAvailability(port) {
  * @throws {Error} If no available port is found within maxAttempts
  */
 async function findAvailablePort(startPort, maxAttempts = 100) {
+  let eaccesCount = 0;
+  const maxEaccesAttempts = 5; // If we get 5 EACCES errors in a row, jump to unprivileged ports
+
   for (let i = 0; i < maxAttempts; i++) {
-    const port = startPort + i;
-    if (await checkPortAvailability(port)) {
-      return port;
+    let port = startPort + i;
+
+    // If we're getting repeated EACCES errors on privileged ports, jump to unprivileged range
+    if (eaccesCount >= maxEaccesAttempts && port < 1024) {
+      port = 3000 + i;
+      eaccesCount = 0; // Reset counter after jumping
+    }
+
+    // Skip privileged ports (< 1024) if we've detected permission issues
+    if (eaccesCount >= maxEaccesAttempts && port < 1024) {
+      continue;
+    }
+
+    try {
+      const net = require('net');
+      const server = net.createServer();
+
+      // Try to bind to the port synchronously-ish
+      const available = await new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          server.close();
+          resolve(false);
+        }, 100); // 100ms timeout per port check
+
+        server.listen(port, '127.0.0.1', () => {
+          clearTimeout(timeout);
+          server.close();
+          resolve(true);
+        });
+
+        server.on('error', (error) => {
+          clearTimeout(timeout);
+          // Track EACCES errors (permission denied on privileged ports)
+          if (error.code === 'EACCES' && port < 1024) {
+            eaccesCount++;
+          } else {
+            eaccesCount = 0; // Reset on other errors
+          }
+          resolve(false);
+        });
+      });
+
+      if (available) {
+        return port;
+      }
+
+      // If we've hit too many EACCES errors, jump to unprivileged range
+      if (eaccesCount >= maxEaccesAttempts && port < 1024) {
+        i = -1; // Reset loop to start from unprivileged ports
+        startPort = 3000;
+        eaccesCount = 0;
+      }
+    } catch (error) {
+      // Continue to next port on any error
+      continue;
     }
   }
+
   throw new Error(`Could not find available port starting from ${startPort}`);
 }
 
@@ -610,10 +674,11 @@ async function assignDynamicPorts() {
   const defaultPorts = {
     DEV_PORT: 3000,
     PROD_PORT: 8080,
-    NGINX_PORT: 80
+    NGINX_PORT: 8888  // Changed from 80 to avoid privileged port
   };
 
   const assignedPorts = {};
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
 
   for (const [key, defaultPort] of Object.entries(defaultPorts)) {
     const isAvailable = await checkPortAvailability(defaultPort);
@@ -621,10 +686,19 @@ async function assignDynamicPorts() {
       assignedPorts[key] = defaultPort;
     } else {
       try {
-        assignedPorts[key] = await findAvailablePort(defaultPort + 1);
-        log(`${colors.yellow}Port ${defaultPort} is in use, assigned ${assignedPorts[key]} instead${colors.reset}`);
+        // For privileged ports, start searching from 3000
+        const startPort = defaultPort < 1024 ? 3000 : defaultPort + 1;
+        assignedPorts[key] = await findAvailablePort(startPort);
+
+        // Only log port changes in non-test environments
+        if (!isTestEnv) {
+          log(`${colors.yellow}Port ${defaultPort} is in use, assigned ${assignedPorts[key]} instead${colors.reset}`);
+        }
       } catch (error) {
-        log(`${colors.red}Error finding available port for ${key}: ${error.message}${colors.reset}`);
+        // Only log errors in non-test environments
+        if (!isTestEnv) {
+          log(`${colors.red}Error finding available port for ${key}: ${error.message}${colors.reset}`);
+        }
         assignedPorts[key] = defaultPort; // Fallback to default
       }
     }
@@ -810,6 +884,11 @@ async function copyTemplate(templateName, targetDir = '.') {
       validateFilePath(sourcePath, TEMPLATES_DIR);
       validateFilePath(targetPath, validatedTargetDir);
 
+      // Skip directories - only process files
+      if (fs.statSync(sourcePath).isDirectory()) {
+        return;
+      }
+
       if (fs.existsSync(targetPath)) {
         log(`  ${colors.yellow}Skipped${colors.reset} ${file} (already exists)`);
         skippedFiles.push(file);
@@ -856,7 +935,7 @@ async function copyTemplate(templateName, targetDir = '.') {
     log(`3. Build and run your Docker container:`);
     log(`   ${colors.blue}docker-compose up --build${colors.reset}`);
 
-    if (fs.existsSync(path.join(targetDir, 'DOCKER.md'))) {
+    if (fs.existsSync(path.join(validatedTargetDir, 'DOCKER.md'))) {
       log(`4. Read DOCKER.md for detailed documentation and advanced usage`);
     }
   }
@@ -864,6 +943,11 @@ async function copyTemplate(templateName, targetDir = '.') {
   if (skippedFiles.length > 0) {
     log(`\n${colors.yellow}Note: Some files were skipped because they already exist.${colors.reset}`);
     log(`${colors.yellow}Remove existing files if you want to regenerate them.${colors.reset}`);
+
+    // Still show DOCKER.md reference if it exists, even when files are skipped
+    if (fs.existsSync(path.join(validatedTargetDir, 'DOCKER.md'))) {
+      log(`${colors.yellow}Read DOCKER.md for detailed documentation and advanced usage${colors.reset}`);
+    }
   }
 }
 
