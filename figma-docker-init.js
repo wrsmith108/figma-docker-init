@@ -13,6 +13,30 @@ const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
 
 // =============================================================================
+// CUSTOM ERROR CLASSES
+// =============================================================================
+
+/**
+ * Custom error class for validation errors
+ */
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+/**
+ * Custom error class for configuration errors
+ */
+class ConfigError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ConfigError';
+  }
+}
+
+// =============================================================================
 // INPUT VALIDATION AND SANITIZATION UTILITIES
 // =============================================================================
 
@@ -25,12 +49,12 @@ const TEMPLATES_DIR = path.join(__dirname, 'templates');
  */
 function sanitizeString(input, maxLength = 255) {
   if (typeof input !== 'string') {
-    throw new Error('Input must be a string');
+    throw new ValidationError('Input must be a string');
   }
   // Remove null bytes and control characters
   const sanitized = input.replace(/[\x00-\x1F\x7F]/g, '').trim();
   if (sanitized.length > maxLength) {
-    throw new Error(`Input exceeds maximum length of ${maxLength} characters`);
+    throw new ValidationError(`Input exceeds maximum length of ${maxLength} characters`);
   }
   return sanitized;
 }
@@ -45,7 +69,7 @@ function validateTemplateName(templateName) {
   const sanitized = sanitizeString(templateName, 50);
   // Only allow alphanumeric characters, hyphens, and underscores
   if (!/^[a-zA-Z0-9_-]+$/.test(sanitized)) {
-    throw new Error('Template name contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
+    throw new ValidationError('Template name contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
   }
   return sanitized;
 }
@@ -61,7 +85,7 @@ function validateProjectDirectory(projectDir) {
   const resolvedPath = path.resolve(sanitized);
   // Prevent directory traversal attacks
   if (!resolvedPath.startsWith(process.cwd())) {
-    throw new Error('Project directory must be within the current working directory');
+    throw new ValidationError('Project directory must be within the current working directory');
   }
   return resolvedPath;
 }
@@ -75,7 +99,7 @@ function validateProjectDirectory(projectDir) {
 function validatePort(port) {
   const numPort = parseInt(port, 10);
   if (isNaN(numPort) || numPort < 1 || numPort > 65535) {
-    throw new Error('Port must be a valid number between 1 and 65535');
+    throw new ValidationError('Port must be a valid number between 1 and 65535');
   }
   return numPort;
 }
@@ -90,7 +114,7 @@ function validateProjectName(name) {
   const sanitized = sanitizeString(name, 100);
   // Allow alphanumeric, hyphens, underscores, and dots
   if (!/^[a-zA-Z0-9._-]+$/.test(sanitized)) {
-    throw new Error('Project name contains invalid characters');
+    throw new ValidationError('Project name contains invalid characters');
   }
   return sanitized;
 }
@@ -124,7 +148,7 @@ function validateFilePath(filePath, baseDir) {
   const resolvedPath = path.resolve(baseDir, sanitized);
   // Ensure path is within base directory
   if (!resolvedPath.startsWith(path.resolve(baseDir))) {
-    throw new Error('File path is outside allowed directory');
+    throw new ValidationError('File path is outside allowed directory');
   }
   return resolvedPath;
 }
@@ -134,30 +158,46 @@ function validateFilePath(filePath, baseDir) {
 // =============================================================================
 
 /**
+ * Generic configuration file parser.
+ * @param {string} projectDir - The project directory path
+ * @param {string} configName - Config file name (without extension)
+ * @param {RegExp} extractPattern - Regex pattern to extract output directory
+ * @returns {string|null} The extracted output directory or null
+ */
+function parseConfig(projectDir, configName, extractPattern) {
+  const extensions = ['js', 'ts'];
+
+  for (const ext of extensions) {
+    try {
+      const configPath = path.join(projectDir, `${configName}.config.${ext}`);
+
+      if (!fs.existsSync(configPath)) {
+        continue;
+      }
+
+      // Validate config file path
+      validateFilePath(configPath, projectDir);
+
+      const content = fs.readFileSync(configPath, 'utf8');
+      const match = content.match(extractPattern);
+
+      return match ? match[1] : null;
+    } catch (error) {
+      log(`Warning: Could not parse ${configName} config. ${error.message}`, colors.yellow);
+      return null;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Parses Vite configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
  * @returns {string|null} The build output directory or null if not found
  */
 function parseViteConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'vite.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'vite.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'vite.config.js');
-    const configPathTs = path.join(projectDir, 'vite.config.ts');
-    log(`Warning: Could not parse Vite config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+  return parseConfig(projectDir, 'vite', /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
 }
 
 /**
@@ -166,25 +206,7 @@ function parseViteConfig(projectDir) {
  * @returns {string|null} The build output directory or null if not found
  */
 function parseRollupConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'rollup.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'rollup.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'rollup.config.js');
-    const configPathTs = path.join(projectDir, 'rollup.config.ts');
-    log(`Warning: Could not parse Rollup config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+  return parseConfig(projectDir, 'rollup', /output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/);
 }
 
 /**
@@ -193,25 +215,7 @@ function parseRollupConfig(projectDir) {
  * @returns {string|null} The build output directory or null if not found
  */
 function parseWebpackConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'webpack.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'webpack.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'webpack.config.js');
-    const configPathTs = path.join(projectDir, 'webpack.config.ts');
-    log(`Warning: Could not parse Webpack config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+  return parseConfig(projectDir, 'webpack', /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/);
 }
 
 /**
@@ -852,4 +856,58 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-main();
+// Only run main() when this file is executed directly (not when imported for testing)
+// Check if this module is the main module being executed
+const isMainModule = process.argv[1] && (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url.endsWith(process.argv[1])
+);
+
+if (isMainModule) {
+  main();
+}
+
+// =============================================================================
+// MODULE EXPORTS
+// =============================================================================
+
+export {
+  // Custom Error Classes
+  ValidationError,
+  ConfigError,
+
+  // Validation Functions
+  sanitizeString,
+  validateTemplateName,
+  validateProjectDirectory,
+  validatePort,
+  validateProjectName,
+  sanitizeTemplateVariable,
+  validateFilePath,
+
+  // Config Parsing Functions
+  parseConfig,
+  parseViteConfig,
+  parseRollupConfig,
+  parseWebpackConfig,
+  detectBuildOutputDir,
+  detectProjectValues,
+
+  // Template Processing Functions
+  validateTemplate,
+  checkBuildCompatibility,
+  replaceTemplateVariables,
+
+  // Port Management Functions
+  checkPortAvailability,
+  findAvailablePort,
+  assignDynamicPorts,
+
+  // CLI Interface Functions
+  showHelp,
+  showVersion,
+  listTemplates,
+
+  // Main Logic Functions
+  copyTemplate
+};
