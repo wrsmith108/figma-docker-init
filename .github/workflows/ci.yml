@@ -121,9 +121,10 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test -- --coverage --coverageReporters=text-lcov --coverageReporters=json
+        run: npx jest --coverage --coverageReporters=text-lcov --coverageReporters=json
 
       - name: Test CLI functionality
+        shell: bash
         run: |
           set -e  # Exit on any error to ensure tests actually fail
           echo "Testing CLI help command..."
