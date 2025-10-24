@@ -121,7 +121,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npx jest --coverage --coverageReporters=text-lcov --coverageReporters=json
+        run: node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageReporters=text-lcov --coverageReporters=json
 
       - name: Test CLI functionality
         shell: bash
