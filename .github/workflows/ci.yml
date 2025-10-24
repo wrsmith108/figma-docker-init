@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ pack-master, main, develop ]
 permissions:
-  contents: read
+  contents: write  # Required for semantic-release to push tags and commits
   pull-requests: read
   checks: write
   statuses: write
