@@ -208,21 +208,9 @@ jobs:
                 fi
               fi
 
-              # Check docker-compose.yml is valid YAML
+              # Check docker-compose.yml exists (detailed YAML validation is done by test suite)
               if [ -f "$template_dir/docker-compose.yml" ]; then
                 echo "✅ docker-compose.yml found for $template_name"
-                # Install jq for YAML validation if not present
-                if command -v jq >/dev/null 2>&1; then
-                  # Use jq to validate YAML structure (jq can parse YAML)
-                  if jq -e . "$template_dir/docker-compose.yml" >/dev/null 2>&1; then
-                    echo "✅ docker-compose.yml is valid YAML"
-                  else
-                    echo "❌ Invalid YAML in docker-compose.yml for $template_name"
-                    exit 1
-                  fi
-                else
-                  echo "⚠️ YAML validation skipped (jq not available)"
-                fi
               fi
 
               echo "✅ Template $template_name verified"
