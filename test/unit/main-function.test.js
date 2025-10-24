@@ -120,6 +120,10 @@ describe('Main Function Coverage', () => {
 
       // Restore original cwd
       process.chdir(originalCwd);
+
+      // Wait for any pending async operations to complete before cleanup
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       fs.rmSync(tempDir, { recursive: true, force: true });
     });
   });
