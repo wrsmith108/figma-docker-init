@@ -73,7 +73,7 @@
   "preferGlobal": true,
   "release": {
     "branches": [
-      "main",
+      "pack-master",
       {
         "name": "beta",
         "prerelease": true
