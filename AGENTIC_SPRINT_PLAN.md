@@ -958,7 +958,7 @@ This PR was developed using parallel agent swarm:
 **GitHub Actions will automatically**:
 1. Run security scan
 2. Run linting
-3. Run matrix tests (Node 18, 20, 22 on Ubuntu, Windows, macOS)
+3. Run matrix tests (Node 20, 22 on Ubuntu, Windows, macOS)
 4. Run build & package verification
 5. Upload test coverage to Codecov
 
@@ -970,7 +970,7 @@ gh pr checks --watch
 # If all checks pass:
 # ✓ Security Scan
 # ✓ Lint & Code Quality
-# ✓ Test (Node 18, 20, 22)
+# ✓ Test (Node 20, 22)
 # ✓ Build & Package
 ```
 
@@ -1220,7 +1220,7 @@ npm deprecate figma-docker-init@1.1.0 "Critical bug, use 1.1.1"
 NODE_ENV=test CI=true npm test
 
 # Check Node version matches CI
-node --version  # Should be 18.x
+node --version  # Should be 20.x or higher
 ```
 
 ### Issue: Semantic release doesn't publish

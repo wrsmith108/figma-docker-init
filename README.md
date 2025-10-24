@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/figma-docker-init.svg)](https://www.npmjs.com/package/figma-docker-init)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.8.1-brightgreen.svg)](https://nodejs.org/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
 [![Tests](https://img.shields.io/badge/tests-368%20passing-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
@@ -257,7 +257,8 @@ jobs:
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= 20.8.1
+- npm >= 10.0.0
 - Docker >= 20.0.0
 - Docker Compose >= 2.0.0
 

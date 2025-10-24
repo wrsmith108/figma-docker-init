@@ -15,7 +15,7 @@ permissions:
 env:
   NODE_ENV: test
   CI: true
-  NODE_VERSION_DEFAULT: '18'
+  NODE_VERSION_DEFAULT: '20'
 
 jobs:
   # Security and dependency scanning
@@ -101,10 +101,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18, 20, 22]
+        node-version: [20, 22]
         include:
           - os: ubuntu-latest
-            node-version: 18
+            node-version: 20
             upload-coverage: true
 
     steps:

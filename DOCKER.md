@@ -20,7 +20,7 @@ This project includes a comprehensive Docker Compose setup optimized for Figma-e
 ### Services Overview
 
 #### Development Service (`app-dev`)
-- **Base Image:** Node.js 18 Alpine
+- **Base Image:** Node.js 20 Alpine
 - **Port:** 3000
 - **Features:** Hot reload, volume mounts, health checks
 - **Memory:** 4GB (optimized for large UI dependency trees)
@@ -270,7 +270,7 @@ docker stats figma-docker-init-dev
 The production Dockerfile uses an optimized multi-stage build:
 
 1. **Builder Stage:**
-   - Uses Node.js 18 Alpine for smaller footprint
+   - Uses Node.js 20 Alpine for smaller footprint
    - Installs ALL dependencies (including devDependencies)
    - **Critical:** Figma projects need devDependencies for build
    - Builds application to `dist/`

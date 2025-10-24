@@ -6,7 +6,7 @@ This document provides comprehensive instructions for publishing the `figma-dock
 
 Before publishing, ensure you have:
 
-1. **Node.js** >= 18.0.0 installed
+1. **Node.js** >= 20.8.1 installed
 2. **npm account** with publishing permissions
 3. **Git** repository set up with proper remotes
 4. **Two-factor authentication** enabled on npm account
