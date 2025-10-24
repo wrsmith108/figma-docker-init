@@ -2,18 +2,20 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ pack-master, main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ pack-master, main, develop ]
 permissions:
   contents: read
   pull-requests: read
   checks: write
   statuses: write
+  security-events: write  # Required for CodeQL
 
 env:
   NODE_ENV: test
   CI: true
+  NODE_VERSION_DEFAULT: '18'
 
 jobs:
   # Security and dependency scanning
@@ -27,22 +29,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION_DEFAULT }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --production
 
       - name: Run security scan with CodeQL
-        uses: github/codeql-action/init@v3.25.15
+        uses: github/codeql-action/init@v3.27.0
         with:
           languages: javascript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3.25.15
+        uses: github/codeql-action/analyze@v3.27.0
 
   # Linting and code quality
   lint:
@@ -55,7 +57,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION_DEFAULT }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -63,15 +65,17 @@ jobs:
 
       - name: Check package.json format
         run: node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"
+        continue-on-error: false
 
       - name: Validate template files
+        shell: bash
         run: |
           echo "Validating template structure..."
           if [ ! -d "templates" ]; then
             echo "❌ Templates directory not found"
             exit 1
           fi
-          
+
           for template in templates/*/; do
             if [ -d "$template" ]; then
               echo "✅ Validating template: $(basename $template)"
@@ -120,7 +124,6 @@ jobs:
         run: npm test -- --coverage --coverageReporters=text-lcov --coverageReporters=json
 
       - name: Test CLI functionality
-        shell: bash
         run: |
           set -e  # Exit on any error to ensure tests actually fail
           echo "Testing CLI help command..."
@@ -131,10 +134,11 @@ jobs:
 
           echo "Testing CLI list templates..."
           node figma-docker-init.js --list
+        continue-on-error: false
 
       - name: Upload coverage to Codecov
         if: matrix.upload-coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage/lcov.info
@@ -154,40 +158,43 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION_DEFAULT }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Test package installation
+        shell: bash
         run: |
           # Test global installation simulation
           npm pack
           PACKAGE_FILE=$(ls *.tgz)
           echo "Package created: $PACKAGE_FILE"
-          
+
           # Verify package contents
           tar -tzf $PACKAGE_FILE | head -20
-          
+
           # Test if package can be installed
           mkdir test-install
           cd test-install
           npm init -y
           npm install ../$PACKAGE_FILE
-          
+
           # Test if CLI is accessible
           npx figma-docker-init --help || echo "CLI test completed"
+        continue-on-error: false
 
       - name: Verify template integrity
+        shell: bash
         run: |
           echo "Verifying template file integrity..."
-          
+
           for template_dir in templates/*/; do
             if [ -d "$template_dir" ]; then
               template_name=$(basename "$template_dir")
               echo "Checking template: $template_name"
-              
+
               # Check Docker files are valid
               if [ -f "$template_dir/Dockerfile" ]; then
                 echo "✅ Dockerfile found for $template_name"
@@ -199,7 +206,7 @@ jobs:
                   exit 1
                 fi
               fi
-              
+
               # Check docker-compose.yml is valid YAML
               if [ -f "$template_dir/docker-compose.yml" ]; then
                 echo "✅ docker-compose.yml found for $template_name"
@@ -216,18 +223,18 @@ jobs:
                   echo "⚠️ YAML validation skipped (jq not available)"
                 fi
               fi
-              
+
               echo "✅ Template $template_name verified"
             fi
           done
+        continue-on-error: false
 
-  # Semantic Release (only on main branch)
+  # Semantic Release (only on pack-master branch)
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
     needs: [test, build]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: release
+    if: github.ref == 'refs/heads/pack-master' && github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -238,17 +245,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION_DEFAULT }}
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Verify semantic-release script exists
+        shell: bash
         run: |
           if ! npm run | grep -q "semantic-release"; then
             echo "❌ semantic-release script not found in package.json"
             exit 1
           fi
           echo "✅ semantic-release script found"
+        continue-on-error: false
 
       - name: Install dependencies
         run: npm ci
@@ -258,6 +267,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run semantic-release
+        continue-on-error: false
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
@@ -267,6 +277,7 @@ jobs:
             *.tgz  # semantic-release creates tarball in root directory
           retention-days: 30
           if-no-files-found: error
+          compression-level: 6
 
   # Notification and status reporting
   notify:
@@ -276,6 +287,7 @@ jobs:
     if: always()
     steps:
       - name: Report Pipeline Status
+        shell: bash
         run: |
           echo "=== CI/CD Pipeline Status Report ==="
           echo "Security Scan: ${{ needs.security.result }}"
@@ -283,7 +295,7 @@ jobs:
           echo "Tests: ${{ needs.test.result }}"
           echo "Build & Package: ${{ needs.build.result }}"
           echo ""
-          
+
           # Evaluate each job result separately in bash (GitHub expressions don't work in [[ ]])
           SECURITY_SUCCESS=$([ "${{ needs.security.result }}" = "success" ] && echo true || echo false)
           LINT_SUCCESS=$([ "${{ needs.lint.result }}" = "success" ] && echo true || echo false)
@@ -300,3 +312,4 @@ jobs:
             echo "❌ Pipeline completed with failures."
             echo "Please review the failed stages before proceeding."
           fi
+        continue-on-error: false
