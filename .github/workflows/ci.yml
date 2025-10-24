@@ -266,7 +266,7 @@ jobs:
           path: |
             *.tgz  # semantic-release creates tarball in root directory
           retention-days: 30
-          if-no-files-found: error
+          if-no-files-found: ignore
           compression-level: 6
 
   # Notification and status reporting
