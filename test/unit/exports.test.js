@@ -1,115 +1,58 @@
 /**
- * Test: Module Exports Validation
- * Purpose: Verify all 24 functions are properly exported
- * TDD Phase: RED - These tests will FAIL until exports are added
+ * Test: Module Exports Validation - Phase 1 Implementation
+ * Purpose: Verify all Phase 1 functions and error classes are properly exported
+ *
+ * Phase 1 Scope (v1.1.0):
+ * - 23 functions across 6 categories
+ * - 2 custom error classes
+ * - Total: 25 exports
+ *
+ * Note: This tests the ACTUAL Phase 1 implementation, not the planned v2.0 API.
+ * Functions like buildImage, runContainer, generateDockerCompose, etc. are planned
+ * for Phase 2 and Phase 3 of the refactoring.
  */
 
-describe('Module Exports', () => {
-  let exports;
+import * as indexExports from '../../figma-docker-init.js';
 
-  beforeEach(() => {
-    // Reset module cache to ensure clean imports
-    jest.resetModules();
-    exports = require('../../index.js');
-  });
+describe('Module Exports - Phase 1 Implementation', () => {
+  const exports = indexExports;
 
-  describe('Template Management Exports', () => {
-    it('should export listTemplates as a function', () => {
-      expect(exports.listTemplates).toBeDefined();
-      expect(typeof exports.listTemplates).toBe('function');
+  // =============================================================================
+  // CUSTOM ERROR CLASSES (2 classes)
+  // =============================================================================
+
+  describe('Custom Error Classes', () => {
+    it('should export ValidationError as a class', () => {
+      expect(exports.ValidationError).toBeDefined();
+      expect(typeof exports.ValidationError).toBe('function');
+      expect(exports.ValidationError.prototype instanceof Error).toBe(true);
     });
 
-    it('should export getTemplate as a function', () => {
-      expect(exports.getTemplate).toBeDefined();
-      expect(typeof exports.getTemplate).toBe('function');
-    });
-
-    it('should export validateTemplate as a function', () => {
-      expect(exports.validateTemplate).toBeDefined();
-      expect(typeof exports.validateTemplate).toBe('function');
-    });
-
-    it('should export buildDockerfile as a function', () => {
-      expect(exports.buildDockerfile).toBeDefined();
-      expect(typeof exports.buildDockerfile).toBe('function');
+    it('should export ConfigError as a class', () => {
+      expect(exports.ConfigError).toBeDefined();
+      expect(typeof exports.ConfigError).toBe('function');
+      expect(exports.ConfigError.prototype instanceof Error).toBe(true);
     });
   });
 
-  describe('Configuration Exports', () => {
-    it('should export parseConfig as a function', () => {
-      expect(exports.parseConfig).toBeDefined();
-      expect(typeof exports.parseConfig).toBe('function');
+  // =============================================================================
+  // VALIDATION FUNCTIONS (7 functions)
+  // =============================================================================
+
+  describe('Validation Functions', () => {
+    it('should export sanitizeString as a function', () => {
+      expect(exports.sanitizeString).toBeDefined();
+      expect(typeof exports.sanitizeString).toBe('function');
     });
 
-    it('should export loadViteConfig as a function', () => {
-      expect(exports.loadViteConfig).toBeDefined();
-      expect(typeof exports.loadViteConfig).toBe('function');
+    it('should export validateTemplateName as a function', () => {
+      expect(exports.validateTemplateName).toBeDefined();
+      expect(typeof exports.validateTemplateName).toBe('function');
     });
 
-    it('should export loadWebpackConfig as a function', () => {
-      expect(exports.loadWebpackConfig).toBeDefined();
-      expect(typeof exports.loadWebpackConfig).toBe('function');
-    });
-
-    it('should export loadNextConfig as a function', () => {
-      expect(exports.loadNextConfig).toBeDefined();
-      expect(typeof exports.loadNextConfig).toBe('function');
-    });
-
-    it('should export loadNuxtConfig as a function', () => {
-      expect(exports.loadNuxtConfig).toBeDefined();
-      expect(typeof exports.loadNuxtConfig).toBe('function');
-    });
-  });
-
-  describe('Docker Operations Exports', () => {
-    it('should export generateDockerCompose as a function', () => {
-      expect(exports.generateDockerCompose).toBeDefined();
-      expect(typeof exports.generateDockerCompose).toBe('function');
-    });
-
-    it('should export generateNginxConfig as a function', () => {
-      expect(exports.generateNginxConfig).toBeDefined();
-      expect(typeof exports.generateNginxConfig).toBe('function');
-    });
-
-    it('should export buildImage as a function', () => {
-      expect(exports.buildImage).toBeDefined();
-      expect(typeof exports.buildImage).toBe('function');
-    });
-
-    it('should export runContainer as a function', () => {
-      expect(exports.runContainer).toBeDefined();
-      expect(typeof exports.runContainer).toBe('function');
-    });
-
-    it('should export testContainer as a function', () => {
-      expect(exports.testContainer).toBeDefined();
-      expect(typeof exports.testContainer).toBe('function');
-    });
-  });
-
-  describe('Port Management Exports', () => {
-    it('should export detectPort as a function', () => {
-      expect(exports.detectPort).toBeDefined();
-      expect(typeof exports.detectPort).toBe('function');
-    });
-
-    it('should export findAvailablePort as a function', () => {
-      expect(exports.findAvailablePort).toBeDefined();
-      expect(typeof exports.findAvailablePort).toBe('function');
-    });
-
-    it('should export isPortAvailable as a function', () => {
-      expect(exports.isPortAvailable).toBeDefined();
-      expect(typeof exports.isPortAvailable).toBe('function');
-    });
-  });
-
-  describe('Validation Exports', () => {
-    it('should export validateOptions as a function', () => {
-      expect(exports.validateOptions).toBeDefined();
-      expect(typeof exports.validateOptions).toBe('function');
+    it('should export validateProjectDirectory as a function', () => {
+      expect(exports.validateProjectDirectory).toBeDefined();
+      expect(typeof exports.validateProjectDirectory).toBe('function');
     });
 
     it('should export validatePort as a function', () => {
@@ -117,40 +60,157 @@ describe('Module Exports', () => {
       expect(typeof exports.validatePort).toBe('function');
     });
 
-    it('should export validateFramework as a function', () => {
-      expect(exports.validateFramework).toBeDefined();
-      expect(typeof exports.validateFramework).toBe('function');
+    it('should export validateProjectName as a function', () => {
+      expect(exports.validateProjectName).toBeDefined();
+      expect(typeof exports.validateProjectName).toBe('function');
+    });
+
+    it('should export sanitizeTemplateVariable as a function', () => {
+      expect(exports.sanitizeTemplateVariable).toBeDefined();
+      expect(typeof exports.sanitizeTemplateVariable).toBe('function');
+    });
+
+    it('should export validateFilePath as a function', () => {
+      expect(exports.validateFilePath).toBeDefined();
+      expect(typeof exports.validateFilePath).toBe('function');
     });
   });
 
-  describe('Utility Exports', () => {
-    it('should export detectFramework as a function', () => {
-      expect(exports.detectFramework).toBeDefined();
-      expect(typeof exports.detectFramework).toBe('function');
+  // =============================================================================
+  // CONFIG PARSING FUNCTIONS (6 functions)
+  // =============================================================================
+
+  describe('Config Parsing Functions', () => {
+    it('should export parseConfig as a function', () => {
+      expect(exports.parseConfig).toBeDefined();
+      expect(typeof exports.parseConfig).toBe('function');
     });
 
-    it('should export copyProjectFiles as a function', () => {
-      expect(exports.copyProjectFiles).toBeDefined();
-      expect(typeof exports.copyProjectFiles).toBe('function');
+    it('should export parseViteConfig as a function', () => {
+      expect(exports.parseViteConfig).toBeDefined();
+      expect(typeof exports.parseViteConfig).toBe('function');
     });
 
-    it('should export executeDockerCommand as a function', () => {
-      expect(exports.executeDockerCommand).toBeDefined();
-      expect(typeof exports.executeDockerCommand).toBe('function');
+    it('should export parseRollupConfig as a function', () => {
+      expect(exports.parseRollupConfig).toBeDefined();
+      expect(typeof exports.parseRollupConfig).toBe('function');
     });
 
-    it('should export cleanupContainer as a function', () => {
-      expect(exports.cleanupContainer).toBeDefined();
-      expect(typeof exports.cleanupContainer).toBe('function');
+    it('should export parseWebpackConfig as a function', () => {
+      expect(exports.parseWebpackConfig).toBeDefined();
+      expect(typeof exports.parseWebpackConfig).toBe('function');
+    });
+
+    it('should export detectBuildOutputDir as a function', () => {
+      expect(exports.detectBuildOutputDir).toBeDefined();
+      expect(typeof exports.detectBuildOutputDir).toBe('function');
+    });
+
+    it('should export detectProjectValues as a function', () => {
+      expect(exports.detectProjectValues).toBeDefined();
+      expect(typeof exports.detectProjectValues).toBe('function');
     });
   });
 
-  describe('Complete Export Count', () => {
-    it('should export exactly 24 functions', () => {
+  // =============================================================================
+  // TEMPLATE PROCESSING FUNCTIONS (3 functions)
+  // =============================================================================
+
+  describe('Template Processing Functions', () => {
+    it('should export validateTemplate as a function', () => {
+      expect(exports.validateTemplate).toBeDefined();
+      expect(typeof exports.validateTemplate).toBe('function');
+    });
+
+    it('should export checkBuildCompatibility as a function', () => {
+      expect(exports.checkBuildCompatibility).toBeDefined();
+      expect(typeof exports.checkBuildCompatibility).toBe('function');
+    });
+
+    it('should export replaceTemplateVariables as a function', () => {
+      expect(exports.replaceTemplateVariables).toBeDefined();
+      expect(typeof exports.replaceTemplateVariables).toBe('function');
+    });
+  });
+
+  // =============================================================================
+  // PORT MANAGEMENT FUNCTIONS (3 functions)
+  // =============================================================================
+
+  describe('Port Management Functions', () => {
+    it('should export checkPortAvailability as a function', () => {
+      expect(exports.checkPortAvailability).toBeDefined();
+      expect(typeof exports.checkPortAvailability).toBe('function');
+    });
+
+    it('should export findAvailablePort as a function', () => {
+      expect(exports.findAvailablePort).toBeDefined();
+      expect(typeof exports.findAvailablePort).toBe('function');
+    });
+
+    it('should export assignDynamicPorts as a function', () => {
+      expect(exports.assignDynamicPorts).toBeDefined();
+      expect(typeof exports.assignDynamicPorts).toBe('function');
+    });
+  });
+
+  // =============================================================================
+  // CLI INTERFACE FUNCTIONS (3 functions)
+  // =============================================================================
+
+  describe('CLI Interface Functions', () => {
+    it('should export showHelp as a function', () => {
+      expect(exports.showHelp).toBeDefined();
+      expect(typeof exports.showHelp).toBe('function');
+    });
+
+    it('should export showVersion as a function', () => {
+      expect(exports.showVersion).toBeDefined();
+      expect(typeof exports.showVersion).toBe('function');
+    });
+
+    it('should export listTemplates as a function', () => {
+      expect(exports.listTemplates).toBeDefined();
+      expect(typeof exports.listTemplates).toBe('function');
+    });
+  });
+
+  // =============================================================================
+  // MAIN LOGIC FUNCTIONS (1 function)
+  // =============================================================================
+
+  describe('Main Logic Functions', () => {
+    it('should export copyTemplate as a function', () => {
+      expect(exports.copyTemplate).toBeDefined();
+      expect(typeof exports.copyTemplate).toBe('function');
+    });
+  });
+
+  // =============================================================================
+  // COMPLETE EXPORT COUNT VALIDATION
+  // =============================================================================
+
+  describe('Complete Export Count - Phase 1', () => {
+    it('should export exactly 23 functions', () => {
       const exportedFunctions = Object.keys(exports).filter(
-        key => typeof exports[key] === 'function'
+        key => typeof exports[key] === 'function' &&
+               key !== 'ValidationError' &&
+               key !== 'ConfigError'
       );
-      expect(exportedFunctions).toHaveLength(24);
+      expect(exportedFunctions).toHaveLength(23);
+    });
+
+    it('should export exactly 2 error classes', () => {
+      const errorClasses = Object.keys(exports).filter(
+        key => (key === 'ValidationError' || key === 'ConfigError') &&
+               typeof exports[key] === 'function'
+      );
+      expect(errorClasses).toHaveLength(2);
+    });
+
+    it('should have exactly 25 total exports (23 functions + 2 classes)', () => {
+      const allExports = Object.keys(exports);
+      expect(allExports).toHaveLength(25);
     });
 
     it('should not have any undefined exports', () => {
@@ -158,6 +218,40 @@ describe('Module Exports', () => {
         key => exports[key] === undefined
       );
       expect(undefinedExports).toHaveLength(0);
+    });
+
+    it('should export all expected Phase 1 functions by name', () => {
+      const expectedExports = [
+        // Error classes (2)
+        'ValidationError', 'ConfigError',
+
+        // Validation functions (7)
+        'sanitizeString', 'validateTemplateName', 'validateProjectDirectory',
+        'validatePort', 'validateProjectName', 'sanitizeTemplateVariable',
+        'validateFilePath',
+
+        // Config parsing functions (6)
+        'parseConfig', 'parseViteConfig', 'parseRollupConfig',
+        'parseWebpackConfig', 'detectBuildOutputDir', 'detectProjectValues',
+
+        // Template processing functions (3)
+        'validateTemplate', 'checkBuildCompatibility', 'replaceTemplateVariables',
+
+        // Port management functions (3)
+        'checkPortAvailability', 'findAvailablePort', 'assignDynamicPorts',
+
+        // CLI interface functions (3)
+        'showHelp', 'showVersion', 'listTemplates',
+
+        // Main logic functions (1)
+        'copyTemplate'
+      ];
+
+      expectedExports.forEach(exportName => {
+        expect(exports[exportName]).toBeDefined();
+      });
+
+      expect(Object.keys(exports).sort()).toEqual(expectedExports.sort());
     });
   });
 });

@@ -15,6 +15,9 @@ const TEMPLATES_DIR = path.join(__dirname, 'templates');
 // =============================================================================
 // CUSTOM ERROR CLASSES
 // =============================================================================
+// Functions: ValidationError, ConfigError
+// Purpose: Custom error types for consistent error handling across the application
+// =============================================================================
 
 /**
  * Custom error class for validation errors
@@ -38,6 +41,9 @@ class ConfigError extends Error {
 
 // =============================================================================
 // INPUT VALIDATION AND SANITIZATION UTILITIES
+// =============================================================================
+// Functions: sanitizeString, validateTemplateName, validateProjectDirectory, validatePort, validateProjectName, sanitizeTemplateVariable, validateFilePath
+// Purpose: Ensure all user inputs are safe and valid before processing
 // =============================================================================
 
 /**
@@ -156,35 +162,40 @@ function validateFilePath(filePath, baseDir) {
 // =============================================================================
 // CONFIGURATION PARSING FUNCTIONS
 // =============================================================================
+// Functions: parseConfig, parseViteConfig, parseRollupConfig, parseWebpackConfig, detectBuildOutputDir
+// Purpose: Extract build configuration from various build tool config files
+// =============================================================================
 
 /**
- * Generic configuration file parser.
- * @param {string} projectDir - The project directory path
- * @param {string} configName - Config file name (without extension)
- * @param {RegExp} extractPattern - Regex pattern to extract output directory
- * @returns {string|null} The extracted output directory or null
+ * Parse configuration file to extract values using regex pattern
+ * @param {string} configPath - Full path to config file (with or without extension)
+ * @param {RegExp} pattern - Regex pattern to extract value
+ * @returns {Promise<string|null>} Extracted value or null if not found
  */
-function parseConfig(projectDir, configName, extractPattern) {
+async function parseConfig(configPath, pattern) {
   const extensions = ['js', 'ts'];
 
-  for (const ext of extensions) {
+  // If path already has extension, try it directly
+  if (configPath.endsWith('.js') || configPath.endsWith('.ts')) {
     try {
-      const configPath = path.join(projectDir, `${configName}.config.${ext}`);
-
-      if (!fs.existsSync(configPath)) {
-        continue;
-      }
-
-      // Validate config file path
-      validateFilePath(configPath, projectDir);
-
-      const content = fs.readFileSync(configPath, 'utf8');
-      const match = content.match(extractPattern);
-
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      const match = content.match(pattern);
       return match ? match[1] : null;
     } catch (error) {
-      log(`Warning: Could not parse ${configName} config. ${error.message}`, colors.yellow);
       return null;
+    }
+  }
+
+  // Try adding .js and .ts extensions
+  for (const ext of extensions) {
+    try {
+      const fullPath = `${configPath}.${ext}`;
+      const content = await fs.promises.readFile(fullPath, 'utf-8');
+      const match = content.match(pattern);
+      return match ? match[1] : null;
+    } catch (error) {
+      // Try next extension
+      continue;
     }
   }
 
@@ -194,46 +205,58 @@ function parseConfig(projectDir, configName, extractPattern) {
 /**
  * Parses Vite configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseViteConfig(projectDir) {
-  return parseConfig(projectDir, 'vite', /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
+async function parseViteConfig(projectDir) {
+  const configPath = path.join(projectDir, 'vite.config');
+  return await parseConfig(
+    configPath,
+    /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Parses Rollup configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseRollupConfig(projectDir) {
-  return parseConfig(projectDir, 'rollup', /output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/);
+async function parseRollupConfig(projectDir) {
+  const configPath = path.join(projectDir, 'rollup.config');
+  return await parseConfig(
+    configPath,
+    /output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Parses Webpack configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseWebpackConfig(projectDir) {
-  return parseConfig(projectDir, 'webpack', /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/);
+async function parseWebpackConfig(projectDir) {
+  const configPath = path.join(projectDir, 'webpack.config');
+  return await parseConfig(
+    configPath,
+    /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Detects the build output directory by trying different build tool configurations.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The detected build output directory or null
+ * @returns {Promise<string|null>} The detected build output directory or null
  */
-function detectBuildOutputDir(projectDir) {
+async function detectBuildOutputDir(projectDir) {
   // Try Vite first
-  let outputDir = parseViteConfig(projectDir);
+  let outputDir = await parseViteConfig(projectDir);
   if (outputDir) return outputDir;
 
   // Try Rollup
-  outputDir = parseRollupConfig(projectDir);
+  outputDir = await parseRollupConfig(projectDir);
   if (outputDir) return outputDir;
 
   // Try Webpack
-  outputDir = parseWebpackConfig(projectDir);
+  outputDir = await parseWebpackConfig(projectDir);
   if (outputDir) return outputDir;
 
   return null;
@@ -241,6 +264,9 @@ function detectBuildOutputDir(projectDir) {
 
 // =============================================================================
 // PROJECT DETECTION AND ANALYSIS FUNCTIONS
+// =============================================================================
+// Functions: detectProjectValues
+// Purpose: Auto-detect project settings from package.json and config files
 // =============================================================================
 
 /**
@@ -278,7 +304,7 @@ async function detectProjectValues(projectDir = '.') {
   }
 
   // Detect BUILD_OUTPUT_DIR dynamically
-  values.BUILD_OUTPUT_DIR = detectBuildOutputDir(validatedProjectDir) || 'dist';
+  values.BUILD_OUTPUT_DIR = await detectBuildOutputDir(validatedProjectDir) || 'dist';
 
   // Detect FRAMEWORK, TYPESCRIPT, UI_LIBRARY, and DEPENDENCY_COUNT from package.json dependencies
   try {
@@ -370,6 +396,9 @@ async function detectProjectValues(projectDir = '.') {
 
 // =============================================================================
 // TEMPLATE VALIDATION AND PROCESSING FUNCTIONS
+// =============================================================================
+// Functions: validateTemplate, checkBuildCompatibility, replaceTemplateVariables
+// Purpose: Validate and process template files with variable replacement
 // =============================================================================
 
 /**
@@ -502,6 +531,9 @@ function replaceTemplateVariables(content, variables) {
 // =============================================================================
 // PORT MANAGEMENT FUNCTIONS
 // =============================================================================
+// Functions: checkPortAvailability, findAvailablePort, assignDynamicPorts
+// Purpose: Manage port allocation and availability checking
+// =============================================================================
 
 /**
  * Checks if a port is available for binding.
@@ -585,6 +617,9 @@ async function assignDynamicPorts() {
 // =============================================================================
 // CLI INTERFACE FUNCTIONS
 // =============================================================================
+// Functions: showHelp, showVersion, listTemplates
+// Purpose: Command-line interface and user interaction
+// =============================================================================
 
 /**
  * Displays help information for the CLI tool.
@@ -654,6 +689,9 @@ function listTemplates() {
 // =============================================================================
 // UTILITIES
 // =============================================================================
+// Functions: log, colors
+// Purpose: Logging and console output formatting
+// =============================================================================
 
 // Color codes for terminal output
 const colors = {
@@ -676,6 +714,9 @@ function log(message, color = colors.reset) {
 
 // =============================================================================
 // MAIN APPLICATION LOGIC
+// =============================================================================
+// Functions: copyTemplate, main
+// Purpose: Core workflow orchestration and CLI entry point
 // =============================================================================
 
 /**
@@ -858,9 +899,12 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Only run main() when this file is executed directly (not when imported for testing)
 // Check if this module is the main module being executed
+// Handle both direct execution and symlink execution (e.g., via npm bin)
 const isMainModule = process.argv[1] && (
   import.meta.url === `file://${process.argv[1]}` ||
-  import.meta.url.endsWith(process.argv[1])
+  import.meta.url.endsWith(process.argv[1]) ||
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1]) ||
+  fileURLToPath(import.meta.url) === fs.realpathSync(process.argv[1])
 );
 
 if (isMainModule) {

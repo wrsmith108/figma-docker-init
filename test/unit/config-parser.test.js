@@ -4,18 +4,17 @@
  * TDD Phase: RED - These tests will FAIL until parseConfig is implemented
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { jest } from '@jest/globals';
+import { parseConfig } from '../../figma-docker-init.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('parseConfig Helper', () => {
-  let parseConfig;
   const testDir = path.join(__dirname, '../fixtures/configs');
-
-  beforeEach(() => {
-    jest.resetModules();
-    // This will fail until parseConfig is implemented and exported
-    parseConfig = require('../../index.js').parseConfig;
-  });
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -70,7 +69,7 @@ describe('parseConfig Helper', () => {
 
       const result = await parseConfig(
         'vite.config.js',
-        /build\.outDir\s*:\s*['"](.+?)['"]/
+        /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/
       );
 
       expect(result).toBe('custom-dist');
@@ -100,7 +99,7 @@ describe('parseConfig Helper', () => {
 
       const result = await parseConfig(
         'vite.config.js',
-        /build\.outDir\s*:\s*['"](.+?)['"]/
+        /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/
       );
 
       expect(result).toBe('production-build');
@@ -118,7 +117,7 @@ describe('parseConfig Helper', () => {
 
       const result = await parseConfig(
         'webpack.config.js',
-        /output\.path[^'"]+'(.+?)'/
+        /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/
       );
 
       expect(result).toBe('webpack-dist');
@@ -171,7 +170,7 @@ describe('parseConfig Helper', () => {
 
       const result = await parseConfig(
         'vite.config.js',
-        /build\.outDir\s*:\s*['"](.+?)['"]/
+        /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/
       );
 
       expect(result).toBe('vite-out');
@@ -183,7 +182,7 @@ describe('parseConfig Helper', () => {
 
       const result = await parseConfig(
         'webpack.config.js',
-        /output\.path[^'"]+'(.+?)'/
+        /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/
       );
 
       expect(result).toBe('wp-dist');
@@ -219,8 +218,8 @@ describe('parseConfig Helper', () => {
       const mockContent = 'export default { build: { outDir: "dist" } }';
       jest.spyOn(fs.promises, 'readFile').mockResolvedValue(mockContent);
 
-      const result1 = await parseConfig('config.js', /build\.outDir\s*:\s*['"](.+?)['"]/);
-      const result2 = await parseConfig('config.js', /build\.outDir\s*:\s*['"](.+?)['"]/);
+      const result1 = await parseConfig('config.js', /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
+      const result2 = await parseConfig('config.js', /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
 
       expect(result1).toBe(result2);
       expect(result1).toBe('dist');
