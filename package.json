@@ -9,11 +9,11 @@
   },
   "scripts": {
     "start": "node figma-docker-init.js",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:coverage:watch": "jest --coverage --watch",
-    "coverage:report": "jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
-    "coverage:open": "jest --coverage && open coverage/lcov-report/index.html",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "test:coverage:watch": "node --experimental-vm-modules node_modules/.bin/jest --coverage --watch",
+    "coverage:report": "node --experimental-vm-modules node_modules/.bin/jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
+    "coverage:open": "node --experimental-vm-modules node_modules/.bin/jest --coverage && open coverage/lcov-report/index.html",
     "semantic-release": "semantic-release"
   },
   "keywords": [
@@ -89,8 +89,7 @@
       [
         "@semantic-release/npm",
         {
-          "npmPublish": true,
-          "tarballDir": "dist"
+          "npmPublish": true
         }
       ],
       [
@@ -98,7 +97,7 @@
         {
           "assets": [
             {
-              "path": "dist/*.tgz",
+              "path": "*.tgz",
               "label": "npm package"
             }
           ]

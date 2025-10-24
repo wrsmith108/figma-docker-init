@@ -1,9 +1,17 @@
 export default {
   preset: null,
   testEnvironment: 'node',
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(supertest)/)',
+  ],
   testMatch: [
     '<rootDir>/test/**/*.test.js'
   ],

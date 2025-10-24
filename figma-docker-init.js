@@ -13,7 +13,37 @@ const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
 
 // =============================================================================
+// CUSTOM ERROR CLASSES
+// =============================================================================
+// Functions: ValidationError, ConfigError
+// Purpose: Custom error types for consistent error handling across the application
+// =============================================================================
+
+/**
+ * Custom error class for validation errors
+ */
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+/**
+ * Custom error class for configuration errors
+ */
+class ConfigError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ConfigError';
+  }
+}
+
+// =============================================================================
 // INPUT VALIDATION AND SANITIZATION UTILITIES
+// =============================================================================
+// Functions: sanitizeString, validateTemplateName, validateProjectDirectory, validatePort, validateProjectName, sanitizeTemplateVariable, validateFilePath
+// Purpose: Ensure all user inputs are safe and valid before processing
 // =============================================================================
 
 /**
@@ -25,12 +55,12 @@ const TEMPLATES_DIR = path.join(__dirname, 'templates');
  */
 function sanitizeString(input, maxLength = 255) {
   if (typeof input !== 'string') {
-    throw new Error('Input must be a string');
+    throw new ValidationError('Input must be a string');
   }
   // Remove null bytes and control characters
   const sanitized = input.replace(/[\x00-\x1F\x7F]/g, '').trim();
   if (sanitized.length > maxLength) {
-    throw new Error(`Input exceeds maximum length of ${maxLength} characters`);
+    throw new ValidationError(`Input exceeds maximum length of ${maxLength} characters`);
   }
   return sanitized;
 }
@@ -45,7 +75,7 @@ function validateTemplateName(templateName) {
   const sanitized = sanitizeString(templateName, 50);
   // Only allow alphanumeric characters, hyphens, and underscores
   if (!/^[a-zA-Z0-9_-]+$/.test(sanitized)) {
-    throw new Error('Template name contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
+    throw new ValidationError('Template name contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
   }
   return sanitized;
 }
@@ -61,7 +91,7 @@ function validateProjectDirectory(projectDir) {
   const resolvedPath = path.resolve(sanitized);
   // Prevent directory traversal attacks
   if (!resolvedPath.startsWith(process.cwd())) {
-    throw new Error('Project directory must be within the current working directory');
+    throw new ValidationError('Project directory must be within the current working directory');
   }
   return resolvedPath;
 }
@@ -73,9 +103,15 @@ function validateProjectDirectory(projectDir) {
  * @throws {Error} If port is not a valid number between 1 and 65535
  */
 function validatePort(port) {
+  const portStr = String(port).trim();
   const numPort = parseInt(port, 10);
-  if (isNaN(numPort) || numPort < 1 || numPort > 65535) {
-    throw new Error('Port must be a valid number between 1 and 65535');
+
+  // Check if the original string is a valid number representation
+  // Allow integers and floats, but reject strings with non-numeric suffixes
+  const isValidNumber = !isNaN(Number(portStr));
+
+  if (!isValidNumber || isNaN(numPort) || numPort < 1 || numPort > 65535) {
+    throw new ValidationError('Port must be a valid number between 1 and 65535');
   }
   return numPort;
 }
@@ -90,7 +126,7 @@ function validateProjectName(name) {
   const sanitized = sanitizeString(name, 100);
   // Allow alphanumeric, hyphens, underscores, and dots
   if (!/^[a-zA-Z0-9._-]+$/.test(sanitized)) {
-    throw new Error('Project name contains invalid characters');
+    throw new ValidationError('Project name contains invalid characters');
   }
   return sanitized;
 }
@@ -102,6 +138,10 @@ function validateProjectName(name) {
  */
 function sanitizeTemplateVariable(value) {
   if (typeof value === 'string') {
+    // Validate string length
+    if (value.length > 1000) {
+      throw new ValidationError('Template variable exceeds maximum length of 1000 characters');
+    }
     // Escape special characters that could be used for injection
     return value.replace(/[<>]/g, '').trim();
   }
@@ -124,7 +164,7 @@ function validateFilePath(filePath, baseDir) {
   const resolvedPath = path.resolve(baseDir, sanitized);
   // Ensure path is within base directory
   if (!resolvedPath.startsWith(path.resolve(baseDir))) {
-    throw new Error('File path is outside allowed directory');
+    throw new ValidationError('File path is outside allowed directory');
   }
   return resolvedPath;
 }
@@ -132,104 +172,101 @@ function validateFilePath(filePath, baseDir) {
 // =============================================================================
 // CONFIGURATION PARSING FUNCTIONS
 // =============================================================================
+// Functions: parseConfig, parseViteConfig, parseRollupConfig, parseWebpackConfig, detectBuildOutputDir
+// Purpose: Extract build configuration from various build tool config files
+// =============================================================================
+
+/**
+ * Parse configuration file to extract values using regex pattern
+ * @param {string} configPath - Full path to config file (with or without extension)
+ * @param {RegExp} pattern - Regex pattern to extract value
+ * @returns {Promise<string|null>} Extracted value or null if not found
+ */
+async function parseConfig(configPath, pattern) {
+  const extensions = ['js', 'ts'];
+
+  // If path already has extension, try it directly
+  if (configPath.endsWith('.js') || configPath.endsWith('.ts')) {
+    try {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      const match = content.match(pattern);
+      return match ? match[1] : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // Try adding .js and .ts extensions
+  for (const ext of extensions) {
+    try {
+      const fullPath = `${configPath}.${ext}`;
+      const content = await fs.promises.readFile(fullPath, 'utf-8');
+      const match = content.match(pattern);
+      return match ? match[1] : null;
+    } catch (error) {
+      // Try next extension
+      continue;
+    }
+  }
+
+  return null;
+}
 
 /**
  * Parses Vite configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseViteConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'vite.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'vite.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'vite.config.js');
-    const configPathTs = path.join(projectDir, 'vite.config.ts');
-    log(`Warning: Could not parse Vite config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+async function parseViteConfig(projectDir) {
+  const configPath = path.join(projectDir, 'vite.config');
+  return await parseConfig(
+    configPath,
+    /build\s*:\s*{[^}]*outDir\s*:\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Parses Rollup configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseRollupConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'rollup.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'rollup.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'rollup.config.js');
-    const configPathTs = path.join(projectDir, 'rollup.config.ts');
-    log(`Warning: Could not parse Rollup config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+async function parseRollupConfig(projectDir) {
+  const configPath = path.join(projectDir, 'rollup.config');
+  return await parseConfig(
+    configPath,
+    /output\s*:\s*{[^}]*dir\s*:\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Parses Webpack configuration to extract build output directory.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The build output directory or null if not found
+ * @returns {Promise<string|null>} The build output directory or null if not found
  */
-function parseWebpackConfig(projectDir) {
-  try {
-    let configPath = path.join(projectDir, 'webpack.config.js');
-    if (!fs.existsSync(configPath)) {
-      configPath = path.join(projectDir, 'webpack.config.ts');
-    }
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
-    // Validate config file path
-    validateFilePath(configPath, projectDir);
-    const content = fs.readFileSync(configPath, 'utf8');
-    const match = content.match(/output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/);
-    return match ? match[1] : null;
-  } catch (error) {
-    const configPath = path.join(projectDir, 'webpack.config.js');
-    const configPathTs = path.join(projectDir, 'webpack.config.ts');
-    log(`Warning: Could not parse Webpack config from ${configPath} or ${configPathTs}. Error: ${error.message}. This may be due to invalid syntax, missing file, or permission issues.`, colors.yellow);
-    return null;
-  }
+async function parseWebpackConfig(projectDir) {
+  const configPath = path.join(projectDir, 'webpack.config');
+  return await parseConfig(
+    configPath,
+    /output\s*:\s*{[^}]*path\s*:\s*path\.resolve\([^,]+,\s*['"]([^'"]+)['"]/
+  );
 }
 
 /**
  * Detects the build output directory by trying different build tool configurations.
  * @param {string} projectDir - The project directory path
- * @returns {string|null} The detected build output directory or null
+ * @returns {Promise<string|null>} The detected build output directory or null
  */
-function detectBuildOutputDir(projectDir) {
+async function detectBuildOutputDir(projectDir) {
   // Try Vite first
-  let outputDir = parseViteConfig(projectDir);
+  let outputDir = await parseViteConfig(projectDir);
   if (outputDir) return outputDir;
 
   // Try Rollup
-  outputDir = parseRollupConfig(projectDir);
+  outputDir = await parseRollupConfig(projectDir);
   if (outputDir) return outputDir;
 
   // Try Webpack
-  outputDir = parseWebpackConfig(projectDir);
+  outputDir = await parseWebpackConfig(projectDir);
   if (outputDir) return outputDir;
 
   return null;
@@ -237,6 +274,9 @@ function detectBuildOutputDir(projectDir) {
 
 // =============================================================================
 // PROJECT DETECTION AND ANALYSIS FUNCTIONS
+// =============================================================================
+// Functions: detectProjectValues
+// Purpose: Auto-detect project settings from package.json and config files
 // =============================================================================
 
 /**
@@ -266,6 +306,9 @@ async function detectProjectValues(projectDir = '.') {
       } else {
         values.PROJECT_NAME = 'my-app';
       }
+    } else {
+      // No package.json found, use default
+      values.PROJECT_NAME = 'my-app';
     }
   } catch (error) {
     const packagePath = path.join(validatedProjectDir, 'package.json');
@@ -274,7 +317,7 @@ async function detectProjectValues(projectDir = '.') {
   }
 
   // Detect BUILD_OUTPUT_DIR dynamically
-  values.BUILD_OUTPUT_DIR = detectBuildOutputDir(validatedProjectDir) || 'dist';
+  values.BUILD_OUTPUT_DIR = await detectBuildOutputDir(validatedProjectDir) || 'dist';
 
   // Detect FRAMEWORK, TYPESCRIPT, UI_LIBRARY, and DEPENDENCY_COUNT from package.json dependencies
   try {
@@ -347,6 +390,12 @@ async function detectProjectValues(projectDir = '.') {
       } else {
         values.FRAMEWORK = 'vanilla';
       }
+    } else {
+      // No package.json found, use defaults
+      values.FRAMEWORK = 'vanilla';
+      values.TYPESCRIPT = false;
+      values.UI_LIBRARY = 'none';
+      values.DEPENDENCY_COUNT = 0;
     }
   } catch (error) {
     const packagePath = path.join(validatedProjectDir, 'package.json');
@@ -366,6 +415,9 @@ async function detectProjectValues(projectDir = '.') {
 
 // =============================================================================
 // TEMPLATE VALIDATION AND PROCESSING FUNCTIONS
+// =============================================================================
+// Functions: validateTemplate, checkBuildCompatibility, replaceTemplateVariables
+// Purpose: Validate and process template files with variable replacement
 // =============================================================================
 
 /**
@@ -498,6 +550,9 @@ function replaceTemplateVariables(content, variables) {
 // =============================================================================
 // PORT MANAGEMENT FUNCTIONS
 // =============================================================================
+// Functions: checkPortAvailability, findAvailablePort, assignDynamicPorts
+// Purpose: Manage port allocation and availability checking
+// =============================================================================
 
 /**
  * Checks if a port is available for binding.
@@ -581,6 +636,9 @@ async function assignDynamicPorts() {
 // =============================================================================
 // CLI INTERFACE FUNCTIONS
 // =============================================================================
+// Functions: showHelp, showVersion, listTemplates
+// Purpose: Command-line interface and user interaction
+// =============================================================================
 
 /**
  * Displays help information for the CLI tool.
@@ -629,8 +687,7 @@ function listTemplates() {
   log(`${colors.bold}Available Templates:${colors.reset}\n`);
 
     if (!fs.existsSync(TEMPLATES_DIR)) {
-    log(`Error: Templates directory not found at ${TEMPLATES_DIR}. Please ensure the templates directory exists and is accessible.`, colors.red);</parameter>
-</search_and_replace>
+    log(`Error: Templates directory not found at ${TEMPLATES_DIR}. Please ensure the templates directory exists and is accessible.`, colors.red);
     return;
   }
 
@@ -650,6 +707,9 @@ function listTemplates() {
 
 // =============================================================================
 // UTILITIES
+// =============================================================================
+// Functions: log, colors
+// Purpose: Logging and console output formatting
 // =============================================================================
 
 // Color codes for terminal output
@@ -673,6 +733,9 @@ function log(message, color = colors.reset) {
 
 // =============================================================================
 // MAIN APPLICATION LOGIC
+// =============================================================================
+// Functions: copyTemplate, main
+// Purpose: Core workflow orchestration and CLI entry point
 // =============================================================================
 
 /**
@@ -853,4 +916,61 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-main();
+// Only run main() when this file is executed directly (not when imported for testing)
+// Check if this module is the main module being executed
+// Handle both direct execution and symlink execution (e.g., via npm bin)
+const isMainModule = process.argv[1] && (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url.endsWith(process.argv[1]) ||
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1]) ||
+  fileURLToPath(import.meta.url) === fs.realpathSync(process.argv[1])
+);
+
+if (isMainModule) {
+  main();
+}
+
+// =============================================================================
+// MODULE EXPORTS
+// =============================================================================
+
+export {
+  // Custom Error Classes
+  ValidationError,
+  ConfigError,
+
+  // Validation Functions
+  sanitizeString,
+  validateTemplateName,
+  validateProjectDirectory,
+  validatePort,
+  validateProjectName,
+  sanitizeTemplateVariable,
+  validateFilePath,
+
+  // Config Parsing Functions
+  parseConfig,
+  parseViteConfig,
+  parseRollupConfig,
+  parseWebpackConfig,
+  detectBuildOutputDir,
+  detectProjectValues,
+
+  // Template Processing Functions
+  validateTemplate,
+  checkBuildCompatibility,
+  replaceTemplateVariables,
+
+  // Port Management Functions
+  checkPortAvailability,
+  findAvailablePort,
+  assignDynamicPorts,
+
+  // CLI Interface Functions
+  showHelp,
+  showVersion,
+  listTemplates,
+
+  // Main Logic Functions
+  copyTemplate
+};
