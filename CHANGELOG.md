@@ -1,3 +1,61 @@
+# [2.0.0](https://github.com/wrsmith108/figma-docker-init/compare/v1.0.2...v2.0.0) (2025-10-24)
+
+
+* feat!: drop Node 18 support, require Node >= 20.8.1 ([5584ce3](https://github.com/wrsmith108/figma-docker-init/commit/5584ce3166e10b376c40bf5e0bb351f893d3ce6e))
+
+
+### Bug Fixes
+
+* **ci:** add NODE_AUTH_TOKEN for npm authentication ([ebd090d](https://github.com/wrsmith108/figma-docker-init/commit/ebd090d5863c9f7c8443f3caf58dd92261836b1c))
+* **ci:** grant semantic-release write permissions for contents ([6ce8fa2](https://github.com/wrsmith108/figma-docker-init/commit/6ce8fa218cb42d201d5184958ecced8d89d5673b))
+* **release:** configure semantic-release to use pack-master branch ([8403175](https://github.com/wrsmith108/figma-docker-init/commit/84031758cf66a6e7f3b5835b1cb0a53b0c2d171e))
+
+
+### chore
+
+* trigger semantic-release for v2.0.0 ([fdb532a](https://github.com/wrsmith108/figma-docker-init/commit/fdb532a8cf89486a697f2b6c9a7376d778ddaf71))
+
+
+### BREAKING CHANGES
+
+* that requires Node >= 20.8.1.
+
+The previous v1.0.0 tag was created locally but failed to publish to npm
+because v1.0.0 already exists on npm from the main branch (with Node 18).
+
+Semantic-release will now correctly:
+- Fetch latest from npm (1.0.2)
+- Detect breaking change commits
+- Bump major version to 2.0.0
+- Publish to npm successfully
+* Node.js 18 is no longer supported. Minimum required version is now 20.8.1.
+
+This change resolves semantic-release engine compatibility warnings and aligns
+with the requirements of the latest semantic-release tooling.
+
+Changes:
+- package.json: Updated engines to require Node >= 20.8.1 and npm >= 10.0.0
+- .github/workflows/ci.yml: Removed Node 18 from test matrix
+- .github/workflows/ci.yml: Updated NODE_VERSION_DEFAULT from 18 to 20
+- README.md: Updated Node.js version badge and prerequisites
+- DOCKER.md: Updated base image reference from Node 18 to Node 20
+- templates/*/DOCKER.md: Updated all template documentation
+- PUBLISHING.md: Updated Node version requirements
+- AGENTIC_SPRINT_PLAN.md: Updated test matrix documentation
+
+Benefits:
+- Eliminates npm EBADENGINE warnings for semantic-release packages
+- Aligns with semantic-release@24+ requirements (Node >= 20.8.1)
+- Ensures full compatibility with latest tooling
+- Reduces CI matrix from 9 jobs to 6 jobs (20% faster)
+
+Migration:
+Users on Node 18 must upgrade to Node 20.8.1 or higher before updating to this version.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+
 # 1.0.0 (2025-10-24)
 
 
