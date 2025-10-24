@@ -629,8 +629,7 @@ function listTemplates() {
   log(`${colors.bold}Available Templates:${colors.reset}\n`);
 
     if (!fs.existsSync(TEMPLATES_DIR)) {
-    log(`Error: Templates directory not found at ${TEMPLATES_DIR}. Please ensure the templates directory exists and is accessible.`, colors.red);</parameter>
-</search_and_replace>
+    log(`Error: Templates directory not found at ${TEMPLATES_DIR}. Please ensure the templates directory exists and is accessible.`, colors.red);
     return;
   }
 
