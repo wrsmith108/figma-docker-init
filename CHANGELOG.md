@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/wrsmith108/figma-docker-init/compare/v2.0.0...v2.0.1) (2025-10-24)
+
+
+### Bug Fixes
+
+* **ci:** change artifact upload to ignore missing files ([fc27c2d](https://github.com/wrsmith108/figma-docker-init/commit/fc27c2d4375067b89937fd2caf27c2d73257fc93))
+
 # [2.0.0](https://github.com/wrsmith108/figma-docker-init/compare/v1.0.2...v2.0.0) (2025-10-24)
 
 

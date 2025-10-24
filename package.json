@@ -1,6 +1,6 @@
 {
   "name": "figma-docker-init",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects",
   "main": "figma-docker-init.js",
   "type": "module",
