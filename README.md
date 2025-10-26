@@ -11,6 +11,27 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.8 - Improved User Experience (October 26, 2025)
+📝 **UX IMPROVEMENT**: Docker containers now run in detached mode by default
+
+**Fixed Issues:**
+- ✅ **Terminal Returns to Prompt**: Added `-d` flag to run containers in background
+- ✅ **Clearer Instructions**: Users now get their terminal back after starting containers
+- ✅ **Log Viewing**: Added instructions for viewing logs with `docker-compose logs -f`
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Updated docker-compose command from `up --build` to `up -d --build`
+- Containers start in background (detached mode)
+- Terminal returns to prompt immediately
+- Added log viewing instructions for users who want to see output
+
+---
+
 ### v2.0.0-beta.7 - Nginx SSL Fix (October 26, 2025)
 🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates (complete fix)
 

@@ -1020,7 +1020,9 @@ async function copyTemplate(templateName, targetDir = '.') {
     log(`1. Review and customize the generated Docker configuration files`);
     log(`2. Update environment variables in .env if needed`);
     log(`3. Build and run your Docker container:`);
-    log(`   ${colors.blue}cd .figma-docker && docker-compose up --build${colors.reset}`);
+    log(`   ${colors.blue}cd .figma-docker && docker-compose up -d --build${colors.reset}`);
+    log(`\n${colors.bold}To view logs:${colors.reset}`);
+    log(`   ${colors.blue}docker-compose logs -f${colors.reset}`);
 
     if (fs.existsSync(path.join(validatedTargetDir, 'DOCKER.md'))) {
       log(`4. Read DOCKER.md for detailed documentation and advanced usage`);
