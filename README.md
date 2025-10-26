@@ -11,6 +11,29 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.9 - Clean Output (October 26, 2025)
+🧹 **CLEANUP**: Removed all template warnings for cleaner installation
+
+**Fixed Issues:**
+- ✅ **No More Version Warning**: Removed obsolete `version: '3.8'` from docker-compose.yml
+- ✅ **No Template Warnings**: Fixed all undefined template variables
+- ✅ **Cleaner Output**: Installation now completes with zero warnings
+- ✅ **Better Defaults**: Replaced template variables with sensible default values
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Removed `version` field from docker-compose.yml (obsolete in Docker Compose v2)
+- Fixed DOCKER.md: Replaced {{UI_LIBRARIES}}, {{BUILD_TOOL}}, {{HAS_TYPESCRIPT}} with actual values
+- Fixed Dockerfile: Replaced {{PROJECT_ROOT}} and {{FIGMA_DOCKER_DIR}} with default paths
+- Fixed nginx.conf: Replaced {{FIGMA_DOCKER_DIR}} with `.figma-docker`
+- Clean installation output with no warnings
+
+---
+
 ### v2.0.0-beta.8 - Improved User Experience (October 26, 2025)
 📝 **UX IMPROVEMENT**: Docker containers now run in detached mode by default
 

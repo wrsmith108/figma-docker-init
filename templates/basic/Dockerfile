@@ -20,8 +20,9 @@ FROM node:18-alpine AS builder
 
 # Set build arguments
 ARG NODE_ENV=production
-ARG PROJECT_ROOT={{PROJECT_ROOT}}
-ARG FIGMA_DOCKER_DIR={{FIGMA_DOCKER_DIR}}
+# Build arguments for paths
+ARG PROJECT_ROOT=..
+ARG FIGMA_DOCKER_DIR=.figma-docker
 
 # Add metadata labels
 LABEL maintainer="{{PROJECT_NAME}} Team"
