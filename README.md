@@ -11,6 +11,33 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.7 - Nginx SSL Fix (October 26, 2025)
+🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates (complete fix)
+
+**Fixed Issues:**
+- ✅ **Removed SSL Configuration**: Eliminated SSL/HTTPS from basic template nginx.conf
+- ✅ **Nginx Stability**: nginx now starts successfully without SSL certificates
+- ✅ **Simplified Configuration**: Reduced nginx.conf from 182 lines to 100 lines for development
+- ✅ **HTTP-Only Mode**: Basic template now uses HTTP-only (perfect for local development)
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Completely rewrote nginx.conf removing all SSL/TLS configuration
+- Removed SSL server block requiring /etc/ssl/certs/server.crt
+- Removed HTTPS redirect logic from HTTP server block
+- Both app-dev and nginx services now start successfully
+- All users get working nginx out of the box
+
+**For Production SSL:**
+- Use the `ui-heavy` template which includes SSL setup instructions
+- Or manually add SSL certificates and configuration as needed
+
+---
+
 ### v2.0.0-beta.6 - Nginx SSL Fix (October 26, 2025)
 🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates
 
