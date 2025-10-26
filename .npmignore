@@ -1,44 +1,68 @@
+# Test files
+test/
+tests/
+*.test.js
+coverage/
+.nyc_output/
+
+# Documentation that shouldn't be in npm package
+docs/architecture/
+docs/archive/
+docs/BLOCKER_FIXES_REPORT.md
+docs/TASK_*.md
+docs/TEMPLATE_*.md
+docs/phase1-*.md
+docs/*PLAN.md
+
 # Development files
-.git/
 .github/
 .vscode/
 .idea/
-
-# Documentation and project files  
-PUBLISHING.md
-*.md.backup
-docs/
-examples/
-
-# Build and test artifacts
-coverage/
-test-results/
-*.test.js
-*.spec.js
-
-# Temporary files
-*.tmp
-*.temp
 .DS_Store
-Thumbs.db
+*.swp
+*.swo
+*~
 
-# Environment files
-.env*
-!.env.example
+# Git files
+.git/
+.gitignore
+.gitattributes
 
-# Logs
-logs/
+# CI/CD
+.travis.yml
+.circleci/
+.gitlab-ci.yml
+
+# Build artifacts
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Cache directories
 .npm/
-.cache/
-node_modules/.cache/
+.eslintcache
 
-# IDE files
-*.swp
-*.swo
-*~
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+*.code-workspace
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary
+temp-*/
+.tmp/
+.cache/
+
+# Test fixtures
+test/fixtures/
+tests/fixtures/
+
+# Dev dependencies
+node_modules/
+
+# Swarm coordination
+.swarm/
+.figma-docker/

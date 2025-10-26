@@ -20,11 +20,11 @@ FROM node:18-alpine AS builder
 
 # Set build arguments
 ARG NODE_ENV=production
-ARG PROJECT_ROOT={{PROJECT_ROOT}}
-ARG FIGMA_DOCKER_DIR={{FIGMA_DOCKER_DIR}}
+ARG PROJECT_ROOT=/Users/williamsmith/Documents/GitHub/figma-docker-init
+ARG FIGMA_DOCKER_DIR=/Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker
 
 # Add metadata labels
-LABEL maintainer="{{PROJECT_NAME}} Team"
+LABEL maintainer="my-app Team"
 LABEL description="React/Vite/TypeScript project build stage"
 LABEL version="1.0.0"
 LABEL figma-docker-init="basic"
@@ -46,14 +46,14 @@ RUN npm ci --silent && \
 COPY . .
 
 # Build the application
-# Output directory: {{BUILD_OUTPUT_DIR}}
+# Output directory: dist
 RUN npm run build
 
 # Stage 3: Production stage with Nginx
 FROM nginx:1.25-alpine AS production
 
 # Add metadata labels
-LABEL maintainer="{{PROJECT_NAME}} Team"
+LABEL maintainer="my-app Team"
 LABEL description="Production nginx server for React SPA"
 LABEL stage="production"
 
@@ -176,7 +176,7 @@ server {
 EOF
 
 # Copy built application from builder stage
-COPY --from=builder --chown=nginx:nginx /app/{{BUILD_OUTPUT_DIR}} /usr/share/nginx/html
+COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
 
 # Create SSL certificate directory
 RUN mkdir -p /etc/ssl/certs && \

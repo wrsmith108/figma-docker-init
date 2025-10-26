@@ -1,0 +1,11 @@
+
+version: '3.8'
+services:
+  app:
+    build:
+      context: {{PROJECT_ROOT}}
+    volumes:
+      - {{FIGMA_DOCKER_DIR}}:/config
+    environment:
+      - NAME={{PROJECT_NAME}}
+      - PORT={{DEV_PORT}}

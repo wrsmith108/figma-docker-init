@@ -81,8 +81,9 @@ docker compose --profile proxy up app-dev nginx-dev
 - Prevents cross-platform compatibility issues
 
 ### Bind Mounts
-- Source code (`.:/app`): Enables hot reload
-- Nginx config (`./nginx.conf`): Custom proxy configuration
+- Source code (`{{PROJECT_ROOT}}:/app`): Enables hot reload
+- Nginx config (`{{FIGMA_DOCKER_DIR}}/nginx.conf`): Custom proxy configuration
+- Config directory (`{{FIGMA_DOCKER_DIR}}`): Docker configuration files
 
 ### Anonymous Volumes
 - `/app/node_modules`: Prevents host node_modules interference

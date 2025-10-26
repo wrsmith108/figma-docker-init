@@ -6,6 +6,15 @@ import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 import { fileURLToPath } from 'url';
+import {
+  findProjectRoot,
+  getFigmaDockerDir,
+  getTemplatesDir,
+  resolveTemplatePath,
+  normalizePath,
+  getRelativeFromRoot
+} from './src/lib/path-resolver.js';
+import { templateCache } from './src/lib/template-cache.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -427,9 +436,24 @@ async function detectProjectValues(projectDir = '.') {
  * @returns {Object} Validation result with errors and warnings arrays
  */
 function validateTemplate(templatePath, variables) {
-  const requiredVars = ['PROJECT_NAME', 'BUILD_OUTPUT_DIR', 'FRAMEWORK', 'TYPESCRIPT', 'UI_LIBRARY', 'DEPENDENCY_COUNT', 'DEV_PORT', 'PROD_PORT', 'NGINX_PORT'];
+  // Updated required variables to include new per-project variables
+  const requiredVars = [
+    'PROJECT_NAME',
+    'BUILD_OUTPUT_DIR',
+    'FRAMEWORK',
+    'TYPESCRIPT',
+    'UI_LIBRARY',
+    'DEPENDENCY_COUNT',
+    'DEV_PORT',
+    'PROD_PORT',
+    'NGINX_PORT'
+  ];
+
   const errors = [];
   const warnings = [];
+
+  // Note: PROJECT_ROOT and FIGMA_DOCKER_DIR are auto-added by replaceTemplateVariables
+  // so they don't need to be in requiredVars
 
   // Check for required variables
   const missingVars = requiredVars.filter(varName => !(varName in variables));
@@ -518,16 +542,37 @@ function checkBuildCompatibility(framework, buildOutputDir) {
  * Replaces template variables in content with provided values.
  * @param {string} content - The template content
  * @param {Object} variables - Variables to replace
+ * @param {string} templatePath - Optional template path for caching
  * @returns {string} Content with variables replaced
  */
-function replaceTemplateVariables(content, variables) {
+function replaceTemplateVariables(content, variables, templatePath = null) {
+  // Check cache first if templatePath is provided
+  if (templatePath) {
+    const cached = templateCache.get(templatePath, variables);
+    if (cached !== null) {
+      return cached;
+    }
+  }
+
+  // Add new template variables for per-project installation
+  const projectRoot = findProjectRoot();
+  const figmaDockerDir = getFigmaDockerDir();
+
+  const enhancedVariables = {
+    ...variables,
+    PROJECT_ROOT: projectRoot || process.cwd(),
+    FIGMA_DOCKER_DIR: figmaDockerDir,
+    PROJECT_ROOT_RELATIVE: projectRoot ? normalizePath(projectRoot) : '.',
+    FIGMA_DOCKER_DIR_RELATIVE: projectRoot ? getRelativeFromRoot(figmaDockerDir, projectRoot) : '.figma-docker'
+  };
+
   let result = content;
   const regex = /\{\{(\w+)\}\}/g;
   let match;
 
   while ((match = regex.exec(content)) !== null) {
     const variableName = match[1];
-    let replacement = variables[variableName];
+    let replacement = enhancedVariables[variableName];
 
     // Validate and sanitize template variables
     if (replacement !== undefined) {
@@ -542,6 +587,11 @@ function replaceTemplateVariables(content, variables) {
     }
 
     result = result.replace(new RegExp(`\\{\\{${variableName}\\}\\}`, 'g'), replacement);
+  }
+
+  // Cache the result if templatePath is provided
+  if (templatePath) {
+    templateCache.set(templatePath, variables, result);
   }
 
   return result;
@@ -760,19 +810,25 @@ function showVersion() {
 function listTemplates() {
   log(`${colors.bold}Available Templates:${colors.reset}\n`);
 
-    if (!fs.existsSync(TEMPLATES_DIR)) {
-    log(`Error: Templates directory not found at ${TEMPLATES_DIR}. Please ensure the templates directory exists and is accessible.`, colors.red);
+  // Check both .figma-docker/templates and package templates
+  const projectRoot = findProjectRoot();
+  const templatesDir = getTemplatesDir(projectRoot);
+
+  if (!fs.existsSync(templatesDir)) {
+    log(`Error: Templates directory not found at ${templatesDir}. Please ensure the templates directory exists and is accessible.`, colors.red);
     return;
   }
 
-  const templates = fs.readdirSync(TEMPLATES_DIR).filter(item => {
-    return fs.statSync(path.join(TEMPLATES_DIR, item)).isDirectory();
+  const templates = fs.readdirSync(templatesDir).filter(item => {
+    return fs.statSync(path.join(templatesDir, item)).isDirectory();
   });
 
   if (templates.length === 0) {
     log('No templates available', colors.yellow);
     return;
   }
+
+  log(`${colors.dim}Templates location: ${templatesDir}${colors.reset}\n`);
 
   templates.forEach(template => {
     log(`  ${colors.blue}${template}${colors.reset}`);
@@ -825,11 +881,22 @@ async function copyTemplate(templateName, targetDir = '.') {
   // Validate target directory
   const validatedTargetDir = validateProjectDirectory(targetDir);
 
-  // Check if template exists
-  const templatePath = path.join(TEMPLATES_DIR, validatedTemplateName);
+  // Ensure .figma-docker directory structure exists
+  const projectRoot = findProjectRoot(validatedTargetDir) || validatedTargetDir;
+  const directories = ensureFigmaDockerStructure(projectRoot);
+
+  log(`${colors.blue}Created .figma-docker directory structure at: ${directories.root}${colors.reset}`);
+
+  // Use path-resolver to find template (checks .figma-docker first, then package templates)
+  const templatePath = resolveTemplatePath(validatedTemplateName, projectRoot);
+
   if (!fs.existsSync(templatePath)) {
     log(`Template "${validatedTemplateName}" not found!`, colors.red);
-    log(`Available templates: ${fs.readdirSync(TEMPLATES_DIR).filter(item => fs.statSync(path.join(TEMPLATES_DIR, item)).isDirectory()).join(', ')}`, colors.yellow);
+    const templatesDir = getTemplatesDir(projectRoot);
+    const availableTemplates = fs.existsSync(templatesDir)
+      ? fs.readdirSync(templatesDir).filter(item => fs.statSync(path.join(templatesDir, item)).isDirectory())
+      : [];
+    log(`Available templates: ${availableTemplates.join(', ') || 'none'}`, colors.yellow);
     process.exit(1);
   }
 
@@ -877,12 +944,15 @@ async function copyTemplate(templateName, targetDir = '.') {
 
   files.forEach(file => {
     const sourcePath = path.join(templatePath, file);
-    const targetPath = path.join(validatedTargetDir, file);
+    // Write files to .figma-docker directory instead of project root
+    const figmaDockerDir = getFigmaDockerDir(projectRoot);
+    const targetPath = path.join(figmaDockerDir, file);
 
     try {
       // Validate file paths
-      validateFilePath(sourcePath, TEMPLATES_DIR);
-      validateFilePath(targetPath, validatedTargetDir);
+      const templatesDir = getTemplatesDir(projectRoot);
+      validateFilePath(sourcePath, templatesDir);
+      validateFilePath(targetPath, figmaDockerDir);
 
       // Skip directories - only process files
       if (fs.statSync(sourcePath).isDirectory()) {
@@ -901,12 +971,13 @@ async function copyTemplate(templateName, targetDir = '.') {
           log(`Error: Failed to read template file "${file}" from ${sourcePath}. Error: ${error.message}. This may be due to file not found, permission issues, or corrupted file.`, colors.red);
           throw error;
         }
-        const processedContent = replaceTemplateVariables(templateContent, projectValues);
+        // Pass sourcePath for caching
+        const processedContent = replaceTemplateVariables(templateContent, projectValues, sourcePath);
 
-        // Write processed content to target file
+        // Write processed content to target file in .figma-docker
         try {
           fs.writeFileSync(targetPath, processedContent);
-          log(`  ${colors.green}Created${colors.reset} ${file}`);
+          log(`  ${colors.green}Created${colors.reset} ${file} in .figma-docker/`);
         } catch (error) {
           log(`Error: Failed to write template file "${file}" to ${targetPath}. Error: ${error.message}. This may be due to insufficient permissions, disk space issues, or invalid file path.`, colors.red);
           throw error;

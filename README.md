@@ -11,15 +11,17 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
-### v1.1.0 - Refactoring Complete (January 2025)
-- **Improved Modular Architecture**: Enhanced code organization and maintainability
+### v2.0.0 - Per-Project Installation Architecture (January 2025)
+- **Per-Project Installation**: Docker configurations now install to `.figma-docker/` directory in each project
+- **Improved Path Resolution**: Enhanced path handling for multi-project workflows
+- **Better Organization**: Centralized configuration management per project
+- **Migration Support**: Seamless migration from global to per-project setup
 - **100% Test Coverage**: All 368 tests passing across Ubuntu, Windows, and macOS
-- **Cross-Platform CI**: Fully validated continuous integration with 9/9 test matrix jobs
 - **Enhanced Error Handling**: Better validation and user feedback
-- **Production Ready**: Lint, security, tests, and build all passing
 
 ## 🚀 Features
 
+- **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
 - **Multiple Templates**: Choose from optimized configurations for different project types
 - **Production Ready**: Includes Nginx configuration, multi-stage builds, and security best practices
 - **Zero Config**: Works out of the box with sensible defaults
@@ -112,17 +114,28 @@ figma-docker-init --list
 
 ## 📁 Generated Files
 
-The CLI generates the following files based on your chosen template:
+The CLI generates the following files in your project's `.figma-docker/` directory:
 
 ```
 your-project/
-├── Dockerfile              # Multi-stage build configuration
-├── docker-compose.yml      # Container orchestration
-├── .dockerignore           # Files to exclude from build context
-├── nginx.conf              # Nginx server configuration
-├── .env.example            # Environment variables template
-└── DOCKER.md               # Detailed documentation
+├── .figma-docker/          # Per-project Docker configuration
+│   ├── config.json         # Project-specific settings
+│   ├── Dockerfile          # Multi-stage build configuration
+│   ├── docker-compose.yml  # Container orchestration
+│   ├── .dockerignore       # Files to exclude from build context
+│   ├── nginx.conf          # Nginx server configuration
+│   ├── .env.example        # Environment variables template
+│   └── DOCKER.md           # Detailed documentation
+├── package.json            # Updated with Docker scripts
+└── [your project files]
 ```
+
+### Directory Structure Benefits
+
+- **Isolation**: Each project maintains its own Docker configuration
+- **Portability**: Easy to version control and share
+- **Organization**: Centralized configuration management
+- **Multi-Project**: Support for multiple projects with different configurations
 
 ### File Descriptions
 

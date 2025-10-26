@@ -1,6 +1,6 @@
 {
   "name": "figma-docker-init",
-  "version": "2.0.0",
+  "version": "2.0.0-beta.1",
   "description": "Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects",
   "main": "figma-docker-init.js",
   "type": "module",
@@ -54,6 +54,7 @@
   },
   "files": [
     "figma-docker-init.js",
+    "src/lib/",
     "templates/",
     "README.md",
     "LICENSE",
@@ -67,7 +68,9 @@
     "@semantic-release/github": "^11.0.6",
     "@semantic-release/npm": "^12.0.2",
     "babel-jest": "^29.7.0",
+    "fs-extra": "^11.3.2",
     "jest": "^29.7.0",
+    "js-yaml": "^4.1.0",
     "semantic-release": "^24.2.9"
   },
   "preferGlobal": true,
@@ -116,5 +119,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "agentdb": "^1.6.1"
   }
 }
