@@ -11,6 +11,24 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.2 - Critical Bug Fixes (January 26, 2025)
+🔧 **HOTFIX**: Resolves execution errors in v2.0.0-beta.1
+
+**Fixed Issues:**
+- ✅ **Module System Compatibility**: Converted CommonJS modules to ES modules for proper import/export
+- ✅ **Missing Dependencies**: Added `ensureFigmaDockerStructure` function that was causing runtime errors
+- ✅ **Template Path Resolution**: Fixed template discovery to correctly locate package templates
+- ✅ **GitHub Codespaces Support**: Now works correctly in all npx environments
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**Recommended for:** All users experiencing "SyntaxError" or "not defined" errors with beta.1
+
+---
+
 ### v2.0.0 - Per-Project Installation Architecture (January 2025)
 - **Per-Project Installation**: Docker configurations now install to `.figma-docker/` directory in each project
 - **Improved Path Resolution**: Enhanced path handling for multi-project workflows

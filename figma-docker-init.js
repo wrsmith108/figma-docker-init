@@ -15,6 +15,7 @@ import {
   getRelativeFromRoot
 } from './src/lib/path-resolver.js';
 import { templateCache } from './src/lib/template-cache.js';
+import { ensureFigmaDockerStructure } from './src/lib/directory-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -810,9 +811,8 @@ function showVersion() {
 function listTemplates() {
   log(`${colors.bold}Available Templates:${colors.reset}\n`);
 
-  // Check both .figma-docker/templates and package templates
-  const projectRoot = findProjectRoot();
-  const templatesDir = getTemplatesDir(projectRoot);
+  // Get package templates directory
+  const templatesDir = getTemplatesDir();
 
   if (!fs.existsSync(templatesDir)) {
     log(`Error: Templates directory not found at ${templatesDir}. Please ensure the templates directory exists and is accessible.`, colors.red);
@@ -888,11 +888,11 @@ async function copyTemplate(templateName, targetDir = '.') {
   log(`${colors.blue}Created .figma-docker directory structure at: ${directories.root}${colors.reset}`);
 
   // Use path-resolver to find template (checks .figma-docker first, then package templates)
-  const templatePath = resolveTemplatePath(validatedTemplateName, projectRoot);
+  const templatePath = resolveTemplatePath(validatedTemplateName);
 
   if (!fs.existsSync(templatePath)) {
     log(`Template "${validatedTemplateName}" not found!`, colors.red);
-    const templatesDir = getTemplatesDir(projectRoot);
+    const templatesDir = getTemplatesDir();
     const availableTemplates = fs.existsSync(templatesDir)
       ? fs.readdirSync(templatesDir).filter(item => fs.statSync(path.join(templatesDir, item)).isDirectory())
       : [];
@@ -949,8 +949,8 @@ async function copyTemplate(templateName, targetDir = '.') {
     const targetPath = path.join(figmaDockerDir, file);
 
     try {
-      // Validate file paths
-      const templatesDir = getTemplatesDir(projectRoot);
+      // Validate file paths - get package templates directory
+      const templatesDir = getTemplatesDir();
       validateFilePath(sourcePath, templatesDir);
       validateFilePath(targetPath, figmaDockerDir);
 
