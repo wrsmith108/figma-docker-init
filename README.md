@@ -11,7 +11,28 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
-### v2.0.0-beta.3 - Enhanced Developer Experience (January 26, 2025)
+### v2.0.0-beta.4 - Critical Installation Fix (October 26, 2025)
+🔧 **HOTFIX**: Resolves npm installation loop caused by unnecessary dependency
+
+**Fixed Issues:**
+- ✅ **Removed AgentDB Dependency**: Eliminated unnecessary 100+ MB ML dependency causing installation hangs
+- ✅ **Faster Installation**: Reduced install time from minutes to seconds
+- ✅ **Node v16 Compatibility**: Now works on older Node versions (though >=20.8.1 still recommended)
+- ✅ **Smaller Package Size**: Reduced from 148KB to minimal size
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Removed `agentdb` dependency that was not used by the CLI tool
+- Eliminated onnxruntime-node and other ML package downloads
+- Fixed infinite loop during `npm install` on some systems
+
+---
+
+### v2.0.0-beta.3 - Enhanced Developer Experience (October 26, 2025)
 🎯 **IMPROVEMENTS**: Streamlined setup workflow and simplified Docker configuration
 
 **New Features:**
@@ -33,7 +54,7 @@ npx figma-docker-init@beta basic
 
 ---
 
-### v2.0.0-beta.2 - Critical Bug Fixes (January 26, 2025)
+### v2.0.0-beta.2 - Critical Bug Fixes (October 26, 2025)
 🔧 **HOTFIX**: Resolves execution errors in v2.0.0-beta.1
 
 **Fixed Issues:**
@@ -51,7 +72,7 @@ npx figma-docker-init@beta basic
 
 ---
 
-### v2.0.0 - Per-Project Installation Architecture (January 2025)
+### v2.0.0 - Per-Project Installation Architecture (October 2025)
 - **Per-Project Installation**: Docker configurations now install to `.figma-docker/` directory in each project
 - **Improved Path Resolution**: Enhanced path handling for multi-project workflows
 - **Better Organization**: Centralized configuration management per project
