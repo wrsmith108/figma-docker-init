@@ -11,6 +11,24 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.5 - Documentation Fix (October 26, 2025)
+📝 **DOCUMENTATION**: Fixed docker-compose instructions
+
+**Fixed Issues:**
+- ✅ **Clearer Instructions**: Updated docker-compose command to include cd to .figma-docker directory
+- ✅ **User Confusion**: Removed "no configuration file provided" error by clarifying directory navigation
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Updated "Next Steps" to show: `cd .figma-docker && docker-compose up --build`
+- Clarified that Docker files are in the `.figma-docker/` subdirectory
+
+---
+
 ### v2.0.0-beta.4 - Critical Installation Fix (October 26, 2025)
 🔧 **HOTFIX**: Resolves npm installation loop caused by unnecessary dependency
 
