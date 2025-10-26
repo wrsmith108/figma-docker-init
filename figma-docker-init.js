@@ -990,6 +990,22 @@ async function copyTemplate(templateName, targetDir = '.') {
     }
   });
 
+  // Automatically create .env from .env.example in .figma-docker directory
+  const envExamplePath = path.join(directories.root, '.env.example');
+  const envPath = path.join(directories.root, '.env');
+
+  if (fs.existsSync(envExamplePath) && !fs.existsSync(envPath)) {
+    try {
+      fs.copyFileSync(envExamplePath, envPath);
+      log(`${colors.green}✓ Created .env from .env.example${colors.reset}`);
+    } catch (error) {
+      log(`${colors.yellow}⚠ Warning: Could not create .env file: ${error.message}${colors.reset}`);
+      log(`${colors.yellow}  Please manually copy .env.example to .env${colors.reset}`);
+    }
+  } else if (fs.existsSync(envPath)) {
+    log(`${colors.blue}ℹ .env file already exists, skipping creation${colors.reset}`);
+  }
+
   log(`\n${colors.bold}${colors.green}Setup Complete!${colors.reset}`);
   log(`${colors.bold}Files created:${colors.reset} ${copiedFiles.length}`);
   log(`${colors.bold}Files skipped:${colors.reset} ${skippedFiles.length}`);
@@ -1002,7 +1018,7 @@ async function copyTemplate(templateName, targetDir = '.') {
 
     log(`\n${colors.bold}Next Steps:${colors.reset}`);
     log(`1. Review and customize the generated Docker configuration files`);
-    log(`2. Update environment variables in .env.example and rename to .env`);
+    log(`2. Update environment variables in .env if needed`);
     log(`3. Build and run your Docker container:`);
     log(`   ${colors.blue}docker-compose up --build${colors.reset}`);
 

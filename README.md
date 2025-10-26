@@ -11,6 +11,28 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 ## 📢 Recent Updates
 
+### v2.0.0-beta.3 - Enhanced Developer Experience (January 26, 2025)
+🎯 **IMPROVEMENTS**: Streamlined setup workflow and simplified Docker configuration
+
+**New Features:**
+- ✅ **Automatic .env Creation**: No longer need to manually copy `.env.example` to `.env`
+- ✅ **Simplified Docker Compose**: Reduced from 267 lines to 78 lines for better maintainability
+- ✅ **Fixed YAML Syntax**: Resolved context path issues and removed problematic template variables
+- ✅ **Improved Volume Paths**: Changed build context to use parent directory correctly
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- The setup script now automatically creates `.env` from `.env.example`
+- Simplified docker-compose.yml template focuses on essential services
+- Fixed build context paths to properly reference project files
+- Removed complex monitoring services for cleaner initial setup
+
+---
+
 ### v2.0.0-beta.2 - Critical Bug Fixes (January 26, 2025)
 🔧 **HOTFIX**: Resolves execution errors in v2.0.0-beta.1
 
