@@ -9,10 +9,10 @@
  * - Cleanup and uninstallation
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const { execSync } = require('child_process');
-const os = require('os');
+import fs from 'fs-extra';
+import path from 'path';
+import { execSync } from 'child_process';
+import os from 'os';
 
 describe('Phase 1 Integration Tests', () => {
   let testProjectDir;

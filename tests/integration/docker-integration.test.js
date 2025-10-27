@@ -9,11 +9,11 @@
  * - Network configuration
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const { execSync } = require('child_process');
-const yaml = require('js-yaml');
-const os = require('os');
+import fs from 'fs-extra';
+import path from 'path';
+import { execSync } from 'child_process';
+import yaml from 'js-yaml';
+import os from 'os';
 
 describe('Docker Integration Tests', () => {
   let testProjectDir;
