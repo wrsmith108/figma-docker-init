@@ -3,10 +3,10 @@
  * Tests installation time, template processing speed, and performance vs v1
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const { performance } = require('perf_hooks');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { performance } from 'perf_hooks';
 
 const {
   createTestProject,

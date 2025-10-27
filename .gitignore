@@ -132,7 +132,7 @@ Thumbs.db
 # Build artifacts
 build/
 dist/
-lib/
+/lib/
 
 # Test artifacts
 test-results/
