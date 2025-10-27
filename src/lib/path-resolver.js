@@ -9,6 +9,7 @@
 
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 /**
  * Maximum path traversal depth for security
@@ -300,7 +301,8 @@ function getTemplatesDir(packageRoot) {
   // Resolve package root from this module's location
   // This file is at: /path/to/package/src/lib/path-resolver.js
   // We need: /path/to/package/templates
-  const currentFileDir = path.dirname(new URL(import.meta.url).pathname);
+  const currentFilePath = fileURLToPath(import.meta.url);
+  const currentFileDir = path.dirname(currentFilePath);
   const srcLibDir = currentFileDir; // .../src/lib
   const srcDir = path.dirname(srcLibDir); // .../src
   const pkgRoot = path.dirname(srcDir); // package root
