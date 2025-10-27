@@ -399,11 +399,11 @@ networks:
     });
 
     it('should clean .gitignore entries', async () => {
-      // Create .gitignore with figma-docker entry
+      // Create .gitignore with figma-docker entry and comment (as CLI adds it)
       const gitignorePath = path.join(testProjectDir, '.gitignore');
-      await fs.writeFile(gitignorePath, 'node_modules/\n.figma-docker/\n.env\n');
+      await fs.writeFile(gitignorePath, 'node_modules/\n# Figma Docker\n.figma-docker/\n.env\n');
 
-      // Remove figma-docker entry
+      // Remove figma-docker entry (simulating cleanup)
       let content = await fs.readFile(gitignorePath, 'utf-8');
       content = content.replace(/\n?# Figma Docker.*\n\.figma-docker\/\n?/g, '');
       await fs.writeFile(gitignorePath, content);
@@ -512,8 +512,8 @@ networks:
     it('should handle existing .figma-docker/ directory', async () => {
       const figmaDockerDir = path.join(testProjectDir, '.figma-docker');
 
-      // Create existing directory
-      await fs.ensureDir(figmaDockerDir);
+      // Create existing directory with config subdirectory
+      await fs.ensureDir(path.join(figmaDockerDir, 'config'));
       await fs.writeJson(
         path.join(figmaDockerDir, 'config', 'config.json'),
         { existing: true }

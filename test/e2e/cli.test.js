@@ -137,7 +137,8 @@ describe('CLI E2E Tests', () => {
       expect(output).toContain('Setting up Docker configuration');
       expect(output).toContain('Setup Complete!');
 
-      // Verify files were created
+      // Verify files were created in .figma-docker directory
+      const figmaDockerDir = path.join(testDir, '.figma-docker');
       const expectedFiles = [
         'Dockerfile',
         'docker-compose.yml',
@@ -146,7 +147,7 @@ describe('CLI E2E Tests', () => {
       ];
 
       expectedFiles.forEach(file => {
-        const filePath = path.join(testDir, file);
+        const filePath = path.join(figmaDockerDir, file);
         expect(fs.existsSync(filePath)).toBe(true);
       });
     });
@@ -157,9 +158,10 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      // Read Dockerfile and check for variable replacement
+      // Read Dockerfile from .figma-docker and check for variable replacement
+      const figmaDockerDir = path.join(testDir, '.figma-docker');
       const dockerfile = fs.readFileSync(
-        path.join(testDir, 'Dockerfile'),
+        path.join(figmaDockerDir, 'Dockerfile'),
         'utf8'
       );
 
@@ -200,21 +202,22 @@ describe('CLI E2E Tests', () => {
     });
 
     it('should skip existing files', () => {
-      // Create a file that already exists
-      fs.writeFileSync(path.join(testDir, 'Dockerfile'), 'existing content');
+      // Create .figma-docker directory and a file that already exists
+      const figmaDockerDir = path.join(testDir, '.figma-docker');
+      fs.mkdirSync(figmaDockerDir, { recursive: true });
+      fs.writeFileSync(path.join(figmaDockerDir, 'Dockerfile'), 'existing content');
 
       const output = execSync(`node "${cliPath}" basic`, {
         encoding: 'utf8',
         cwd: testDir
       });
 
-      expect(output).toContain('Skipped');
-      expect(output).toContain('Dockerfile');
-      expect(output).toContain('already exists');
+      expect(output).toContain('Some files were skipped');
+      expect(output).toContain('already exist');
 
       // Verify existing file wasn't overwritten
       const content = fs.readFileSync(
-        path.join(testDir, 'Dockerfile'),
+        path.join(figmaDockerDir, 'Dockerfile'),
         'utf8'
       );
       expect(content).toBe('existing content');
@@ -230,6 +233,8 @@ describe('CLI E2E Tests', () => {
 
       expect(output).toContain('Setup Complete!');
 
+      // Files are created in .figma-docker directory
+      const figmaDockerDir = path.join(testDir, '.figma-docker');
       const expectedFiles = [
         'Dockerfile',
         'docker-compose.yml',
@@ -238,7 +243,7 @@ describe('CLI E2E Tests', () => {
       ];
 
       expectedFiles.forEach(file => {
-        expect(fs.existsSync(path.join(testDir, file))).toBe(true);
+        expect(fs.existsSync(path.join(figmaDockerDir, file))).toBe(true);
       });
     });
 
@@ -248,8 +253,10 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
+      // Files are created in .figma-docker directory
+      const figmaDockerDir = path.join(testDir, '.figma-docker');
       const dockerfile = fs.readFileSync(
-        path.join(testDir, 'Dockerfile'),
+        path.join(figmaDockerDir, 'Dockerfile'),
         'utf8'
       );
 
@@ -297,7 +304,7 @@ describe('CLI E2E Tests', () => {
       expect(output).toContain('Next Steps:');
       expect(output).toContain('Review and customize');
       expect(output).toContain('Update environment variables');
-      expect(output).toContain('docker-compose up --build');
+      expect(output).toContain('cd .figma-docker && docker-compose up -d --build');
     });
 
     it('should mention DOCKER.md if it exists', () => {

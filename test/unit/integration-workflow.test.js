@@ -334,7 +334,9 @@ describe('Integration Workflow Functions', () => {
 
         await copyTemplate('test-template', targetDir);
 
-        const dockerfilePath = path.join(targetDir, 'Dockerfile');
+        // Files are created in .figma-docker directory
+        const figmaDockerDir = path.join(targetDir, '.figma-docker');
+        const dockerfilePath = path.join(figmaDockerDir, 'Dockerfile');
         expect(fs.existsSync(dockerfilePath)).toBe(true);
 
         const content = fs.readFileSync(dockerfilePath, 'utf8');
@@ -448,7 +450,9 @@ describe('Integration Workflow Functions', () => {
 
         await copyTemplate('replace-template', targetDir);
 
-        const content = fs.readFileSync(path.join(targetDir, 'config.txt'), 'utf8');
+        // Files are created in .figma-docker directory
+        const figmaDockerDir = path.join(targetDir, '.figma-docker');
+        const content = fs.readFileSync(path.join(figmaDockerDir, 'config.txt'), 'utf8');
         expect(content).toContain('Project: my-awesome-app');
         expect(content).toContain('Framework: react');
 

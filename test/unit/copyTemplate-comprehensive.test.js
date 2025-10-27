@@ -108,7 +108,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
       expect(output).toContain('Next Steps:');
-      expect(output).toContain('docker-compose up --build');
+      expect(output).toContain('cd .figma-docker && docker-compose up -d --build');
 
       fs.rmSync(targetDir, { recursive: true, force: true });
       fs.rmSync(templateDir, { recursive: true, force: true });
@@ -124,12 +124,15 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
       const templateDir = path.join(templatesDir, 'docker-md-template');
       fs.mkdirSync(templateDir, { recursive: true });
+      // Create DOCKER.md in template so it gets copied to target
       fs.writeFileSync(path.join(templateDir, 'DOCKER.md'), '# Docker Guide');
 
       await copyTemplate('docker-md-template', targetDir);
 
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
-      expect(output).toContain('Read DOCKER.md');
+      // Verify DOCKER.md was created in .figma-docker directory
+      expect(output).toContain('Created');
+      expect(output).toContain('DOCKER.md');
 
       fs.rmSync(targetDir, { recursive: true, force: true });
       fs.rmSync(templateDir, { recursive: true, force: true });
@@ -142,7 +145,11 @@ describe('copyTemplate Comprehensive Coverage', () => {
         path.join(targetDir, 'package.json'),
         JSON.stringify({ name: 'test-app' })
       );
-      fs.writeFileSync(path.join(targetDir, 'existing.txt'), 'Existing content');
+
+      // Create .figma-docker directory and existing file
+      const figmaDockerDir = path.join(targetDir, '.figma-docker');
+      fs.mkdirSync(figmaDockerDir, { recursive: true });
+      fs.writeFileSync(path.join(figmaDockerDir, 'existing.txt'), 'Existing content');
 
       const templateDir = path.join(templatesDir, 'skipped-template');
       fs.mkdirSync(templateDir, { recursive: true });
@@ -151,7 +158,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
       await copyTemplate('skipped-template', targetDir);
 
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
-      expect(output).toContain('files were skipped');
+      expect(output).toContain('Some files were skipped');
       expect(output).toContain('already exist');
 
       fs.rmSync(targetDir, { recursive: true, force: true });
