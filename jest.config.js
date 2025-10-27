@@ -13,7 +13,8 @@ export default {
     'node_modules/(?!(supertest)/)',
   ],
   testMatch: [
-    '<rootDir>/test/**/*.test.js'
+    '<rootDir>/test/**/*.test.js',
+    '<rootDir>/tests/**/*.test.js'
   ],
   collectCoverage: true,
   collectCoverageFrom: [

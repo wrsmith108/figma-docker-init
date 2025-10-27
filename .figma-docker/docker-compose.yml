@@ -3,19 +3,19 @@ services:
     # Optimized for Figma projects with complex UI dependencies
     app-dev:
       image: node:18-alpine
-      container_name: "{{PROJECT_NAME}}-dev"
+      container_name: "my-app-dev"
       working_dir: /app
       ports:
-        - "{{DEV_PORT}}:3000"
+        - "3000:3000"
       volumes:
         # Mount source code for hot reload
-        - {{PROJECT_ROOT}}:/app
+        - /Users/williamsmith/Documents/GitHub/figma-docker-init:/app
         # Use named volume for node_modules to avoid cross-platform issues
         - node_modules:/app/node_modules
         # Exclude node_modules from source mount using anonymous volume
         - /app/node_modules
         # Mount .figma-docker configuration
-        - {{FIGMA_DOCKER_DIR}}:{{FIGMA_DOCKER_DIR}}:ro
+        - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker:/Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker:ro
       environment:
         - NODE_ENV=development
         - VITE_HOST=0.0.0.0
@@ -38,15 +38,15 @@ services:
       tmpfs:
         - /tmp
         - /app/node_modules/.cache
-      # Resource limits for development with platform detection (UI-heavy optimized)
+      # Resource limits for development with platform detection
       deploy:
         resources:
           limits:
-            cpus: '${DEV_CPU_LIMIT:-3.0}'
-            memory: ${DEV_MEM_LIMIT:-6G}
+            cpus: '${DEV_CPU_LIMIT:-2.0}'
+            memory: ${DEV_MEM_LIMIT:-4G}
           reservations:
-            cpus: '${DEV_CPU_RESERVE:-1.0}'
-            memory: ${DEV_MEM_RESERVE:-1G}
+            cpus: '${DEV_CPU_RESERVE:-0.5}'
+            memory: ${DEV_MEM_RESERVE:-512M}
       healthcheck:
         test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
         interval: 30s
@@ -59,7 +59,7 @@ services:
           max-size: "10m"
           max-file: "3"
       networks:
-        - "{{PROJECT_NAME}}-network"
+        - "my-app-network"
 
   # Production service using the local Dockerfile
   app-prod:
@@ -68,9 +68,9 @@ services:
       dockerfile: Dockerfile
       args:
         - NODE_ENV=production
-    container_name: "{{PROJECT_NAME}}-prod"
+    container_name: "my-app-prod"
     ports:
-      - "{{PROD_PORT}}:80"
+      - "8080:80"
       - "{{PROD_SSL_PORT:-443}}:443"
     environment:
       - NODE_ENV=production
@@ -89,15 +89,15 @@ services:
       - /tmp
       - /var/run
       - /var/cache/nginx
-    # Resource limits for production with platform detection (UI-heavy optimized)
+    # Resource limits for production with platform detection
     deploy:
       resources:
         limits:
-          cpus: '${PROD_CPU_LIMIT:-2.0}'
-          memory: ${PROD_MEM_LIMIT:-2G}
+          cpus: '${PROD_CPU_LIMIT:-1.0}'
+          memory: ${PROD_MEM_LIMIT:-1G}
         reservations:
-          cpus: '${PROD_CPU_RESERVE:-0.5}'
-          memory: ${PROD_MEM_RESERVE:-512M}
+          cpus: '${PROD_CPU_RESERVE:-0.25}'
+          memory: ${PROD_MEM_RESERVE:-256M}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
@@ -110,21 +110,21 @@ services:
         max-size: "10m"
         max-file: "5"
     networks:
-      - "{{PROJECT_NAME}}-network"
+      - "my-app-network"
     profiles:
       - production
 
   # Optional: Nginx reverse proxy for advanced development scenarios
   nginx-dev:
     image: nginx:alpine
-    container_name: "{{PROJECT_NAME}}-nginx"
+    container_name: "my-app-nginx"
     ports:
-      - "{{NGINX_PORT}}:80"
+      - "8888:80"
       - "{{NGINX_SSL_PORT:-8443}}:443"
     volumes:
-      - "{{FIGMA_DOCKER_DIR}}/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/nginx.conf:/etc/nginx/nginx.conf:ro
       # SSL certificates (optional - mount if available)
-      - "{{FIGMA_DOCKER_DIR}}/ssl:/etc/ssl/certs:ro"
+      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/ssl:/etc/ssl/certs:ro
     depends_on:
       - app-dev
     restart: unless-stopped
@@ -138,15 +138,15 @@ services:
       - /tmp
       - /var/run
       - /var/cache/nginx
-    # Resource limits for nginx proxy with platform detection (UI-heavy optimized)
+    # Resource limits for nginx proxy with platform detection
     deploy:
       resources:
         limits:
-          cpus: '${NGINX_CPU_LIMIT:-1.0}'
-          memory: ${NGINX_MEM_LIMIT:-512M}
+          cpus: '${NGINX_CPU_LIMIT:-0.5}'
+          memory: ${NGINX_MEM_LIMIT:-256M}
         reservations:
-          cpus: '${NGINX_CPU_RESERVE:-0.2}'
-          memory: ${NGINX_MEM_RESERVE:-128M}
+          cpus: '${NGINX_CPU_RESERVE:-0.1}'
+          memory: ${NGINX_MEM_RESERVE:-64M}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/nginx-health"]
       interval: 30s
@@ -159,19 +159,19 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - "{{PROJECT_NAME}}-network"
+      - "my-app-network"
     profiles:
       - proxy
 
   # Optional: Monitoring service with Prometheus metrics
   prometheus:
     image: prom/prometheus:latest
-    container_name: "{{PROJECT_NAME}}-prometheus"
+    container_name: "my-app-prometheus"
     ports:
       - "{{PROMETHEUS_PORT:-9090}}:9090"
     volumes:
       - prometheus_data:/prometheus
-      - "{{FIGMA_DOCKER_DIR}}/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -201,19 +201,19 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - "{{PROJECT_NAME}}-network"
+      - "my-app-network"
     profiles:
       - monitoring
 
   # Optional: Grafana for visualization
   grafana:
     image: grafana/grafana:latest
-    container_name: "{{PROJECT_NAME}}-grafana"
+    container_name: "my-app-grafana"
     ports:
       - "{{GRAFANA_PORT:-3001}}:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      - "{{FIGMA_DOCKER_DIR}}/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro"
+      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
@@ -242,7 +242,7 @@ services:
     depends_on:
       - prometheus
     networks:
-      - "{{PROJECT_NAME}}-network"
+      - "my-app-network"
     profiles:
       - monitoring
 
@@ -258,10 +258,10 @@ volumes:
     driver: local
 
 networks:
-  "{{PROJECT_NAME}}-network":
+  "my-app-network":
     driver: bridge
-    name: "{{PROJECT_NAME}}-network"
+    name: "my-app-network"
     # Enhanced network security
     internal: false
     driver_opts:
-      com.docker.network.bridge.name: "{{PROJECT_NAME}}-bridge"
+      com.docker.network.bridge.name: "my-app-bridge"

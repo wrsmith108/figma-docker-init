@@ -9,17 +9,218 @@
 
 Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
 
-## 📢 Recent Updates
+## 📢 What's New in v2.0.0
 
-### v1.1.0 - Refactoring Complete (January 2025)
-- **Improved Modular Architecture**: Enhanced code organization and maintainability
+### v2.0.0 - Stable Release (October 26, 2025)
+🎉 **STABLE RELEASE**: Production-ready Docker setup with zero warnings and optimal developer experience
+
+**Key Features:**
+- ✅ **Zero Warning Installation**: Clean output with no template or configuration warnings
+- ✅ **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
+- ✅ **Detached Mode by Default**: Containers start in background, terminal returns immediately
+- ✅ **HTTP-Only Development**: Simplified nginx configuration without SSL complexity
+- ✅ **Automatic .env Creation**: No manual file copying required
+- ✅ **GitHub Codespaces Ready**: Validated and tested in cloud development environments
+
+**Installation:**
+```bash
+npx figma-docker-init basic
+```
+
+**Quick Start:**
+```bash
+# Navigate to your React/Vite project
+cd your-project
+
+# Initialize Docker configuration
+npx figma-docker-init basic
+
+# Start containers in background
+cd .figma-docker && docker-compose up -d --build
+
+# View logs if needed
+docker-compose logs -f
+```
+
+**What's Included:**
+- Modern Docker Compose configuration (no obsolete version field)
+- Optimized nginx proxy with WebSocket support for Vite HMR
+- Multi-stage Dockerfile with production builds
+- Comprehensive documentation in DOCKER.md
+- Environment variable template (.env.example)
+- Health checks and monitoring endpoints
+
+---
+
+## 📋 Beta Testing History
+
+### v2.0.0-beta.9 - Clean Output (October 26, 2025)
+🧹 **CLEANUP**: Removed all template warnings for cleaner installation
+
+### v2.0.0-beta.8 - Improved User Experience (October 26, 2025)
+📝 **UX IMPROVEMENT**: Docker containers now run in detached mode by default
+
+**Fixed Issues:**
+- ✅ **Terminal Returns to Prompt**: Added `-d` flag to run containers in background
+- ✅ **Clearer Instructions**: Users now get their terminal back after starting containers
+- ✅ **Log Viewing**: Added instructions for viewing logs with `docker-compose logs -f`
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Updated docker-compose command from `up --build` to `up -d --build`
+- Containers start in background (detached mode)
+- Terminal returns to prompt immediately
+- Added log viewing instructions for users who want to see output
+
+---
+
+### v2.0.0-beta.7 - Nginx SSL Fix (October 26, 2025)
+🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates (complete fix)
+
+**Fixed Issues:**
+- ✅ **Removed SSL Configuration**: Eliminated SSL/HTTPS from basic template nginx.conf
+- ✅ **Nginx Stability**: nginx now starts successfully without SSL certificates
+- ✅ **Simplified Configuration**: Reduced nginx.conf from 182 lines to 100 lines for development
+- ✅ **HTTP-Only Mode**: Basic template now uses HTTP-only (perfect for local development)
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Completely rewrote nginx.conf removing all SSL/TLS configuration
+- Removed SSL server block requiring /etc/ssl/certs/server.crt
+- Removed HTTPS redirect logic from HTTP server block
+- Both app-dev and nginx services now start successfully
+- All users get working nginx out of the box
+
+**For Production SSL:**
+- Use the `ui-heavy` template which includes SSL setup instructions
+- Or manually add SSL certificates and configuration as needed
+
+---
+
+### v2.0.0-beta.6 - Nginx SSL Fix (October 26, 2025)
+🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates
+
+**Fixed Issues:**
+- ✅ **Removed SSL Configuration**: Eliminated SSL/HTTPS from basic template nginx.conf
+- ✅ **Nginx Stability**: nginx now starts successfully without SSL certificates
+- ✅ **Simplified Configuration**: Reduced nginx.conf from 182 lines to 98 lines for development
+- ✅ **HTTP-Only Mode**: Basic template now uses HTTP-only (perfect for local development)
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Removed SSL/TLS server block requiring /etc/ssl/certs/server.crt
+- Removed HTTPS redirect logic from HTTP server block
+- Simplified nginx.conf for HTTP-only development
+- Both app-dev and nginx services now start successfully
+
+**For Production SSL:**
+- Use the `ui-heavy` template which includes SSL setup instructions
+- Or manually add SSL certificates and configuration as needed
+
+---
+
+### v2.0.0-beta.5 - Documentation Fix (October 26, 2025)
+📝 **DOCUMENTATION**: Fixed docker-compose instructions
+
+**Fixed Issues:**
+- ✅ **Clearer Instructions**: Updated docker-compose command to include cd to .figma-docker directory
+- ✅ **User Confusion**: Removed "no configuration file provided" error by clarifying directory navigation
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Updated "Next Steps" to show: `cd .figma-docker && docker-compose up --build`
+- Clarified that Docker files are in the `.figma-docker/` subdirectory
+
+---
+
+### v2.0.0-beta.4 - Critical Installation Fix (October 26, 2025)
+🔧 **HOTFIX**: Resolves npm installation loop caused by unnecessary dependency
+
+**Fixed Issues:**
+- ✅ **Removed AgentDB Dependency**: Eliminated unnecessary 100+ MB ML dependency causing installation hangs
+- ✅ **Faster Installation**: Reduced install time from minutes to seconds
+- ✅ **Node v16 Compatibility**: Now works on older Node versions (though >=20.8.1 still recommended)
+- ✅ **Smaller Package Size**: Reduced from 148KB to minimal size
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- Removed `agentdb` dependency that was not used by the CLI tool
+- Eliminated onnxruntime-node and other ML package downloads
+- Fixed infinite loop during `npm install` on some systems
+
+---
+
+### v2.0.0-beta.3 - Enhanced Developer Experience (October 26, 2025)
+🎯 **IMPROVEMENTS**: Streamlined setup workflow and simplified Docker configuration
+
+**New Features:**
+- ✅ **Automatic .env Creation**: No longer need to manually copy `.env.example` to `.env`
+- ✅ **Simplified Docker Compose**: Reduced from 267 lines to 78 lines for better maintainability
+- ✅ **Fixed YAML Syntax**: Resolved context path issues and removed problematic template variables
+- ✅ **Improved Volume Paths**: Changed build context to use parent directory correctly
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**What Changed:**
+- The setup script now automatically creates `.env` from `.env.example`
+- Simplified docker-compose.yml template focuses on essential services
+- Fixed build context paths to properly reference project files
+- Removed complex monitoring services for cleaner initial setup
+
+---
+
+### v2.0.0-beta.2 - Critical Bug Fixes (October 26, 2025)
+🔧 **HOTFIX**: Resolves execution errors in v2.0.0-beta.1
+
+**Fixed Issues:**
+- ✅ **Module System Compatibility**: Converted CommonJS modules to ES modules for proper import/export
+- ✅ **Missing Dependencies**: Added `ensureFigmaDockerStructure` function that was causing runtime errors
+- ✅ **Template Path Resolution**: Fixed template discovery to correctly locate package templates
+- ✅ **GitHub Codespaces Support**: Now works correctly in all npx environments
+
+**Installation:**
+```bash
+npx figma-docker-init@beta basic
+```
+
+**Recommended for:** All users experiencing "SyntaxError" or "not defined" errors with beta.1
+
+---
+
+### v2.0.0 - Per-Project Installation Architecture (October 2025)
+- **Per-Project Installation**: Docker configurations now install to `.figma-docker/` directory in each project
+- **Improved Path Resolution**: Enhanced path handling for multi-project workflows
+- **Better Organization**: Centralized configuration management per project
+- **Migration Support**: Seamless migration from global to per-project setup
 - **100% Test Coverage**: All 368 tests passing across Ubuntu, Windows, and macOS
-- **Cross-Platform CI**: Fully validated continuous integration with 9/9 test matrix jobs
 - **Enhanced Error Handling**: Better validation and user feedback
-- **Production Ready**: Lint, security, tests, and build all passing
 
 ## 🚀 Features
 
+- **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
 - **Multiple Templates**: Choose from optimized configurations for different project types
 - **Production Ready**: Includes Nginx configuration, multi-stage builds, and security best practices
 - **Zero Config**: Works out of the box with sensible defaults
@@ -112,17 +313,28 @@ figma-docker-init --list
 
 ## 📁 Generated Files
 
-The CLI generates the following files based on your chosen template:
+The CLI generates the following files in your project's `.figma-docker/` directory:
 
 ```
 your-project/
-├── Dockerfile              # Multi-stage build configuration
-├── docker-compose.yml      # Container orchestration
-├── .dockerignore           # Files to exclude from build context
-├── nginx.conf              # Nginx server configuration
-├── .env.example            # Environment variables template
-└── DOCKER.md               # Detailed documentation
+├── .figma-docker/          # Per-project Docker configuration
+│   ├── config.json         # Project-specific settings
+│   ├── Dockerfile          # Multi-stage build configuration
+│   ├── docker-compose.yml  # Container orchestration
+│   ├── .dockerignore       # Files to exclude from build context
+│   ├── nginx.conf          # Nginx server configuration
+│   ├── .env.example        # Environment variables template
+│   └── DOCKER.md           # Detailed documentation
+├── package.json            # Updated with Docker scripts
+└── [your project files]
 ```
+
+### Directory Structure Benefits
+
+- **Isolation**: Each project maintains its own Docker configuration
+- **Portability**: Easy to version control and share
+- **Organization**: Centralized configuration management
+- **Multi-Project**: Support for multiple projects with different configurations
 
 ### File Descriptions
 
