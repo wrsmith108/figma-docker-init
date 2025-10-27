@@ -9,30 +9,53 @@
 
 Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
 
-## 📢 Recent Updates
+## 📢 What's New in v2.0.0
 
-### v2.0.0-beta.9 - Clean Output (October 26, 2025)
-🧹 **CLEANUP**: Removed all template warnings for cleaner installation
+### v2.0.0 - Stable Release (October 26, 2025)
+🎉 **STABLE RELEASE**: Production-ready Docker setup with zero warnings and optimal developer experience
 
-**Fixed Issues:**
-- ✅ **No More Version Warning**: Removed obsolete `version: '3.8'` from docker-compose.yml
-- ✅ **No Template Warnings**: Fixed all undefined template variables
-- ✅ **Cleaner Output**: Installation now completes with zero warnings
-- ✅ **Better Defaults**: Replaced template variables with sensible default values
+**Key Features:**
+- ✅ **Zero Warning Installation**: Clean output with no template or configuration warnings
+- ✅ **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
+- ✅ **Detached Mode by Default**: Containers start in background, terminal returns immediately
+- ✅ **HTTP-Only Development**: Simplified nginx configuration without SSL complexity
+- ✅ **Automatic .env Creation**: No manual file copying required
+- ✅ **GitHub Codespaces Ready**: Validated and tested in cloud development environments
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx figma-docker-init basic
 ```
 
-**What Changed:**
-- Removed `version` field from docker-compose.yml (obsolete in Docker Compose v2)
-- Fixed DOCKER.md: Replaced {{UI_LIBRARIES}}, {{BUILD_TOOL}}, {{HAS_TYPESCRIPT}} with actual values
-- Fixed Dockerfile: Replaced {{PROJECT_ROOT}} and {{FIGMA_DOCKER_DIR}} with default paths
-- Fixed nginx.conf: Replaced {{FIGMA_DOCKER_DIR}} with `.figma-docker`
-- Clean installation output with no warnings
+**Quick Start:**
+```bash
+# Navigate to your React/Vite project
+cd your-project
+
+# Initialize Docker configuration
+npx figma-docker-init basic
+
+# Start containers in background
+cd .figma-docker && docker-compose up -d --build
+
+# View logs if needed
+docker-compose logs -f
+```
+
+**What's Included:**
+- Modern Docker Compose configuration (no obsolete version field)
+- Optimized nginx proxy with WebSocket support for Vite HMR
+- Multi-stage Dockerfile with production builds
+- Comprehensive documentation in DOCKER.md
+- Environment variable template (.env.example)
+- Health checks and monitoring endpoints
 
 ---
+
+## 📋 Beta Testing History
+
+### v2.0.0-beta.9 - Clean Output (October 26, 2025)
+🧹 **CLEANUP**: Removed all template warnings for cleaner installation
 
 ### v2.0.0-beta.8 - Improved User Experience (October 26, 2025)
 📝 **UX IMPROVEMENT**: Docker containers now run in detached mode by default
