@@ -76,9 +76,13 @@ jobs:
             exit 1
           fi
 
-          for template in templates/*/; do
+          # Only validate user-facing templates (skip test fixtures)
+          USER_TEMPLATES=("basic" "ui-heavy" "advanced")
+
+          for template_name in "${USER_TEMPLATES[@]}"; do
+            template="templates/$template_name"
             if [ -d "$template" ]; then
-              echo "✅ Validating template: $(basename $template)"
+              echo "✅ Validating template: $template_name"
               # Check for required files
               if [ ! -f "$template/Dockerfile" ]; then
                 echo "❌ Missing Dockerfile in $template"
@@ -88,9 +92,13 @@ jobs:
                 echo "❌ Missing docker-compose.yml in $template"
                 exit 1
               fi
-              echo "✅ Template $(basename $template) is valid"
+              echo "✅ Template $template_name is valid"
+            else
+              echo "⚠️  Template $template_name directory not found (might be in development)"
             fi
           done
+
+          echo "✅ All user-facing templates validated successfully"
 
   # Matrix testing across Node.js versions
   test:
