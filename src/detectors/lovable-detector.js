@@ -30,16 +30,23 @@ import fsSync from 'fs';
 import path from 'path';
 
 export class LovableDetector {
-  constructor() {
+  constructor(projectRoot = process.cwd()) {
+    this.projectRoot = projectRoot;
     this.priority = 2; // High priority
+    this.indicators = {
+      strong: 0,
+      medium: 0,
+      weak: 0
+    };
+    this.findings = [];
   }
 
   /**
    * Main detection method
-   * @param {string} projectRoot - Project root directory
+   * @param {string} [projectRoot] - Project root directory (optional, defaults to constructor value)
    * @returns {Promise<Object>} Detection result
    */
-  async detect(projectRoot) {
+  async detect(projectRoot = this.projectRoot) {
     this.projectRoot = projectRoot;
     this.indicators = {
       strong: 0,

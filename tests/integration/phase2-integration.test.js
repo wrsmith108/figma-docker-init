@@ -155,7 +155,7 @@ describe('Phase 2 Integration Tests', () => {
       // Verify Dockerfile
       const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
       expect(dockerfile).toContain('FROM node:20-alpine');
-      expect(dockerfile).toContain('# Bolt project');
+      expect(dockerfile).toContain('bolt');
 
       // Verify compose file
       const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');

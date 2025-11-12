@@ -384,13 +384,25 @@ export class TemplateComposer {
     // Build fragment list based on tool and framework
     const fragments = ['base/Dockerfile.base'];
 
-    // Add tool-specific fragments only if explicitly requested
-    // Skip tool fragments for now to avoid CMD conflicts
-    // The base template should handle most cases
+    // Add tool-specific fragment if it exists
+    const toolFragment = `tools/${tool}/Dockerfile.fragment`;
+    try {
+      await this.loadFragment(toolFragment);
+      fragments.push(toolFragment);
+    } catch (error) {
+      // Tool fragment is optional
+    }
 
-    // Add framework fragment if it exists and no tool fragment
-    // Skip framework fragments to avoid CMD conflicts
-    // The base template provides a working multi-stage build
+    // Add framework fragment if it exists
+    if (framework) {
+      const frameworkFragment = `fragments/frameworks/${framework}.fragment`;
+      try {
+        await this.loadFragment(frameworkFragment);
+        fragments.push(frameworkFragment);
+      } catch (error) {
+        // Framework fragment is optional
+      }
+    }
 
     // Add backend fragment if it exists (e.g., supabase)
     if (metadata.backend) {
