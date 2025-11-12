@@ -167,12 +167,15 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
     it('should count created and skipped files correctly', async () => {
       const targetDir = path.join(fixturesDir, 'file-counts');
+      const vibeDockerDir = path.join(targetDir, '.vibe-docker');
       fs.mkdirSync(targetDir, { recursive: true });
+      fs.mkdirSync(vibeDockerDir, { recursive: true });
       fs.writeFileSync(
         path.join(targetDir, 'package.json'),
         JSON.stringify({ name: 'test-app' })
       );
-      fs.writeFileSync(path.join(targetDir, 'existing.txt'), 'Existing');
+      // Create existing file in .vibe-docker/ where files will be copied
+      fs.writeFileSync(path.join(vibeDockerDir, 'existing.txt'), 'Existing');
 
       const templateDir = path.join(templatesDir, 'counts-template');
       fs.mkdirSync(templateDir, { recursive: true });

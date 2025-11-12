@@ -120,7 +120,8 @@ describe('CLI E2E Tests', () => {
       expect(() => {
         execSync(`node "${cliPath}" --list`, {
           encoding: 'utf8',
-          cwd: testDir
+          cwd: testDir,
+          stdio: 'pipe'
         });
       }).not.toThrow();
     });
@@ -180,7 +181,7 @@ describe('CLI E2E Tests', () => {
       });
 
       const dockerCompose = fs.readFileSync(
-        path.join(testDir, 'docker-compose.yml'),
+        path.join(testDir, '.vibe-docker', 'docker-compose.yml'),
         'utf8'
       );
 

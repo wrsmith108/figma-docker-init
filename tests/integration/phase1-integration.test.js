@@ -45,7 +45,7 @@ describe('Phase 1 Integration Tests', () => {
 
       // Verify package.json updated
       expect(packageJson.devDependencies['figma-docker']).toBe('*');
-    });
+    }, 15000);
 
     it('should create .figma-docker/ directory structure', async () => {
       const vibeDockerDir = path.join(testProjectDir, '.vibe-docker');

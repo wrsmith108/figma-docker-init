@@ -344,7 +344,8 @@ async function detectProjectValues(projectDir = '.') {
   }
 
   // Detect BUILD_OUTPUT_DIR dynamically
-  values.BUILD_OUTPUT_DIR = await detectBuildOutputDir(validatedProjectDir) || 'dist';
+  const buildOutputResult = await detectBuildOutputDir(validatedProjectDir);
+  values.BUILD_OUTPUT_DIR = buildOutputResult?.dir || 'dist';
 
   // Detect FRAMEWORK, TYPESCRIPT, UI_LIBRARY, and DEPENDENCY_COUNT from package.json dependencies
   try {
@@ -470,7 +471,7 @@ function validateTemplate(templatePath, variables) {
   const errors = [];
   const warnings = [];
 
-  // Note: PROJECT_ROOT and FIGMA_DOCKER_DIR are auto-added by replaceTemplateVariables
+  // Note: PROJECT_ROOT and VIBE_DOCKER_DIR are auto-added by replaceTemplateVariables
   // so they don't need to be in requiredVars
 
   // Check for required variables
@@ -579,9 +580,9 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
   const enhancedVariables = {
     ...variables,
     PROJECT_ROOT: projectRoot || process.cwd(),
-    FIGMA_DOCKER_DIR: vibeDockerDir,
+    VIBE_DOCKER_DIR: vibeDockerDir,
     PROJECT_ROOT_RELATIVE: projectRoot ? normalizePath(projectRoot) : '.',
-    FIGMA_DOCKER_DIR_RELATIVE: projectRoot ? getRelativeFromRoot(vibeDockerDir, projectRoot) : '.vibe-docker'
+    VIBE_DOCKER_DIR_RELATIVE: projectRoot ? getRelativeFromRoot(vibeDockerDir, projectRoot) : '.vibe-docker'
   };
 
   let result = content;

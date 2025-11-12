@@ -192,7 +192,7 @@ describe('NPM Installation E2E Tests', () => {
       ];
 
       expectedFiles.forEach(file => {
-        const filePath = path.join(testDir, file);
+        const filePath = path.join(testDir, '.vibe-docker', file);
         expect(fs.existsSync(filePath)).toBe(true);
       });
     });

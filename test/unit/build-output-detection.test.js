@@ -207,7 +207,9 @@ describe('Build Output Directory Detection', () => {
       );
 
       const result = await detectBuildOutputDir(projectDir);
-      expect(result).toBe('vite-out');
+      expect(result.dir).toBe('vite-out');
+      expect(result.confidence).toBe(1.0);
+      expect(result.detectedBy).toBe('vite');
 
       fs.rmSync(projectDir, { recursive: true, force: true });
     });
@@ -221,7 +223,9 @@ describe('Build Output Directory Detection', () => {
       );
 
       const result = await detectBuildOutputDir(projectDir);
-      expect(result).toBe('rollup-out');
+      expect(result.dir).toBe('rollup-out');
+      expect(result.confidence).toBe(0.95);
+      expect(result.detectedBy).toBe('rollup');
 
       fs.rmSync(projectDir, { recursive: true, force: true });
     });
@@ -235,7 +239,9 @@ describe('Build Output Directory Detection', () => {
       );
 
       const result = await detectBuildOutputDir(projectDir);
-      expect(result).toBe('webpack-out');
+      expect(result.dir).toBe('webpack-out');
+      expect(result.confidence).toBe(0.95);
+      expect(result.detectedBy).toBe('webpack');
 
       fs.rmSync(projectDir, { recursive: true, force: true });
     });
@@ -245,7 +251,9 @@ describe('Build Output Directory Detection', () => {
       fs.mkdirSync(projectDir, { recursive: true });
 
       const result = await detectBuildOutputDir(projectDir);
-      expect(result).toBeNull();
+      expect(result.dir).toBeNull();
+      expect(result.confidence).toBe(0);
+      expect(result.detectedBy).toBeNull();
 
       fs.rmSync(projectDir, { recursive: true, force: true });
     });

@@ -1,1 +1,0 @@
-export default { build: { outDir: "custom-dist" } }
