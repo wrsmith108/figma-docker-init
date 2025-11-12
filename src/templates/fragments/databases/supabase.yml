@@ -1,0 +1,58 @@
+# Supabase Database Fragment
+# Composable docker-compose service for Supabase local development
+# Insertion Point: DATABASE_SERVICES
+
+  supabase-db:
+    image: supabase/postgres:15.1.0.117
+    container_name: {{PROJECT_NAME}}-supabase-db
+    restart: unless-stopped
+    ports:
+      - "{{POSTGRES_PORT:-5432}}:5432"
+    environment:
+      POSTGRES_PASSWORD: {{POSTGRES_PASSWORD:-your-super-secret-password}}
+      POSTGRES_DB: {{POSTGRES_DB:-postgres}}
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+    networks:
+      - {{PROJECT_NAME}}-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  supabase-studio:
+    image: supabase/studio:20231123-64ecbc2
+    container_name: {{PROJECT_NAME}}-supabase-studio
+    restart: unless-stopped
+    ports:
+      - "{{STUDIO_PORT:-54323}}:3000"
+    environment:
+      SUPABASE_URL: http://supabase-kong:8000
+      STUDIO_PG_META_URL: http://supabase-meta:8080
+      SUPABASE_ANON_KEY: {{SUPABASE_ANON_KEY}}
+      SUPABASE_SERVICE_KEY: {{SUPABASE_SERVICE_KEY}}
+    depends_on:
+      - supabase-db
+    networks:
+      - {{PROJECT_NAME}}-network
+
+  supabase-auth:
+    image: supabase/gotrue:v2.99.0
+    container_name: {{PROJECT_NAME}}-supabase-auth
+    restart: unless-stopped
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:{{POSTGRES_PASSWORD:-your-super-secret-password}}@supabase-db:5432/postgres
+      GOTRUE_SITE_URL: {{SITE_URL:-http://localhost:3000}}
+      GOTRUE_JWT_SECRET: {{JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters}}
+    depends_on:
+      - supabase-db
+    networks:
+      - {{PROJECT_NAME}}-network
+
+volumes:
+  supabase-db-data:
+    driver: local

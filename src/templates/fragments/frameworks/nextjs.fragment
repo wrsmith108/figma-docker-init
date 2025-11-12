@@ -1,0 +1,7 @@
+# Next.js-specific configuration
+
+# Next.js uses server-side rendering
+ENV SERVER_BUILD=true
+
+# Next.js start command
+CMD ["npm", "start"]

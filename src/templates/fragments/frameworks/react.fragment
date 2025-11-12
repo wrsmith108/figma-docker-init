@@ -1,0 +1,10 @@
+# React-specific configuration
+
+# Install serve for static file serving
+RUN npm install -g serve
+
+# React build typically creates static files
+ENV STATIC_BUILD=true
+
+# Override start command for static serving
+CMD ["serve", "-s", "dist", "-l", "{{PORT}}"]

@@ -1,0 +1,13 @@
+# Figma Make-specific configuration
+# Figma Make projects use React + Vite
+
+# Static build for Vite
+ENV STATIC_BUILD=true
+
+# Default port
+ENV PORT=3000
+
+# Use serve for static files
+RUN npm install -g serve
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
