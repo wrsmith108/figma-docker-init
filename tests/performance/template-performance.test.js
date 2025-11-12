@@ -1,9 +1,4 @@
 /**
-
-import { fileURLToPath } from 'url';
-import path from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
  * Template Performance Tests
  *
  * Benchmarks for Phase 2 template system:
@@ -20,11 +15,15 @@ const __dirname = path.dirname(__filename);
  */
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
 import { TemplateComposer } from '../../src/lib/template-composer.js';
 import { EnvManager } from '../../src/lib/env-manager.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Template Performance Benchmarks', () => {
   let tempDir;

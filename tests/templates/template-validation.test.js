@@ -1,9 +1,4 @@
 /**
-
-import { fileURLToPath } from 'url';
-import path from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
  * Template Validation Tests
  *
  * Validates Docker template quality and security:
@@ -19,9 +14,13 @@ const __dirname = path.dirname(__filename);
  */
 
 import { describe, test, expect, beforeAll } from '@jest/globals';
+import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import path from 'path';
 import { TemplateValidator } from '../../src/lib/template-validator.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Template Validation', () => {
   let validator;
