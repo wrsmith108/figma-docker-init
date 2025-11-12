@@ -12,7 +12,7 @@ import {
   showHelp,
   showVersion,
   listTemplates
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +41,7 @@ describe('CLI Interface Functions', () => {
       showHelp();
       const output = consoleLogSpy.mock.calls.join('\n');
       expect(output).toContain('Usage:');
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
     });
 
     it('should list available templates', () => {
@@ -80,7 +80,7 @@ describe('CLI Interface Functions', () => {
       showVersion();
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls.join('\n');
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
       expect(output).toMatch(/v\d+\.\d+\.\d+/); // Should match semantic version
     });
 
@@ -91,7 +91,7 @@ describe('CLI Interface Functions', () => {
       showVersion();
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls.join('\n');
-      expect(output).toContain('figma-docker-init v1.0.0'); // Default version
+      expect(output).toContain('vibe-to-docker v1.0.0'); // Default version
 
       existsSyncSpy.mockRestore();
     });

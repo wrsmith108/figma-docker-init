@@ -12,7 +12,7 @@
  * for Phase 2 and Phase 3 of the refactoring.
  */
 
-import * as indexExports from '../../figma-docker-init.js';
+import * as indexExports from '../../vibe-to-docker.js';
 
 describe('Module Exports - Phase 1 Implementation', () => {
   const exports = indexExports;

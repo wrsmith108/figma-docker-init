@@ -9,16 +9,16 @@ This document investigates the issue where `{{PROJECT_NAME}}` variables weren't 
 ### Primary Issue: User Workflow Misunderstanding
 
 **What Actually Happened:**
-Users cloned the `figma-docker-init` repository itself and ran `figma-docker-init ui-heavy` inside the repository directory, rather than in a separate project directory. This caused the tool to:
+Users cloned the `vibe-to-docker` repository itself and ran `vibe-to-docker ui-heavy` inside the repository directory, rather than in a separate project directory. This caused the tool to:
 
-1. Detect the repository's own `package.json` (name: "figma-docker-init")
-2. Correctly replace `{{PROJECT_NAME}}` with "figma-docker-init"
+1. Detect the repository's own `package.json` (name: "vibe-to-docker")
+2. Correctly replace `{{PROJECT_NAME}}` with "vibe-to-docker"
 3. Overwrite the repository's development files with processed templates
 4. Create confusion because users expected to set up Docker for a different project
 
 **Evidence from Code Analysis:**
 
-Looking at [`figma-docker-init.js`](../figma-docker-init.js:821-952), the `copyTemplate()` function:
+Looking at [`vibe-to-docker.js`](../vibe-to-docker.js:821-952), the `copyTemplate()` function:
 
 ```javascript
 async function copyTemplate(templateName, targetDir = '.') {
@@ -71,8 +71,8 @@ sequenceDiagram
     participant Replacer as replaceTemplateVariables()
     participant FileSystem
     
-    User->>CLI: figma-docker-init ui-heavy
-    Note over User,CLI: Should be run in PROJECT directory,<br/>NOT in figma-docker-init repo
+    User->>CLI: vibe-to-docker ui-heavy
+    Note over User,CLI: Should be run in PROJECT directory,<br/>NOT in vibe-to-docker repo
     
     CLI->>Detector: Read current directory
     Detector->>Detector: Check for package.json
@@ -104,7 +104,7 @@ sequenceDiagram
 
 ```bash
 # 1. Install the CLI tool globally
-npm install -g figma-docker-init
+npm install -g vibe-to-docker
 
 # 2. Navigate to YOUR project directory
 cd ~/projects/my-figma-app
@@ -113,7 +113,7 @@ cd ~/projects/my-figma-app
 npm init -y  # If needed
 
 # 4. Run the CLI
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 
 # Result: Docker files created in my-figma-app/
 # with PROJECT_NAME = "my-figma-app"
@@ -123,25 +123,25 @@ figma-docker-init ui-heavy
 
 ```bash
 # 1. Clone the CLI tool repository
-git clone https://github.com/wrsmith108/figma-docker-init.git
-cd figma-docker-init
+git clone https://github.com/wrsmith108/vibe-to-docker.git
+cd vibe-to-docker
 
 # 2. Install dependencies
-npm install figma-docker-init  # ← This installs the package locally
+npm install vibe-to-docker  # ← This installs the package locally
 npm audit fix
 npm fund
 
 # 3. Run the CLI IN THE REPOSITORY
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 
-# Result: Docker files created in figma-docker-init/
-# with PROJECT_NAME = "figma-docker-init"
+# Result: Docker files created in vibe-to-docker/
+# with PROJECT_NAME = "vibe-to-docker"
 # ⚠️ OVERWRITES THE REPOSITORY'S OWN FILES!
 ```
 
 **Why This Happens:**
 
-Looking at [`figma-docker-init.js`](../figma-docker-init.js:984-987), there's a warning but no blocking check:
+Looking at [`vibe-to-docker.js`](../vibe-to-docker.js:984-987), there's a warning but no blocking check:
 
 ```javascript
 // Validate current directory has package.json (basic sanity check)
@@ -160,15 +160,15 @@ if (!fs.existsSync('./package.json')) {
 **Impact**: ⭐⭐⭐⭐⭐ (Prevents 90% of user errors)  
 **Implementation Time**: 2 hours
 
-**Description**: Detect when CLI is run inside the figma-docker-init repository itself and show error
+**Description**: Detect when CLI is run inside the vibe-to-docker repository itself and show error
 
 **Implementation:**
 
 ```javascript
-// Add to figma-docker-init.js after line 983
+// Add to vibe-to-docker.js after line 983
 function isRunningInOwnRepository() {
-  // Check if current directory contains figma-docker-init.js
-  if (fs.existsSync('./figma-docker-init.js')) {
+  // Check if current directory contains vibe-to-docker.js
+  if (fs.existsSync('./vibe-to-docker.js')) {
     return true;
   }
   
@@ -176,7 +176,7 @@ function isRunningInOwnRepository() {
   if (fs.existsSync('./package.json')) {
     try {
       const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-      if (pkg.name === 'figma-docker-init' && pkg.bin && pkg.bin['figma-docker-init']) {
+      if (pkg.name === 'vibe-to-docker' && pkg.bin && pkg.bin['vibe-to-docker']) {
         return true;
       }
     } catch (error) {
@@ -189,12 +189,12 @@ function isRunningInOwnRepository() {
 
 // In main() function, add after line 987:
 if (isRunningInOwnRepository()) {
-  log(`${colors.red}Error: You're running this tool inside the figma-docker-init repository itself!${colors.reset}`);
+  log(`${colors.red}Error: You're running this tool inside the vibe-to-docker repository itself!${colors.reset}`);
   log(`${colors.yellow}This tool should be run in YOUR project directory, not the CLI tool's repository.${colors.reset}\n`);
   log(`${colors.bold}Correct workflow:${colors.reset}`);
-  log(`  1. Install globally: ${colors.blue}npm install -g figma-docker-init${colors.reset}`);
+  log(`  1. Install globally: ${colors.blue}npm install -g vibe-to-docker${colors.reset}`);
   log(`  2. Navigate to your project: ${colors.blue}cd ~/projects/my-project${colors.reset}`);
-  log(`  3. Run the tool: ${colors.blue}figma-docker-init ui-heavy${colors.reset}\n`);
+  log(`  3. Run the tool: ${colors.blue}vibe-to-docker ui-heavy${colors.reset}\n`);
   log(`${colors.yellow}See README.md for more details.${colors.reset}`);
   process.exit(1);
 }
@@ -306,7 +306,7 @@ if (!confirmed) {
 ```markdown
 ## ⚠️ Important: Installation Context
 
-**DO NOT run this tool inside the `figma-docker-init` repository itself!**
+**DO NOT run this tool inside the `vibe-to-docker` repository itself!**
 
 ### ✅ Correct Workflow
 
@@ -314,10 +314,10 @@ if (!confirmed) {
 # 1. Install the CLI tool (choose one method):
 
 # Global installation (recommended)
-npm install -g figma-docker-init
+npm install -g vibe-to-docker
 
 # OR via npx (no installation needed)
-npx figma-docker-init ui-heavy
+npx vibe-to-docker ui-heavy
 
 # 2. Navigate to YOUR project directory
 cd ~/projects/my-awesome-app
@@ -326,16 +326,16 @@ cd ~/projects/my-awesome-app
 npm init -y  # If you don't have one yet
 
 # 4. Run the setup
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 ```
 
 ### ❌ Common Mistake
 
 ```bash
 # DON'T DO THIS:
-git clone https://github.com/wrsmith108/figma-docker-init.git
-cd figma-docker-init
-figma-docker-init ui-heavy  # ← This overwrites repository files!
+git clone https://github.com/wrsmith108/vibe-to-docker.git
+cd vibe-to-docker
+vibe-to-docker ui-heavy  # ← This overwrites repository files!
 ```
 
 ### Troubleshooting
@@ -346,8 +346,8 @@ figma-docker-init ui-heavy  # ← This overwrites repository files!
 
 1. Check if you ran the tool in the correct directory
 2. Verify your `package.json` has a valid `name` field
-3. Try running: `rm docker-compose.yml && figma-docker-init ui-heavy`
-4. If the issue persists, please [open an issue](https://github.com/wrsmith108/figma-docker-init/issues)
+3. Try running: `rm docker-compose.yml && vibe-to-docker ui-heavy`
+4. If the issue persists, please [open an issue](https://github.com/wrsmith108/vibe-to-docker/issues)
 
 **Q: Docker says "invalid container name"**
 
@@ -468,7 +468,7 @@ if (fs.existsSync(composeFile) && copiedFiles.includes('docker-compose.yml')) {
 // test/unit/workflow-validation.test.js
 describe('Workflow Validation', () => {
   test('detects when running in own repository', () => {
-    // Create mock environment with figma-docker-init.js present
+    // Create mock environment with vibe-to-docker.js present
     const result = isRunningInOwnRepository();
     expect(result).toBe(true);
   });
@@ -501,9 +501,9 @@ describe('Workflow Validation', () => {
 # test/integration/workflow-test.sh
 
 # Test 1: Prevent running in own repository
-cd /path/to/figma-docker-init
-output=$(figma-docker-init ui-heavy 2>&1)
-if [[ $output == *"running this tool inside the figma-docker-init repository"* ]]; then
+cd /path/to/vibe-to-docker
+output=$(vibe-to-docker ui-heavy 2>&1)
+if [[ $output == *"running this tool inside the vibe-to-docker repository"* ]]; then
   echo "✓ Repository context detection works"
 else
   echo "✗ Repository context detection failed"
@@ -514,7 +514,7 @@ fi
 mkdir -p /tmp/test-project
 cd /tmp/test-project
 echo '{"name": "test-app"}' > package.json
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 
 # Verify no unreplaced variables
 if grep -q "{{" docker-compose.yml; then
@@ -537,7 +537,7 @@ fi
 ### Manual Testing Scenarios
 
 1. **Test repository context detection**
-   - Clone figma-docker-init repo
+   - Clone vibe-to-docker repo
    - Attempt to run CLI in repo directory
    - Verify error message appears
 
@@ -618,7 +618,7 @@ Track the following to measure solution effectiveness:
 
 ## Conclusion
 
-The core template variable system in [`figma-docker-init.js`](../figma-docker-init.js:523-548) is correctly designed and always provides safe default values. The reported issues stem from **user workflow misunderstandings** where the tool is run in unintended contexts.
+The core template variable system in [`vibe-to-docker.js`](../vibe-to-docker.js:523-548) is correctly designed and always provides safe default values. The reported issues stem from **user workflow misunderstandings** where the tool is run in unintended contexts.
 
 **Key Findings:**
 
@@ -643,5 +643,5 @@ Phase 1 solutions provide immediate relief and prevent future issues. Phase 2 so
 
 **Document Version**: 1.0  
 **Last Updated**: October 26, 2025  
-**Author**: Figma Docker Init Team  
+**Author**: Vibe Docker Init Team  
 **Review Status**: Pending Code Review

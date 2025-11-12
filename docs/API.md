@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the internal APIs and configuration schemas for `figma-docker-init` v2.0.0. This is useful for:
+This document describes the internal APIs and configuration schemas for `vibe-to-docker` v2.0.0. This is useful for:
 
 - Contributing to the project
 - Understanding the per-project architecture
@@ -11,13 +11,13 @@ This document describes the internal APIs and configuration schemas for `figma-d
 
 ## Configuration File Schema
 
-### .figma-docker/config.json
+### .vibe-docker/config.json
 
 The project configuration file stores project-specific settings.
 
 ```json
 {
-  "$schema": "https://figma-docker-init.dev/schema/config.v1.json",
+  "$schema": "https://vibe-to-docker.dev/schema/config.v1.json",
   "version": "2.0.0",
   "template": "ui-heavy",
   "project": {
@@ -36,10 +36,10 @@ The project configuration file stores project-specific settings.
     "nginx": 8888
   },
   "paths": {
-    "dockerfile": ".figma-docker/Dockerfile",
-    "compose": ".figma-docker/docker-compose.yml",
-    "nginx": ".figma-docker/nginx.conf",
-    "env": ".figma-docker/.env"
+    "dockerfile": ".vibe-docker/Dockerfile",
+    "compose": ".vibe-docker/docker-compose.yml",
+    "nginx": ".vibe-docker/nginx.conf",
+    "env": ".vibe-docker/.env"
   },
   "created_at": "2025-01-26T20:46:56.767Z",
   "updated_at": "2025-01-26T20:46:56.767Z"
@@ -50,7 +50,7 @@ The project configuration file stores project-specific settings.
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `version` | string | Yes | figma-docker-init version |
+| `version` | string | Yes | vibe-to-docker version |
 | `template` | string | Yes | Template name used (basic, ui-heavy) |
 | `project.name` | string | Yes | Project name from package.json |
 | `project.framework` | string | Yes | Detected framework (react-vite, vue, etc.) |
@@ -93,17 +93,17 @@ const projectRoot = resolveProjectRoot();
 
 #### `resolveDockerDir(projectRoot)`
 
-Resolves the `.figma-docker/` directory path.
+Resolves the `.vibe-docker/` directory path.
 
 **Parameters:**
 - `projectRoot` (string): Project root directory
 
-**Returns:** `string` - Absolute path to `.figma-docker/` directory
+**Returns:** `string` - Absolute path to `.vibe-docker/` directory
 
 **Example:**
 ```javascript
 const dockerDir = resolveDockerDir(projectRoot);
-// /Users/username/projects/my-app/.figma-docker
+// /Users/username/projects/my-app/.vibe-docker
 ```
 
 #### `resolveTemplatePath(templateName)`
@@ -121,7 +121,7 @@ Resolves template directory path.
 **Example:**
 ```javascript
 const templatePath = resolveTemplatePath('ui-heavy');
-// /usr/local/lib/node_modules/figma-docker-init/templates/ui-heavy
+// /usr/local/lib/node_modules/vibe-to-docker/templates/ui-heavy
 ```
 
 #### `validateFilePath(filePath, baseDir)`
@@ -150,11 +150,11 @@ try {
 
 ### Module: `lib/directory-manager.js`
 
-Manages `.figma-docker/` directory structure.
+Manages `.vibe-docker/` directory structure.
 
 #### `createDockerDirectory(projectRoot, options = {})`
 
-Creates `.figma-docker/` directory structure.
+Creates `.vibe-docker/` directory structure.
 
 **Parameters:**
 - `projectRoot` (string): Project root directory
@@ -165,7 +165,7 @@ Creates `.figma-docker/` directory structure.
 **Returns:** `Promise<object>` - Creation result
 ```javascript
 {
-  path: '/path/to/.figma-docker',
+  path: '/path/to/.vibe-docker',
   created: true,
   backed_up: false
 }
@@ -186,10 +186,10 @@ const result = await createDockerDirectory(projectRoot, {
 
 #### `validateDockerDirectory(dockerDir)`
 
-Validates `.figma-docker/` directory structure.
+Validates `.vibe-docker/` directory structure.
 
 **Parameters:**
-- `dockerDir` (string): Path to `.figma-docker/` directory
+- `dockerDir` (string): Path to `.vibe-docker/` directory
 
 **Returns:** `Promise<object>` - Validation result
 ```javascript
@@ -211,10 +211,10 @@ if (!validation.valid) {
 
 #### `cleanupDockerDirectory(dockerDir, options = {})`
 
-Cleans up `.figma-docker/` directory.
+Cleans up `.vibe-docker/` directory.
 
 **Parameters:**
-- `dockerDir` (string): Path to `.figma-docker/` directory
+- `dockerDir` (string): Path to `.vibe-docker/` directory
 - `options` (object): Cleanup options
   - `remove_env` (boolean): Remove .env file
   - `remove_logs` (boolean): Remove log files
@@ -257,7 +257,7 @@ import { processTemplate } from './lib/template-processor.js';
 
 await processTemplate(
   '/templates/ui-heavy/Dockerfile',
-  '.figma-docker/Dockerfile',
+  '.vibe-docker/Dockerfile',
   {
     PROJECT_NAME: 'my-app',
     BUILD_OUTPUT_DIR: 'dist',
@@ -451,7 +451,7 @@ console.log('Build output:', outputDir || 'dist');
 Custom error for validation failures.
 
 ```javascript
-import { ValidationError } from 'figma-docker-init';
+import { ValidationError } from 'vibe-to-docker';
 
 throw new ValidationError('Invalid port number');
 ```
@@ -461,7 +461,7 @@ throw new ValidationError('Invalid port number');
 Custom error for configuration issues.
 
 ```javascript
-import { ConfigError } from 'figma-docker-init';
+import { ConfigError } from 'vibe-to-docker';
 
 throw new ConfigError('Missing required field in config.json');
 ```
@@ -522,7 +522,7 @@ interface TemplateVariables {
 ### Command-Line Interface
 
 ```bash
-figma-docker-init [template] [options]
+vibe-to-docker [template] [options]
 ```
 
 **Arguments:**
@@ -550,7 +550,7 @@ Controls logging and error handling behavior.
 
 **Example:**
 ```bash
-NODE_ENV=development figma-docker-init ui-heavy
+NODE_ENV=development vibe-to-docker ui-heavy
 ```
 
 ## See Also

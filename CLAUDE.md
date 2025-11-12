@@ -47,13 +47,13 @@
 
 ## Project Overview
 
-**Current State**: figma-docker-init v2.1.0 - Docker setup for Figma Make exported projects
+**Current State**: vibe-to-docker v2.1.0 - Docker setup for Figma Make exported projects
 **Migration Target**: vibe-to-docker v1.0.0 - Universal Docker containerization for AI-generated projects
 
 This project is undergoing migration from Figma-specific tool to universal vibe-coding support.
 
 ### Vibe-to-Docker Initiative
-**Goal**: Transform figma-docker-init into a universal Docker containerization tool supporting:
+**Goal**: Transform vibe-to-docker into a universal Docker containerization tool supporting:
 - Figma Make (React/Vite/TypeScript)
 - Lovable (formerly GPT Engineer) - Multi-framework fullstack
 - V0 (Vercel) - Next.js/React/Tailwind

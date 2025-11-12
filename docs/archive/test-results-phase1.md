@@ -141,7 +141,7 @@
 
 ---
 
-### 4. Integration Tests (`test/figma-docker-init.test.js`)
+### 4. Integration Tests (`test/vibe-to-docker.test.js`)
 
 **Status**: ✅ PASSED (9/9 passed)
 
@@ -170,7 +170,7 @@
 
 **Test 1: Help Command**
 ```bash
-$ node figma-docker-init.js --help
+$ node vibe-to-docker.js --help
 ```
 ✅ Displays proper help text with:
 - Usage instructions
@@ -180,13 +180,13 @@ $ node figma-docker-init.js --help
 
 **Test 2: Version Command**
 ```bash
-$ node figma-docker-init.js --version
+$ node vibe-to-docker.js --version
 ```
-✅ Returns: `figma-docker-init v1.0.2`
+✅ Returns: `vibe-to-docker v1.0.2`
 
 **Test 3: List Templates**
 ```bash
-$ node figma-docker-init.js --list
+$ node vibe-to-docker.js --list
 ```
 ✅ Lists available templates:
 - advanced
@@ -210,7 +210,7 @@ $ node figma-docker-init.js --list
 ```
 File                  | % Stmts | % Branch | % Funcs | % Lines |
 ----------------------|---------|----------|---------|---------|
-figma-docker-init.js  |    7.32 |     6.97 |   13.95 |    7.55 |
+vibe-to-docker.js  |    7.32 |     6.97 |   13.95 |    7.55 |
 ----------------------|---------|----------|---------|---------|
 All files             |    7.32 |     6.97 |   13.95 |    7.55 |
 ```
@@ -252,7 +252,7 @@ All files             |    7.32 |     6.97 |   13.95 |    7.55 |
 
 **Impact**: 10/17 config parser tests failing
 
-**Recommendation**: Review `parseConfig` implementation at lines 153-187 in figma-docker-init.js
+**Recommendation**: Review `parseConfig` implementation at lines 153-187 in vibe-to-docker.js
 
 ### Problem 3: Massive Coverage Gap
 

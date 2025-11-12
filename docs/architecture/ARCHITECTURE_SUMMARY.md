@@ -15,7 +15,7 @@
 **Structure**:
 ```
 project-root/
-└── .figma-docker/
+└── .vibe-docker/
     ├── config.json
     ├── templates/
     │   ├── basic/
@@ -33,7 +33,7 @@ project-root/
 ### 2. Core Modules
 
 #### Directory Manager (`lib/directory-manager.js`)
-- Creates and validates `.figma-docker/` structure
+- Creates and validates `.vibe-docker/` structure
 - Handles permissions and cleanup
 - Detects legacy installations
 - Provides backup mechanisms
@@ -77,7 +77,7 @@ checkPermissions(projectRoot)
 
 ### PathResolver
 ```javascript
-getFigmaDockerDir()
+getVibeDockerDir()
 getTemplatesDir()
 getTemplateDir(templateName)
 getTemplateFile(templateName, fileName)
@@ -105,10 +105,10 @@ handleFailure(error)
 ## Architecture Decision Records
 
 ### ADR-001: Per-Project Installation
-**Decision**: Use per-project `.figma-docker/` directories
+**Decision**: Use per-project `.vibe-docker/` directories
 **Rationale**: Portability, isolation, version control, team consistency
 
-### ADR-002: Directory Name `.figma-docker/`
+### ADR-002: Directory Name `.vibe-docker/`
 **Decision**: Use hidden directory with leading dot
 **Rationale**: Follows conventions, descriptive, namespaced
 
@@ -160,7 +160,7 @@ handleFailure(error)
 
 **Test Scenarios**:
 - Fresh installation on clean project
-- Installation with existing `.figma-docker/`
+- Installation with existing `.vibe-docker/`
 - Migration from legacy installation
 - Cross-platform compatibility (macOS, Windows, Linux)
 - Monorepo with multiple projects
@@ -193,14 +193,14 @@ handleFailure(error)
 
 **Automatic Migration**:
 ```bash
-npx figma-docker-init --migrate
+npx vibe-to-docker --migrate
 ```
 
 **Manual Steps**:
-1. Backup existing: `cp -r ~/.figma-docker ~/.figma-docker.backup`
-2. Run new install: `npx figma-docker-init`
-3. Review config: `vim .figma-docker/config.json`
-4. Test: `docker-compose -f .figma-docker/templates/basic/docker-compose.yml up`
+1. Backup existing: `cp -r ~/.vibe-docker ~/.vibe-docker.backup`
+2. Run new install: `npx vibe-to-docker`
+3. Review config: `vim .vibe-docker/config.json`
+4. Test: `docker-compose -f .vibe-docker/templates/basic/docker-compose.yml up`
 
 ### For Developers
 

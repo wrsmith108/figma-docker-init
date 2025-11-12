@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Figma-Make users who export their designs to GitHub repositories face significant friction when setting up containerized development environments for VS Code with AI agents. The current figma-docker-init package generates Docker configurations with unresolved template variables, mismatched build directories, incorrect environment settings, and inconsistent port mappings. This results in:
+Figma-Make users who export their designs to GitHub repositories face significant friction when setting up containerized development environments for VS Code with AI agents. The current vibe-to-docker package generates Docker configurations with unresolved template variables, mismatched build directories, incorrect environment settings, and inconsistent port mappings. This results in:
 
 - **Build failures** due to literal `{{VARIABLE}}` placeholders in generated files
 - **Production service misconfigurations** running with development settings
@@ -14,9 +14,9 @@ These issues prevent seamless containerization, forcing developers to manually d
 
 ## Solution Overview
 
-This PR transforms figma-docker-init into a robust, one-command containerization tool that automatically detects project configurations and generates fully functional Docker environments. The solution implements comprehensive template variable replacement, dynamic build output detection, and environment-aware configuration generation.
+This PR transforms vibe-to-docker into a robust, one-command containerization tool that automatically detects project configurations and generates fully functional Docker environments. The solution implements comprehensive template variable replacement, dynamic build output detection, and environment-aware configuration generation.
 
-Key improvements enable Figma-Make users to run `npx figma-docker-init` and immediately have:
+Key improvements enable Figma-Make users to run `npx vibe-to-docker` and immediately have:
 - **Auto-configured Docker Compose** with correct ports and environments
 - **Framework-aware build processes** supporting Vite, React, Vue, and TypeScript
 - **Production-ready services** with proper environment variables
@@ -94,7 +94,7 @@ Added comprehensive detection functions:
 Figma-Make users can now export designs to GitHub and immediately containerize:
 
 1. **Export from Figma-Make** → GitHub repository
-2. **Run one command**: `npx figma-docker-init`
+2. **Run one command**: `npx vibe-to-docker`
 3. **Open in VS Code** with Dev Containers extension
 4. **Start developing** with pre-configured environment
 
@@ -163,7 +163,7 @@ This PR eliminates hours of manual Docker configuration for Figma-Make users, en
 - **Development velocity**: Hot reload and auto-configuration accelerate iteration cycles
 
 ### Backward Compatibility
-All changes maintain backward compatibility with existing figma-docker-init usage patterns. The enhancements are additive, improving reliability without breaking existing workflows.
+All changes maintain backward compatibility with existing vibe-to-docker usage patterns. The enhancements are additive, improving reliability without breaking existing workflows.
 
 ### Future Extensibility
 The new template engine and project analysis framework lay groundwork for:
@@ -174,6 +174,6 @@ The new template engine and project analysis framework lay groundwork for:
 
 ---
 
-**Package Version:** figma-docker-init v1.1.0  
+**Package Version:** vibe-to-docker v1.1.0  
 **Breaking Changes:** None  
 **Migration Guide:** No migration required - enhancements are backward compatible

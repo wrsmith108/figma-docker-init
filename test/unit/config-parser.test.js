@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { jest } from '@jest/globals';
-import { parseConfig } from '../../figma-docker-init.js';
+import { parseConfig } from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -8,9 +8,9 @@
 ## 🎉 Successfully Deployed!
 
 ### npm Registry
-- **Package**: `figma-docker-init@2.0.0-beta.1`
+- **Package**: `vibe-to-docker@2.0.0-beta.1`
 - **Tag**: `beta`
-- **URL**: https://www.npmjs.com/package/figma-docker-init/v/2.0.0-beta.1
+- **URL**: https://www.npmjs.com/package/vibe-to-docker/v/2.0.0-beta.1
 - **Size**: 32.2 kB (29 files)
 - **Status**: ✅ Published and verified
 
@@ -18,7 +18,7 @@
 - **Branch**: `feature/per-project-installation-v2`
 - **Tag**: `v2.0.0-beta.1`
 - **Commit**: `c284110`
-- **URL**: https://github.com/wrsmith108/figma-docker-init/releases/tag/v2.0.0-beta.1
+- **URL**: https://github.com/wrsmith108/vibe-to-docker/releases/tag/v2.0.0-beta.1
 - **Status**: ✅ Pushed successfully
 
 ---
@@ -28,14 +28,14 @@
 ### Quick Test
 ```bash
 # Install globally
-npm install -g figma-docker-init@beta
+npm install -g vibe-to-docker@beta
 
 # Check version
-figma-docker-init --version
-# Should show: figma-docker-init v2.0.0-beta.1
+vibe-to-docker --version
+# Should show: vibe-to-docker v2.0.0-beta.1
 
 # List templates
-figma-docker-init --list
+vibe-to-docker --list
 ```
 
 ### Full Test in Real Project
@@ -45,7 +45,7 @@ npx create-vite test-beta-app --template react
 cd test-beta-app
 
 # Generate Docker setup
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 
 # Verify files created
 ls -la docker-compose.yml Dockerfile nginx.conf
@@ -58,10 +58,10 @@ docker-compose up --build
 ### Test the Fixed Modules
 ```bash
 # Install in project
-npm install figma-docker-init@beta
+npm install vibe-to-docker@beta
 
 # Verify src/lib/ modules included
-ls node_modules/figma-docker-init/src/lib/
+ls node_modules/vibe-to-docker/src/lib/
 # Should show:
 # - directory-manager.js
 # - path-resolver.js
@@ -84,7 +84,7 @@ ls node_modules/figma-docker-init/src/lib/
 
 ### Package Contents
 ```
-✅ figma-docker-init.js (CLI entry point)
+✅ vibe-to-docker.js (CLI entry point)
 ✅ src/lib/directory-manager.js (17.2 kB)
 ✅ src/lib/path-resolver.js (8.6 kB)
 ✅ src/lib/template-cache.js (4.8 kB)
@@ -109,8 +109,8 @@ Please report if you encounter:
 ## 📝 What to Test
 
 ### Priority 1: Core Functionality
-- [ ] Install via npm: `npm install figma-docker-init@beta`
-- [ ] Install via npx: `npx figma-docker-init@beta basic`
+- [ ] Install via npm: `npm install vibe-to-docker@beta`
+- [ ] Install via npx: `npx vibe-to-docker@beta basic`
 - [ ] Generate docker-compose.yml (should be valid YAML)
 - [ ] Docker builds without errors
 - [ ] Dev server starts on expected port
@@ -135,7 +135,7 @@ Please report if you encounter:
 
 ## 🐛 How to Report Issues
 
-**GitHub Issues**: https://github.com/wrsmith108/figma-docker-init/issues
+**GitHub Issues**: https://github.com/wrsmith108/vibe-to-docker/issues
 
 **Include in report**:
 - Operating system and version
@@ -165,10 +165,10 @@ Please report if you encounter:
 
 ## 🔗 Links
 
-**npm Package**: https://www.npmjs.com/package/figma-docker-init/v/2.0.0-beta.1
-**GitHub Release**: https://github.com/wrsmith108/figma-docker-init/releases/tag/v2.0.0-beta.1
-**GitHub Branch**: https://github.com/wrsmith108/figma-docker-init/tree/feature/per-project-installation-v2
-**Pull Request**: https://github.com/wrsmith108/figma-docker-init/pull/new/feature/per-project-installation-v2
+**npm Package**: https://www.npmjs.com/package/vibe-to-docker/v/2.0.0-beta.1
+**GitHub Release**: https://github.com/wrsmith108/vibe-to-docker/releases/tag/v2.0.0-beta.1
+**GitHub Branch**: https://github.com/wrsmith108/vibe-to-docker/tree/feature/per-project-installation-v2
+**Pull Request**: https://github.com/wrsmith108/vibe-to-docker/pull/new/feature/per-project-installation-v2
 
 **Documentation**:
 - README: Updated with beta info
@@ -199,7 +199,7 @@ Please report if you encounter:
 
 This is a **beta release** specifically for testing. Your feedback is crucial for v2.0.0 stable.
 
-**Test it now**: `npx figma-docker-init@beta basic`
+**Test it now**: `npx vibe-to-docker@beta basic`
 
 **Questions?** Open an issue on GitHub!
 

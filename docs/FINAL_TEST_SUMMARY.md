@@ -57,7 +57,7 @@ Exports Verified:
   • Zero undefined exports
 ```
 
-#### 3️⃣ Integration Tests: figma-docker-init.test.js
+#### 3️⃣ Integration Tests: vibe-to-docker.test.js
 ```
 ✅ 9/9 tests passing (100%)
 Time: 0.466s
@@ -116,7 +116,7 @@ Coverage: 4.5% statements, 2.9% branches
 
 The `parseConfig()` function implementation does not match test expectations:
 
-**Current Implementation** (figma-docker-init.js:167-193):
+**Current Implementation** (vibe-to-docker.js:167-193):
 ```javascript
 function parseConfig(projectDir, configName, extractPattern) {
   const extensions = ['js', 'ts'];
@@ -269,7 +269,7 @@ async function parseViteConfig(projectDir) {
 
 ### Coverage Gaps
 
-**Uncovered Code Sections (from figma-docker-init.js):**
+**Uncovered Code Sections (from vibe-to-docker.js):**
 - Lines 24-651: Main business logic (~627 lines)
 - Lines 675-846: Docker operations (~171 lines)
 - Lines 851-868: Exports and main entry (~17 lines)
@@ -297,15 +297,15 @@ All CLI commands tested and working:
 
 ### 1. --help Command
 ```bash
-$ node figma-docker-init.js --help
+$ node vibe-to-docker.js --help
 ```
 **Result:** ✅ **PASS**
 ```
-Figma Docker Init
+Vibe Docker Init
 Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects
 
 Usage:
-  figma-docker-init [template] [options]
+  vibe-to-docker [template] [options]
 
 Templates:
   basic      Basic Docker setup with minimal configuration
@@ -319,16 +319,16 @@ Options:
 
 ### 2. --version Command
 ```bash
-$ node figma-docker-init.js --version
+$ node vibe-to-docker.js --version
 ```
 **Result:** ✅ **PASS**
 ```
-figma-docker-init v1.0.2
+vibe-to-docker v1.0.2
 ```
 
 ### 3. --list Command
 ```bash
-$ node figma-docker-init.js --list
+$ node vibe-to-docker.js --list
 ```
 **Result:** ✅ **PASS**
 ```
@@ -468,10 +468,10 @@ To mark Phase 1 as complete, all criteria must be met:
 ✅ npm test -- test/unit/errors.test.js       → 11/11 PASS (0.315s)
 ✅ npm test -- test/unit/exports.test.js      → 30/30 PASS (0.234s)
 ❌ npm test -- test/unit/config-parser.test.js → 7/17 PASS (0.256s)
-✅ npm test -- test/figma-docker-init.test.js → 9/9 PASS (0.466s)
-✅ node figma-docker-init.js --help          → Working
-✅ node figma-docker-init.js --version       → v1.0.2
-✅ node figma-docker-init.js --list          → 3 templates
+✅ npm test -- test/vibe-to-docker.test.js → 9/9 PASS (0.466s)
+✅ node vibe-to-docker.js --help          → Working
+✅ node vibe-to-docker.js --version       → v1.0.2
+✅ node vibe-to-docker.js --list          → 3 templates
 
 Total Test Time: 1.271s
 Total Tests: 57 executed, 48 passing, 10 failing

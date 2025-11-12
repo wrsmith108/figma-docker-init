@@ -9,7 +9,7 @@ import {
   findAvailablePort,
   assignDynamicPorts,
   ValidationError
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 import net from 'net';
 
 describe('Port Management Functions', () => {

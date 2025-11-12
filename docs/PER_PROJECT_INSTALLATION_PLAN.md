@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive implementation plan for transforming `figma-docker-init` from a configuration management tool into a **full bootstrap and setup tool** designed for first-time users from vibe-coding platforms (Figma Make, Lovable, v0.dev, etc.).
+This document outlines the comprehensive implementation plan for transforming `vibe-to-docker` from a configuration management tool into a **full bootstrap and setup tool** designed for first-time users from vibe-coding platforms (Figma Make, Lovable, v0.dev, etc.).
 
 ### Core Transformation
 
@@ -10,7 +10,7 @@ This document outlines the comprehensive implementation plan for transforming `f
 **New Scope:** Complete bootstrap tool that:
 - ✅ Verifies Docker installation and guides setup
 - ✅ Automatically detects project type and framework
-- ✅ Works via `npx figma-docker-init` on fresh repositories
+- ✅ Works via `npx vibe-to-docker` on fresh repositories
 - ✅ Handles npm package installation
 - ✅ Supports multiple platforms: macOS, Windows, Linux, GitHub Codespaces, Gitpod
 - ✅ Adapts to cloud environments with Docker-in-Docker
@@ -26,7 +26,7 @@ git clone https://github.com/user/project.git
 cd project
 
 # Run bootstrap tool
-npx figma-docker-init
+npx vibe-to-docker
 
 # Tool automatically:
 # 1. Checks if Docker is installed → Guides installation if missing
@@ -44,7 +44,7 @@ npx figma-docker-init
 
 # In .devcontainer/devcontainer.json:
 {
-  "postCreateCommand": "npx figma-docker-init"
+  "postCreateCommand": "npx vibe-to-docker"
 }
 
 # Tool automatically:
@@ -59,7 +59,7 @@ npx figma-docker-init
 ```yaml
 # .gitpod.yml
 tasks:
-  - init: npx figma-docker-init && npm install
+  - init: npx vibe-to-docker && npm install
     command: npm run dev
 
 # Tool handles Gitpod-specific Docker-in-Docker setup
@@ -74,7 +74,7 @@ The tool is organized into five core modules that work together to provide a sea
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Bootstrap Entry Point                     │
-│                  (npx figma-docker-init)                     │
+│                  (npx vibe-to-docker)                     │
 └──────────────┬──────────────────────────────────────────────┘
                │
        ┌───────┴────────┐
@@ -264,7 +264,7 @@ Docker Installation Required (macOS Apple Silicon)
    docker --version
 
 6. Run this tool again:
-   npx figma-docker-init
+   npx vibe-to-docker
 `,
       'macos-intel': `
 Docker Installation Required (macOS Intel)
@@ -283,7 +283,7 @@ Docker Installation Required (macOS Intel)
    docker --version
 
 6. Run this tool again:
-   npx figma-docker-init
+   npx vibe-to-docker
 `,
       'windows': `
 Docker Installation Required (Windows)
@@ -310,7 +310,7 @@ Steps:
    docker --version
 
 7. Run this tool again:
-   npx figma-docker-init
+   npx vibe-to-docker
 `,
       'linux': `
 Docker Installation Required (Linux)
@@ -343,7 +343,7 @@ For Ubuntu/Debian:
    newgrp docker
 
 8. Run this tool again:
-   npx figma-docker-init
+   npx vibe-to-docker
 
 For other distributions, see: https://docs.docker.com/engine/install/
 `,
@@ -1297,7 +1297,7 @@ describe('ProjectDetector', () => {
 **Purpose:** Orchestrate the complete bootstrap process from initial invocation to final setup.
 
 **Key Features:**
-- Single entry point via `npx figma-docker-init`
+- Single entry point via `npx vibe-to-docker`
 - Checks Docker availability
 - Detects project configuration
 - Runs `npm install` if package.json exists
@@ -1340,7 +1340,7 @@ class BootstrapWorkflow {
    * @returns {Promise<Object>} Bootstrap results
    */
   async run() {
-    console.log('🚀 Starting figma-docker-init bootstrap...\n');
+    console.log('🚀 Starting vibe-to-docker bootstrap...\n');
     
     const results = {
       steps: [],
@@ -1622,7 +1622,7 @@ class BootstrapWorkflow {
       pkg.scripts = pkg.scripts || {};
       
       const scriptsToAdd = {
-        'docker:init': 'figma-docker-init',
+        'docker:init': 'vibe-to-docker',
         'docker:build': 'docker-compose build',
         'docker:up': 'docker-compose up',
         'docker:down': 'docker-compose down'
@@ -1687,7 +1687,7 @@ class BootstrapWorkflow {
     console.log('4. Access your application:');
     console.log('   http://localhost:3000\n');
     
-    console.log('📚 Documentation: https://github.com/wrsmith108/figma-docker-init\n');
+    console.log('📚 Documentation: https://github.com/wrsmith108/vibe-to-docker\n');
   }
 
   /**
@@ -2048,13 +2048,13 @@ class TemplateSelector {
     console.log('   - Unknown/Custom → Use generic template\n');
     
     console.log('2. Run the tool with explicit template:');
-    console.log('   npx figma-docker-init --template=ui-heavy\n');
+    console.log('   npx vibe-to-docker --template=ui-heavy\n');
     
     console.log('3. Or explore templates manually:');
-    console.log('   https://github.com/wrsmith108/figma-docker-init/tree/main/templates\n');
+    console.log('   https://github.com/wrsmith108/vibe-to-docker/tree/main/templates\n');
     
     console.log('4. For help or questions:');
-    console.log('   https://github.com/wrsmith108/figma-docker-init/issues\n');
+    console.log('   https://github.com/wrsmith108/vibe-to-docker/issues\n');
   }
 }
 
@@ -2280,7 +2280,7 @@ export { TemplateSelector };
 
 ## Success Criteria
 
-- ✅ Tool works identically via `npx figma-docker-init` on fresh repositories
+- ✅ Tool works identically via `npx vibe-to-docker` on fresh repositories
 - ✅ Docker detection accurate on all platforms
 - ✅ Project detection achieves 85%+ accuracy with hybrid approach
 - ✅ npm install runs automatically when package.json exists
@@ -2332,7 +2332,7 @@ Show bootstrap from fresh clone:
 
 2. Run the bootstrap tool:
    ```bash
-   npx figma-docker-init
+   npx vibe-to-docker
    ```
 
 3. The tool will automatically:
@@ -2350,7 +2350,7 @@ Show bootstrap from fresh clone:
 
 ## Conclusion
 
-This implementation plan transforms `figma-docker-init` from a simple configuration generator into a comprehensive bootstrap tool that handles the complete first-time setup experience for users from vibe-coding platforms. 
+This implementation plan transforms `vibe-to-docker` from a simple configuration generator into a comprehensive bootstrap tool that handles the complete first-time setup experience for users from vibe-coding platforms. 
 
 The modular architecture ensures maintainability and testability, while the hybrid detection approach maximizes accuracy across different project types. Docker-in-Docker support for cloud environments enables seamless integration with modern development workflows.
 

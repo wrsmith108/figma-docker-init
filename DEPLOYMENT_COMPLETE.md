@@ -13,8 +13,8 @@
 **Request**: Make `.env` creation automatic instead of manual copy step
 
 **Implementation**:
-- Added automatic file copy in `figma-docker-init.js` (lines 993-1007)
-- Copies `.env.example` to `.env` in `.figma-docker/` directory
+- Added automatic file copy in `vibe-to-docker.js` (lines 993-1007)
+- Copies `.env.example` to `.env` in `.vibe-docker/` directory
 - Includes error handling with graceful fallback
 - Shows clear success message: "✓ Created .env from .env.example"
 - Updated instructions from "rename to .env" to "update .env if needed"
@@ -44,7 +44,7 @@
 ## 📦 Changes Summary
 
 ### Files Modified
-1. `figma-docker-init.js`
+1. `vibe-to-docker.js`
    - Added automatic .env creation (lines 993-1007)
    - Updated user instructions
 
@@ -74,18 +74,18 @@
 ```bash
 # Test 1: Automatic .env creation
 cd /private/tmp/verify-npm-beta
-node figma-docker-init.js basic
+node vibe-to-docker.js basic
 ✅ Result: .env file created automatically
 
 # Test 2: YAML validation
-cd .figma-docker
+cd .vibe-docker
 docker-compose config
 ✅ Result: Valid YAML, no syntax errors
 ```
 
 ### File Verification
 ```bash
-ls -la .figma-docker/ | grep .env
+ls -la .vibe-docker/ | grep .env
 -rw-r--r--  .env         (1218 bytes) ✅
 -rw-r--r--  .env.example (1218 bytes) ✅
 ```
@@ -101,14 +101,14 @@ ls -la .figma-docker/ | grep .env
 - **Status**: Pushed successfully
 
 ### NPM
-- **Package**: figma-docker-init@2.0.0-beta.3
+- **Package**: vibe-to-docker@2.0.0-beta.3
 - **Tag**: beta
 - **Status**: Published successfully
-- **Verification**: `npm view figma-docker-init@beta version` → 2.0.0-beta.3
+- **Verification**: `npm view vibe-to-docker@beta version` → 2.0.0-beta.3
 
 ### Installation Command
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 ---
@@ -124,7 +124,7 @@ npx figma-docker-init@beta basic
 - ✅ **Improved Volume Paths**: Correct parent directory references
 
 **What Users Will Notice:**
-1. When running `npx figma-docker-init@beta basic`, the `.env` file is now created automatically
+1. When running `npx vibe-to-docker@beta basic`, the `.env` file is now created automatically
 2. Simpler, more maintainable docker-compose.yml configuration
 3. No more YAML syntax errors when running `docker-compose up`
 4. Cleaner output focusing on essential services
@@ -161,4 +161,4 @@ npx figma-docker-init@beta basic
 ---
 
 **Status**: ✅ DEPLOYMENT COMPLETE
-**Next Steps**: Users can now install with `npx figma-docker-init@beta basic`
+**Next Steps**: Users can now install with `npx vibe-to-docker@beta basic`

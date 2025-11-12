@@ -36,7 +36,7 @@ describe('CLI Refactor', () => {
 
     // Setup process mock
     mockProcess = {
-      argv: ['node', 'figma-docker-init.js'],
+      argv: ['node', 'vibe-to-docker.js'],
       cwd: jest.fn(() => tempDir),
       exit: jest.fn()
     };
@@ -176,8 +176,8 @@ describe('CLI Refactor', () => {
 
       // Simulate installation
       const install = () => {
-        mockFs.mkdirSync(path.join(projectDir, '.figma-docker'));
-        mockFs.writeFileSync(path.join(projectDir, '.figma-docker', 'config.json'), '{}');
+        mockFs.mkdirSync(path.join(projectDir, '.vibe-docker'));
+        mockFs.writeFileSync(path.join(projectDir, '.vibe-docker', 'config.json'), '{}');
       };
 
       install();
@@ -193,9 +193,9 @@ describe('CLI Refactor', () => {
       mockFs.writeFileSync.mockImplementation(() => operations.push('write'));
 
       const installFlow = () => {
-        mockFs.mkdirSync(path.join(projectDir, '.figma-docker'), { recursive: true });
-        mockFs.writeFileSync(path.join(projectDir, '.figma-docker', 'config.json'), '{}');
-        mockFs.writeFileSync(path.join(projectDir, '.figma-docker', 'docker-compose.yml'), '');
+        mockFs.mkdirSync(path.join(projectDir, '.vibe-docker'), { recursive: true });
+        mockFs.writeFileSync(path.join(projectDir, '.vibe-docker', 'config.json'), '{}');
+        mockFs.writeFileSync(path.join(projectDir, '.vibe-docker', 'docker-compose.yml'), '');
       };
 
       installFlow();
@@ -238,8 +238,8 @@ describe('CLI Refactor', () => {
       };
 
       try {
-        mockFs.mkdirSync(path.join(projectDir, '.figma-docker'));
-        mockFs.writeFileSync(path.join(projectDir, '.figma-docker', 'config.json'), '{}');
+        mockFs.mkdirSync(path.join(projectDir, '.vibe-docker'));
+        mockFs.writeFileSync(path.join(projectDir, '.vibe-docker', 'config.json'), '{}');
       } catch (error) {
         rollback();
       }
@@ -255,7 +255,7 @@ describe('CLI Refactor', () => {
 
       const verifyInstallation = (dir) => {
         return requiredFiles.every(file =>
-          mockFs.existsSync(path.join(dir, '.figma-docker', file))
+          mockFs.existsSync(path.join(dir, '.vibe-docker', file))
         );
       };
 
@@ -265,7 +265,7 @@ describe('CLI Refactor', () => {
 
   describe('Command-line Flags', () => {
     test('should parse --project-dir flag', () => {
-      const argv = ['node', 'figma-docker-init.js', '--project-dir', '/custom/path'];
+      const argv = ['node', 'vibe-to-docker.js', '--project-dir', '/custom/path'];
 
       const parseArgs = (args) => {
         const flagIndex = args.indexOf('--project-dir');
@@ -280,7 +280,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should parse --force flag', () => {
-      const argv = ['node', 'figma-docker-init.js', '--force'];
+      const argv = ['node', 'vibe-to-docker.js', '--force'];
 
       const parseArgs = (args) => {
         return {
@@ -293,7 +293,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should parse --dry-run flag', () => {
-      const argv = ['node', 'figma-docker-init.js', '--dry-run'];
+      const argv = ['node', 'vibe-to-docker.js', '--dry-run'];
 
       const parseArgs = (args) => {
         return {
@@ -306,7 +306,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should parse --verbose flag', () => {
-      const argv = ['node', 'figma-docker-init.js', '--verbose'];
+      const argv = ['node', 'vibe-to-docker.js', '--verbose'];
 
       const parseArgs = (args) => {
         return {
@@ -321,7 +321,7 @@ describe('CLI Refactor', () => {
     test('should parse multiple flags together', () => {
       const argv = [
         'node',
-        'figma-docker-init.js',
+        'vibe-to-docker.js',
         '--force',
         '--verbose',
         '--project-dir',
@@ -344,7 +344,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should handle flags with equals sign', () => {
-      const argv = ['node', 'figma-docker-init.js', '--project-dir=/custom/path'];
+      const argv = ['node', 'vibe-to-docker.js', '--project-dir=/custom/path'];
 
       const parseArgs = (args) => {
         const projectDirArg = args.find(arg => arg.startsWith('--project-dir='));
@@ -359,7 +359,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should provide default values for missing flags', () => {
-      const argv = ['node', 'figma-docker-init.js'];
+      const argv = ['node', 'vibe-to-docker.js'];
 
       const parseArgs = (args) => {
         return {
@@ -379,7 +379,7 @@ describe('CLI Refactor', () => {
   describe('Config File Creation', () => {
     test('should create config.json with valid schema', () => {
       const projectDir = tempDir;
-      const configPath = path.join(projectDir, '.figma-docker', 'config.json');
+      const configPath = path.join(projectDir, '.vibe-docker', 'config.json');
 
       const config = {
         version: '2.0.0',
@@ -419,7 +419,7 @@ describe('CLI Refactor', () => {
     });
 
     test('should handle config file write errors', () => {
-      const configPath = path.join(tempDir, '.figma-docker', 'config.json');
+      const configPath = path.join(tempDir, '.vibe-docker', 'config.json');
 
       mockFs.writeFileSync.mockImplementation(() => {
         throw new Error('EACCES: permission denied');
@@ -524,7 +524,7 @@ describe('CLI Refactor', () => {
       });
 
       expect(() => {
-        mockFs.mkdirSync(path.join(tempDir, '.figma-docker'));
+        mockFs.mkdirSync(path.join(tempDir, '.vibe-docker'));
       }).toThrow('EACCES');
     });
 
@@ -603,7 +603,7 @@ describe('CLI Refactor', () => {
       // Simulate full workflow
       const fullInstall = () => {
         workflow.push('detect-root');
-        mockFs.mkdirSync('.figma-docker');
+        mockFs.mkdirSync('.vibe-docker');
         workflow.push('create-config');
         mockFs.writeFileSync('.figma-docker/config.json', '{}');
         workflow.push('verify');

@@ -113,14 +113,14 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Verify installation
-      const nodeModulesPath = path.join(testDir, 'node_modules', 'figma-docker-init');
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
 
       // Verify package.json was updated
       const pkg = JSON.parse(
         fs.readFileSync(path.join(testDir, 'package.json'), 'utf8')
       );
-      expect(pkg.dependencies['figma-docker-init']).toBeDefined();
+      expect(pkg.dependencies['vibe-to-docker']).toBeDefined();
     });
 
     it('should make CLI accessible via npx after installation', () => {
@@ -134,12 +134,12 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Test npx command
-      const output = execSync('npx figma-docker-init --version', {
+      const output = execSync('npx vibe-to-docker --version', {
         encoding: 'utf8',
         cwd: testDir
       });
 
-      expect(output).toMatch(/figma-docker-init v\d+\.\d+\.\d+/);
+      expect(output).toMatch(/vibe-to-docker v\d+\.\d+\.\d+/);
     });
 
     it('should execute CLI commands after installation', () => {
@@ -153,7 +153,7 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Test --list command
-      const listOutput = execSync('npx figma-docker-init --list', {
+      const listOutput = execSync('npx vibe-to-docker --list', {
         encoding: 'utf8',
         cwd: testDir
       });
@@ -175,7 +175,7 @@ describe('NPM Installation E2E Tests', () => {
 
       // Create basic template (may fail due to port checks, but files should still be created)
       try {
-        execSync('npx figma-docker-init basic', {
+        execSync('npx vibe-to-docker basic', {
           encoding: 'utf8',
           cwd: testDir
         });
@@ -215,10 +215,10 @@ describe('NPM Installation E2E Tests', () => {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
       // Verify essential fields
-      expect(pkg.name).toBe('figma-docker-init');
+      expect(pkg.name).toBe('vibe-to-docker');
       expect(pkg.version).toBeDefined();
       expect(pkg.bin).toBeDefined();
-      expect(pkg.bin['figma-docker-init']).toBeDefined();
+      expect(pkg.bin['vibe-to-docker']).toBeDefined();
       expect(pkg.description).toContain('Docker');
       expect(pkg.keywords).toContain('figma');
       expect(pkg.keywords).toContain('docker');
@@ -238,7 +238,7 @@ describe('NPM Installation E2E Tests', () => {
       // Verify required files exist
       const requiredFiles = [
         'package/package.json',
-        'package/figma-docker-init.js',
+        'package/vibe-to-docker.js',
         'package/README.md',
         'package/LICENSE'
       ];
@@ -266,7 +266,7 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Check CLI file
-      const cliPath = path.join(extractDir, 'package/figma-docker-init.js');
+      const cliPath = path.join(extractDir, 'package/vibe-to-docker.js');
       const stats = fs.statSync(cliPath);
 
       // Verify file exists and is executable (on Unix systems)
@@ -293,12 +293,12 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Verify the bin link works
-      const output = execSync('npx figma-docker-init --help', {
+      const output = execSync('npx vibe-to-docker --help', {
         encoding: 'utf8',
         cwd: testDir
       });
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
     });
   });
@@ -315,7 +315,7 @@ describe('NPM Installation E2E Tests', () => {
       });
 
       // Get version from installed package
-      const output = execSync('npx figma-docker-init --version', {
+      const output = execSync('npx vibe-to-docker --version', {
         encoding: 'utf8',
         cwd: testDir
       });
@@ -325,7 +325,7 @@ describe('NPM Installation E2E Tests', () => {
         fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8')
       );
 
-      expect(output).toContain(`figma-docker-init v${projectPkg.version}`);
+      expect(output).toContain(`vibe-to-docker v${projectPkg.version}`);
     });
   });
 
@@ -340,7 +340,7 @@ describe('NPM Installation E2E Tests', () => {
         stdio: 'pipe'
       });
 
-      const nodeModulesPath = path.join(testDir, 'node_modules', 'figma-docker-init');
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       const installedPkg = JSON.parse(
         fs.readFileSync(path.join(nodeModulesPath, 'package.json'), 'utf8')
       );
@@ -364,7 +364,7 @@ describe('NPM Installation E2E Tests', () => {
       const templatesPath = path.join(
         testDir,
         'node_modules',
-        'figma-docker-init',
+        'vibe-to-docker',
         'templates'
       );
 
@@ -385,7 +385,7 @@ describe('NPM Installation E2E Tests', () => {
         stdio: 'pipe'
       });
 
-      const output = execSync('npx figma-docker-init --list', {
+      const output = execSync('npx vibe-to-docker --list', {
         encoding: 'utf8',
         cwd: testDir
       });

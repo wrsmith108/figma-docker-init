@@ -5,7 +5,7 @@ parseConfig() implementation doesn't match test expectations, causing 10/17 test
 
 ## Current Implementation (WRONG)
 ```javascript
-// Location: figma-docker-init.js:167-193
+// Location: vibe-to-docker.js:167-193
 function parseConfig(projectDir, configName, extractPattern) {
   const extensions = ['js', 'ts'];
   for (const ext of extensions) {

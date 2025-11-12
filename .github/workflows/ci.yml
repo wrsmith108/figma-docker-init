@@ -136,13 +136,13 @@ jobs:
         run: |
           set -e  # Exit on any error to ensure tests actually fail
           echo "Testing CLI help command..."
-          node figma-docker-init.js --help
+          node vibe-to-docker.js --help
 
           echo "Testing CLI version command..."
-          node figma-docker-init.js --version
+          node vibe-to-docker.js --version
 
           echo "Testing CLI list templates..."
-          node figma-docker-init.js --list
+          node vibe-to-docker.js --list
         continue-on-error: false
 
       - name: Upload coverage to Codecov
@@ -191,7 +191,7 @@ jobs:
           npm install ../$PACKAGE_FILE
 
           # Test if CLI is accessible
-          npx figma-docker-init --help || echo "CLI test completed"
+          npx vibe-to-docker --help || echo "CLI test completed"
         continue-on-error: false
 
       - name: Verify template integrity

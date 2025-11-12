@@ -2,14 +2,14 @@
 
 ## Overview
 
-This roadmap outlines the phased transformation of `figma-docker-init` from a configuration management tool into a comprehensive bootstrap and setup tool for first-time users from vibe-coding platforms (Figma Make, Lovable, v0.dev, etc.).
+This roadmap outlines the phased transformation of `vibe-to-docker` from a configuration management tool into a comprehensive bootstrap and setup tool for first-time users from vibe-coding platforms (Figma Make, Lovable, v0.dev, etc.).
 
 ## Vision
 
 Transform the tool to provide a seamless, zero-configuration setup experience that:
 - Automatically detects project frameworks and requirements
 - Guides Docker installation on all platforms
-- Works via `npx figma-docker-init` on fresh repositories
+- Works via `npx vibe-to-docker` on fresh repositories
 - Adapts to cloud environments (Codespaces, Gitpod)
 - Requires minimal user intervention
 
@@ -21,7 +21,7 @@ Transform the tool to provide a seamless, zero-configuration setup experience th
 ### Status: Planning
 
 ### Objectives
-1. Refactor architecture to support per-project `.figma-docker/` directory structure
+1. Refactor architecture to support per-project `.vibe-docker/` directory structure
 2. Update CLI to install into target project directory
 3. Modify template engine for per-project configuration
 4. Update all file path references throughout codebase
@@ -29,16 +29,16 @@ Transform the tool to provide a seamless, zero-configuration setup experience th
 ### Key Deliverables
 
 #### 1.1 Directory Structure Refactor
-- [ ] Create `.figma-docker/` directory structure within project root
+- [ ] Create `.vibe-docker/` directory structure within project root
 - [ ] Move Docker configurations from global to per-project location
-- [ ] Update template system to write to `.figma-docker/`
+- [ ] Update template system to write to `.vibe-docker/`
 - [ ] Ensure backward compatibility with existing installations
 
 #### 1.2 CLI Installation Flow
 - [ ] Modify CLI entry point to detect target project directory
 - [ ] Implement per-project installation logic
 - [ ] Add validation for project directory structure
-- [ ] Create `.figma-docker/config.json` for project-specific settings
+- [ ] Create `.vibe-docker/config.json` for project-specific settings
 
 #### 1.3 Template Engine Updates
 - [ ] Refactor template processor to use project-relative paths
@@ -53,7 +53,7 @@ Transform the tool to provide a seamless, zero-configuration setup experience th
 - [ ] Add path validation and error handling
 
 ### Success Metrics
-- All templates install to `.figma-docker/` directory
+- All templates install to `.vibe-docker/` directory
 - CLI correctly detects and uses project root
 - No breaking changes for existing users
 - All unit tests pass with new structure
@@ -236,10 +236,10 @@ Transform the tool to provide a seamless, zero-configuration setup experience th
 ## Success Criteria
 
 ### Primary Goals
-✅ Tool works via `npx figma-docker-init` on fresh repositories  
+✅ Tool works via `npx vibe-to-docker` on fresh repositories  
 ✅ Automatic framework detection with 95%+ accuracy  
 ✅ Docker installation guidance for all major platforms  
-✅ Per-project configuration in `.figma-docker/` directory  
+✅ Per-project configuration in `.vibe-docker/` directory  
 ✅ Zero-config experience for common frameworks  
 
 ### Secondary Goals
@@ -281,7 +281,7 @@ Transform the tool to provide a seamless, zero-configuration setup experience th
 
 ## Conclusion
 
-This roadmap provides a structured approach to transforming `figma-docker-init` into a comprehensive bootstrap tool. By following this phased approach, we ensure:
+This roadmap provides a structured approach to transforming `vibe-to-docker` into a comprehensive bootstrap tool. By following this phased approach, we ensure:
 
 1. **Incremental Value**: Each phase delivers working functionality
 2. **Risk Mitigation**: Early testing and feedback loops

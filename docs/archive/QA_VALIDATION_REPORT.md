@@ -73,7 +73,7 @@ The `copyTemplate` function attempts to read the `monitoring` subdirectory as a 
 
 ```
 Error: Failed to read template file "monitoring" from
-/Users/williamsmith/Documents/GitHub/figma-docker-init/templates/basic/monitoring.
+/Users/williamsmith/Documents/GitHub/vibe-to-docker/templates/basic/monitoring.
 Error: EISDIR: illegal operation on a directory, read.
 ```
 
@@ -90,7 +90,7 @@ Error: EISDIR: illegal operation on a directory, read.
 10. ❌ should mention DOCKER.md if it exists
 
 #### Code Location
-**File**: `/Users/williamsmith/Documents/GitHub/figma-docker-init/figma-docker-init.js`
+**File**: `/Users/williamsmith/Documents/GitHub/vibe-to-docker/vibe-to-docker.js`
 **Lines**: 878-898 (copyTemplate function)
 
 ```javascript
@@ -175,7 +175,7 @@ fs.writeFileSync(path.join(templateDir, '../../../etc/passwd'), 'hack');
 ```
 File                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ----------------------|---------|----------|---------|---------|-------------------
-figma-docker-init.js  |  95.94  |   96.17  |  93.02  |  96.65  | 453,629-630,778-779,
+vibe-to-docker.js  |  95.94  |   96.17  |  93.02  |  96.65  | 453,629-630,778-779,
                       |         |          |         |         | 785-787,791-792,824-825
 ```
 
@@ -276,7 +276,7 @@ figma-docker-init.js  |  95.94  |   96.17  |  93.02  |  96.65  | 453,629-630,778
 ### Immediate Actions Required (Before CI)
 
 #### 1. Fix copyTemplate Directory Handling ⚡ CRITICAL
-**File**: `figma-docker-init.js` (lines 878-898)
+**File**: `vibe-to-docker.js` (lines 878-898)
 **Action**: Add directory check before file read
 **Estimated Time**: 5 minutes
 **Owner**: **Requires Agent 2 or reassignment**
@@ -357,7 +357,7 @@ npm test  # Must show 368/368 passing
 **WHO**: Agent 2 or Task Reassignment
 **WHAT**: Fix copyTemplate directory handling
 **WHEN**: Before CI deployment
-**WHERE**: figma-docker-init.js, lines 878-898
+**WHERE**: vibe-to-docker.js, lines 878-898
 **WHY**: Blocking all E2E CLI tests (10 failures)
 
 ### Verification Steps

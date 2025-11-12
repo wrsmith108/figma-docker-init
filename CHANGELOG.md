@@ -1,26 +1,26 @@
-## [2.0.1](https://github.com/wrsmith108/figma-docker-init/compare/v2.0.0...v2.0.1) (2025-10-24)
+## [2.0.1](https://github.com/wrsmith108/vibe-to-docker/compare/v2.0.0...v2.0.1) (2025-10-24)
 
 
 ### Bug Fixes
 
-* **ci:** change artifact upload to ignore missing files ([fc27c2d](https://github.com/wrsmith108/figma-docker-init/commit/fc27c2d4375067b89937fd2caf27c2d73257fc93))
+* **ci:** change artifact upload to ignore missing files ([fc27c2d](https://github.com/wrsmith108/vibe-to-docker/commit/fc27c2d4375067b89937fd2caf27c2d73257fc93))
 
-# [2.0.0](https://github.com/wrsmith108/figma-docker-init/compare/v1.0.2...v2.0.0) (2025-10-24)
+# [2.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v1.0.2...v2.0.0) (2025-10-24)
 
 
-* feat!: drop Node 18 support, require Node >= 20.8.1 ([5584ce3](https://github.com/wrsmith108/figma-docker-init/commit/5584ce3166e10b376c40bf5e0bb351f893d3ce6e))
+* feat!: drop Node 18 support, require Node >= 20.8.1 ([5584ce3](https://github.com/wrsmith108/vibe-to-docker/commit/5584ce3166e10b376c40bf5e0bb351f893d3ce6e))
 
 
 ### Bug Fixes
 
-* **ci:** add NODE_AUTH_TOKEN for npm authentication ([ebd090d](https://github.com/wrsmith108/figma-docker-init/commit/ebd090d5863c9f7c8443f3caf58dd92261836b1c))
-* **ci:** grant semantic-release write permissions for contents ([6ce8fa2](https://github.com/wrsmith108/figma-docker-init/commit/6ce8fa218cb42d201d5184958ecced8d89d5673b))
-* **release:** configure semantic-release to use pack-master branch ([8403175](https://github.com/wrsmith108/figma-docker-init/commit/84031758cf66a6e7f3b5835b1cb0a53b0c2d171e))
+* **ci:** add NODE_AUTH_TOKEN for npm authentication ([ebd090d](https://github.com/wrsmith108/vibe-to-docker/commit/ebd090d5863c9f7c8443f3caf58dd92261836b1c))
+* **ci:** grant semantic-release write permissions for contents ([6ce8fa2](https://github.com/wrsmith108/vibe-to-docker/commit/6ce8fa218cb42d201d5184958ecced8d89d5673b))
+* **release:** configure semantic-release to use pack-master branch ([8403175](https://github.com/wrsmith108/vibe-to-docker/commit/84031758cf66a6e7f3b5835b1cb0a53b0c2d171e))
 
 
 ### chore
 
-* trigger semantic-release for v2.0.0 ([fdb532a](https://github.com/wrsmith108/figma-docker-init/commit/fdb532a8cf89486a697f2b6c9a7376d778ddaf71))
+* trigger semantic-release for v2.0.0 ([fdb532a](https://github.com/wrsmith108/vibe-to-docker/commit/fdb532a8cf89486a697f2b6c9a7376d778ddaf71))
 
 
 ### BREAKING CHANGES
@@ -66,27 +66,27 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 # 1.0.0 (2025-10-24)
 
 
-* feat!: drop Node 18 support, require Node >= 20.8.1 ([5584ce3](https://github.com/wrsmith108/figma-docker-init/commit/5584ce3166e10b376c40bf5e0bb351f893d3ce6e))
+* feat!: drop Node 18 support, require Node >= 20.8.1 ([5584ce3](https://github.com/wrsmith108/vibe-to-docker/commit/5584ce3166e10b376c40bf5e0bb351f893d3ce6e))
 
 
 ### Bug Fixes
 
-* **ci:** add NODE_AUTH_TOKEN for npm authentication ([ebd090d](https://github.com/wrsmith108/figma-docker-init/commit/ebd090d5863c9f7c8443f3caf58dd92261836b1c))
-* **ci:** grant semantic-release write permissions for contents ([6ce8fa2](https://github.com/wrsmith108/figma-docker-init/commit/6ce8fa218cb42d201d5184958ecced8d89d5673b))
-* **ci:** remove invalid jq YAML validation in template integrity check ([43206ff](https://github.com/wrsmith108/figma-docker-init/commit/43206ff2253e66bb765347c69d69dd76edddf311))
-* **ci:** use jest.js directly to avoid Windows bash script issue ([94e102a](https://github.com/wrsmith108/figma-docker-init/commit/94e102a4cf10b4c1b062c160081889a03fe9d709)), closes [#18769285806](https://github.com/wrsmith108/figma-docker-init/issues/18769285806) [#18769410002](https://github.com/wrsmith108/figma-docker-init/issues/18769410002)
-* **ci:** use npx jest for cross-platform Windows compatibility ([256d629](https://github.com/wrsmith108/figma-docker-init/commit/256d629a0b3eae77c35629d6100c70fe416591b4)), closes [#18769285806](https://github.com/wrsmith108/figma-docker-init/issues/18769285806)
-* **release:** configure semantic-release to use pack-master branch ([8403175](https://github.com/wrsmith108/figma-docker-init/commit/84031758cf66a6e7f3b5835b1cb0a53b0c2d171e))
-* resolve all CI test failures - port allocation and E2E improvements ([0a837de](https://github.com/wrsmith108/figma-docker-init/commit/0a837def20fb5bee92bb0c216091a2d269995e32))
-* resolve docker-compose configuration issue ([9937833](https://github.com/wrsmith108/figma-docker-init/commit/99378339afc95119add7bee1716844e426fb7840))
-* **test:** prevent async log after test completion in main-function ([c6575f8](https://github.com/wrsmith108/figma-docker-init/commit/c6575f8e6214767402130cb4ccbdeac16c68dc85)), closes [#18769483605](https://github.com/wrsmith108/figma-docker-init/issues/18769483605)
+* **ci:** add NODE_AUTH_TOKEN for npm authentication ([ebd090d](https://github.com/wrsmith108/vibe-to-docker/commit/ebd090d5863c9f7c8443f3caf58dd92261836b1c))
+* **ci:** grant semantic-release write permissions for contents ([6ce8fa2](https://github.com/wrsmith108/vibe-to-docker/commit/6ce8fa218cb42d201d5184958ecced8d89d5673b))
+* **ci:** remove invalid jq YAML validation in template integrity check ([43206ff](https://github.com/wrsmith108/vibe-to-docker/commit/43206ff2253e66bb765347c69d69dd76edddf311))
+* **ci:** use jest.js directly to avoid Windows bash script issue ([94e102a](https://github.com/wrsmith108/vibe-to-docker/commit/94e102a4cf10b4c1b062c160081889a03fe9d709)), closes [#18769285806](https://github.com/wrsmith108/vibe-to-docker/issues/18769285806) [#18769410002](https://github.com/wrsmith108/vibe-to-docker/issues/18769410002)
+* **ci:** use npx jest for cross-platform Windows compatibility ([256d629](https://github.com/wrsmith108/vibe-to-docker/commit/256d629a0b3eae77c35629d6100c70fe416591b4)), closes [#18769285806](https://github.com/wrsmith108/vibe-to-docker/issues/18769285806)
+* **release:** configure semantic-release to use pack-master branch ([8403175](https://github.com/wrsmith108/vibe-to-docker/commit/84031758cf66a6e7f3b5835b1cb0a53b0c2d171e))
+* resolve all CI test failures - port allocation and E2E improvements ([0a837de](https://github.com/wrsmith108/vibe-to-docker/commit/0a837def20fb5bee92bb0c216091a2d269995e32))
+* resolve docker-compose configuration issue ([9937833](https://github.com/wrsmith108/vibe-to-docker/commit/99378339afc95119add7bee1716844e426fb7840))
+* **test:** prevent async log after test completion in main-function ([c6575f8](https://github.com/wrsmith108/vibe-to-docker/commit/c6575f8e6214767402130cb4ccbdeac16c68dc85)), closes [#18769483605](https://github.com/wrsmith108/vibe-to-docker/issues/18769483605)
 
 
 ### Features
 
-* add comprehensive test suite, CI/CD pipeline, coverage reporting, and semantic-release ([9560bdf](https://github.com/wrsmith108/figma-docker-init/commit/9560bdf6387d772efb1bd5bd3414608ec7f8012c))
-* implement v1.1.0 refactoring with improved modularity ([3878736](https://github.com/wrsmith108/figma-docker-init/commit/38787365b9b16c63b03818443edaf743e3d6270c))
-* initial release of figma-docker-init CLI tool ([c120940](https://github.com/wrsmith108/figma-docker-init/commit/c12094087e82bd823ec05be181c9e43d5fac51e3))
+* add comprehensive test suite, CI/CD pipeline, coverage reporting, and semantic-release ([9560bdf](https://github.com/wrsmith108/vibe-to-docker/commit/9560bdf6387d772efb1bd5bd3414608ec7f8012c))
+* implement v1.1.0 refactoring with improved modularity ([3878736](https://github.com/wrsmith108/vibe-to-docker/commit/38787365b9b16c63b03818443edaf743e3d6270c))
+* initial release of vibe-to-docker CLI tool ([c120940](https://github.com/wrsmith108/vibe-to-docker/commit/c12094087e82bd823ec05be181c9e43d5fac51e3))
 
 
 ### BREAKING CHANGES

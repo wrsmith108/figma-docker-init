@@ -53,7 +53,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -69,14 +69,14 @@ describe('E2E Platform Tests', () => {
         stdio: 'pipe'
       });
 
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
 
       // Verify node_modules structure
-      const nodeModulesPath = path.join(testDir, 'node_modules', 'figma-docker-init');
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
 
       // Verify CLI is executable
-      const cliPath = path.join(nodeModulesPath, 'bin', 'figma-docker-init.js');
+      const cliPath = path.join(nodeModulesPath, 'bin', 'vibe-to-docker.js');
       expect(fs.existsSync(cliPath)).toBe(true);
 
       const stats = fs.statSync(cliPath);
@@ -90,7 +90,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -101,7 +101,7 @@ describe('E2E Platform Tests', () => {
 
       execSync('npm install', { cwd: testDir, stdio: 'pipe' });
 
-      const cliPath = path.join(testDir, 'node_modules', 'figma-docker-init', 'bin', 'figma-docker-init.js');
+      const cliPath = path.join(testDir, 'node_modules', 'vibe-to-docker', 'bin', 'vibe-to-docker.js');
       const stats = fs.statSync(cliPath);
 
       // Check executable permission
@@ -138,7 +138,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -153,9 +153,9 @@ describe('E2E Platform Tests', () => {
         stdio: 'pipe'
       });
 
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
 
-      const nodeModulesPath = path.join(testDir, 'node_modules', 'figma-docker-init');
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
     });
 
@@ -218,7 +218,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -233,9 +233,9 @@ describe('E2E Platform Tests', () => {
         stdio: 'pipe'
       });
 
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
 
-      const cliPath = path.join(testDir, 'node_modules', 'figma-docker-init', 'bin', 'figma-docker-init.js');
+      const cliPath = path.join(testDir, 'node_modules', 'vibe-to-docker', 'bin', 'vibe-to-docker.js');
       expect(fs.existsSync(cliPath)).toBe(true);
 
       const stats = fs.statSync(cliPath);
@@ -306,7 +306,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -323,7 +323,7 @@ describe('E2E Platform Tests', () => {
         timeout: 60000 // 60 second timeout
       });
 
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
     });
 
     test('should run without TTY in CI', () => {
@@ -336,7 +336,7 @@ describe('E2E Platform Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 

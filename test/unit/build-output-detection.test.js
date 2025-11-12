@@ -12,7 +12,7 @@ import {
   parseRollupConfig,
   parseWebpackConfig,
   detectBuildOutputDir
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

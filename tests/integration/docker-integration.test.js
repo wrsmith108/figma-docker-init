@@ -240,16 +240,16 @@ describe('Docker Integration Tests', () => {
   describe('Container Startup with New Paths', () => {
     beforeEach(async () => {
       // Setup directory structure
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'config'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'data'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'logs'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'config'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'data'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'logs'));
     });
 
     it('should validate required directories exist', async () => {
       const requiredDirs = [
-        path.join(testProjectDir, '.figma-docker', 'config'),
-        path.join(testProjectDir, '.figma-docker', 'data'),
-        path.join(testProjectDir, '.figma-docker', 'logs')
+        path.join(testProjectDir, '.vibe-docker', 'config'),
+        path.join(testProjectDir, '.vibe-docker', 'data'),
+        path.join(testProjectDir, '.vibe-docker', 'logs')
       ];
 
       for (const dir of requiredDirs) {
@@ -282,7 +282,7 @@ describe('Docker Integration Tests', () => {
 
     it('should verify container can read config files', async () => {
       // Create test config file
-      const configFile = path.join(testProjectDir, '.figma-docker', 'config', 'test.json');
+      const configFile = path.join(testProjectDir, '.vibe-docker', 'config', 'test.json');
       await fs.writeJson(configFile, { test: 'value' });
 
       expect(await fs.pathExists(configFile)).toBe(true);
@@ -314,9 +314,9 @@ describe('Docker Integration Tests', () => {
 
   describe('Volume Mount Functionality', () => {
     beforeEach(async () => {
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'config'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'data'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'logs'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'config'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'data'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'logs'));
     });
 
     it('should mount config directory as read-only option', async () => {
@@ -342,7 +342,7 @@ describe('Docker Integration Tests', () => {
     });
 
     it('should persist data across container restarts', async () => {
-      const dataFile = path.join(testProjectDir, '.figma-docker', 'data', 'persistent.json');
+      const dataFile = path.join(testProjectDir, '.vibe-docker', 'data', 'persistent.json');
       const testData = { persistent: true, timestamp: Date.now() };
 
       await fs.writeJson(dataFile, testData);
@@ -354,7 +354,7 @@ describe('Docker Integration Tests', () => {
     });
 
     it('should handle volume permissions correctly', async () => {
-      const dataFile = path.join(testProjectDir, '.figma-docker', 'data', 'test.txt');
+      const dataFile = path.join(testProjectDir, '.vibe-docker', 'data', 'test.txt');
       await fs.writeFile(dataFile, 'test content');
 
       const stats = await fs.stat(dataFile);
@@ -388,7 +388,7 @@ describe('Docker Integration Tests', () => {
     });
 
     it('should create log files in mounted volume', async () => {
-      const logDir = path.join(testProjectDir, '.figma-docker', 'logs');
+      const logDir = path.join(testProjectDir, '.vibe-docker', 'logs');
       const logFile = path.join(logDir, 'app.log');
 
       await fs.writeFile(logFile, 'Log entry 1\nLog entry 2\n');
@@ -401,7 +401,7 @@ describe('Docker Integration Tests', () => {
     it('should handle nested directory structures in volumes', async () => {
       const nestedPath = path.join(
         testProjectDir,
-        '.figma-docker',
+        '.vibe-docker',
         'data',
         'projects',
         'subfolder',
@@ -557,9 +557,9 @@ describe('Docker Integration Tests', () => {
 
   describe('Docker Compose Commands', () => {
     beforeEach(async () => {
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'config'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'data'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'logs'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'config'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'data'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'logs'));
 
       const composeConfig = {
         version: '3.8',

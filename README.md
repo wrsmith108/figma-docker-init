@@ -1,11 +1,11 @@
-# Figma Docker Init
+# Vibe Docker Init
 
-[![npm version](https://badge.fury.io/js/figma-docker-init.svg)](https://www.npmjs.com/package/figma-docker-init)
+[![npm version](https://badge.fury.io/js/vibe-to-docker.svg)](https://www.npmjs.com/package/vibe-to-docker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.8.1-brightgreen.svg)](https://nodejs.org/)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
-[![Tests](https://img.shields.io/badge/tests-368%20passing-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/your-username/figma-docker-init)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/your-username/vibe-to-docker)
+[![Tests](https://img.shields.io/badge/tests-368%20passing-brightgreen.svg)](https://github.com/your-username/vibe-to-docker)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/your-username/vibe-to-docker)
 
 Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
 
@@ -16,7 +16,7 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 **Key Features:**
 - ✅ **Zero Warning Installation**: Clean output with no template or configuration warnings
-- ✅ **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
+- ✅ **Per-Project Configuration**: Each project gets its own `.vibe-docker/` directory
 - ✅ **Detached Mode by Default**: Containers start in background, terminal returns immediately
 - ✅ **HTTP-Only Development**: Simplified nginx configuration without SSL complexity
 - ✅ **Automatic .env Creation**: No manual file copying required
@@ -24,7 +24,7 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 
 **Installation:**
 ```bash
-npx figma-docker-init basic
+npx vibe-to-docker basic
 ```
 
 **Quick Start:**
@@ -33,10 +33,10 @@ npx figma-docker-init basic
 cd your-project
 
 # Initialize Docker configuration
-npx figma-docker-init basic
+npx vibe-to-docker basic
 
 # Start containers in background
-cd .figma-docker && docker-compose up -d --build
+cd .vibe-docker && docker-compose up -d --build
 
 # View logs if needed
 docker-compose logs -f
@@ -67,7 +67,7 @@ docker-compose logs -f
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
@@ -89,7 +89,7 @@ npx figma-docker-init@beta basic
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
@@ -116,7 +116,7 @@ npx figma-docker-init@beta basic
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
@@ -135,17 +135,17 @@ npx figma-docker-init@beta basic
 📝 **DOCUMENTATION**: Fixed docker-compose instructions
 
 **Fixed Issues:**
-- ✅ **Clearer Instructions**: Updated docker-compose command to include cd to .figma-docker directory
+- ✅ **Clearer Instructions**: Updated docker-compose command to include cd to .vibe-docker directory
 - ✅ **User Confusion**: Removed "no configuration file provided" error by clarifying directory navigation
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
-- Updated "Next Steps" to show: `cd .figma-docker && docker-compose up --build`
-- Clarified that Docker files are in the `.figma-docker/` subdirectory
+- Updated "Next Steps" to show: `cd .vibe-docker && docker-compose up --build`
+- Clarified that Docker files are in the `.vibe-docker/` subdirectory
 
 ---
 
@@ -160,7 +160,7 @@ npx figma-docker-init@beta basic
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
@@ -181,7 +181,7 @@ npx figma-docker-init@beta basic
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **What Changed:**
@@ -197,13 +197,13 @@ npx figma-docker-init@beta basic
 
 **Fixed Issues:**
 - ✅ **Module System Compatibility**: Converted CommonJS modules to ES modules for proper import/export
-- ✅ **Missing Dependencies**: Added `ensureFigmaDockerStructure` function that was causing runtime errors
+- ✅ **Missing Dependencies**: Added `ensureVibeDockerStructure` function that was causing runtime errors
 - ✅ **Template Path Resolution**: Fixed template discovery to correctly locate package templates
 - ✅ **GitHub Codespaces Support**: Now works correctly in all npx environments
 
 **Installation:**
 ```bash
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 ```
 
 **Recommended for:** All users experiencing "SyntaxError" or "not defined" errors with beta.1
@@ -211,7 +211,7 @@ npx figma-docker-init@beta basic
 ---
 
 ### v2.0.0 - Per-Project Installation Architecture (October 2025)
-- **Per-Project Installation**: Docker configurations now install to `.figma-docker/` directory in each project
+- **Per-Project Installation**: Docker configurations now install to `.vibe-docker/` directory in each project
 - **Improved Path Resolution**: Enhanced path handling for multi-project workflows
 - **Better Organization**: Centralized configuration management per project
 - **Migration Support**: Seamless migration from global to per-project setup
@@ -220,7 +220,7 @@ npx figma-docker-init@beta basic
 
 ## 🚀 Features
 
-- **Per-Project Configuration**: Each project gets its own `.figma-docker/` directory
+- **Per-Project Configuration**: Each project gets its own `.vibe-docker/` directory
 - **Multiple Templates**: Choose from optimized configurations for different project types
 - **Production Ready**: Includes Nginx configuration, multi-stage builds, and security best practices
 - **Zero Config**: Works out of the box with sensible defaults
@@ -233,19 +233,19 @@ npx figma-docker-init@beta basic
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g figma-docker-init
+npm install -g vibe-to-docker
 ```
 
 ### One-time Use (npx)
 
 ```bash
-npx figma-docker-init [template]
+npx vibe-to-docker [template]
 ```
 
 ### Local Installation
 
 ```bash
-npm install --save-dev figma-docker-init
+npm install --save-dev vibe-to-docker
 ```
 
 ## 🎯 Quick Start
@@ -254,7 +254,7 @@ npm install --save-dev figma-docker-init
 2. Run the CLI tool:
 
 ```bash
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 ```
 
 3. Customize the generated `.env.example` file and rename it to `.env`
@@ -269,7 +269,7 @@ docker-compose up --build
 ### Basic Command
 
 ```bash
-figma-docker-init [template] [options]
+vibe-to-docker [template] [options]
 ```
 
 ### Available Templates
@@ -282,7 +282,7 @@ Minimal Docker setup with essential configuration:
 - Environment file template
 
 ```bash
-figma-docker-init basic
+vibe-to-docker basic
 ```
 
 #### `ui-heavy`
@@ -293,31 +293,31 @@ Optimized for UI-heavy applications with advanced caching and performance optimi
 - Comprehensive environment configuration
 
 ```bash
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 ```
 
 ### Command Options
 
 ```bash
 # Show help information
-figma-docker-init --help
-figma-docker-init -h
+vibe-to-docker --help
+vibe-to-docker -h
 
 # Show version
-figma-docker-init --version
-figma-docker-init -v
+vibe-to-docker --version
+vibe-to-docker -v
 
 # List all available templates
-figma-docker-init --list
+vibe-to-docker --list
 ```
 
 ## 📁 Generated Files
 
-The CLI generates the following files in your project's `.figma-docker/` directory:
+The CLI generates the following files in your project's `.vibe-docker/` directory:
 
 ```
 your-project/
-├── .figma-docker/          # Per-project Docker configuration
+├── .vibe-docker/          # Per-project Docker configuration
 │   ├── config.json         # Project-specific settings
 │   ├── Dockerfile          # Multi-stage build configuration
 │   ├── docker-compose.yml  # Container orchestration
@@ -495,7 +495,7 @@ jobs:
 
 ```bash
 # In your React project
-figma-docker-init basic
+vibe-to-docker basic
 docker-compose up --build
 # App available at http://localhost
 ```
@@ -504,7 +504,7 @@ docker-compose up --build
 
 ```bash
 # For apps with heavy UI components
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 cp .env.example .env
 # Edit .env with your configuration
 docker-compose up --build
@@ -558,9 +558,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🤝 Support
 
-- 📖 [Documentation](https://github.com/your-username/figma-docker-init#readme)
-- 🐛 [Issue Tracker](https://github.com/your-username/figma-docker-init/issues)
-- 💬 [Discussions](https://github.com/your-username/figma-docker-init/discussions)
+- 📖 [Documentation](https://github.com/your-username/vibe-to-docker#readme)
+- 🐛 [Issue Tracker](https://github.com/your-username/vibe-to-docker/issues)
+- 💬 [Discussions](https://github.com/your-username/vibe-to-docker/discussions)
 
 ## 🙏 Acknowledgments
 

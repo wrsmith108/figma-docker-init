@@ -31,7 +31,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -48,7 +48,7 @@ describe('E2E Performance Tests', () => {
       expect(installTime).toBeLessThan(30000);
 
       // Verify installation succeeded
-      const nodeModulesPath = path.join(testDir, 'node_modules', 'figma-docker-init');
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
     }, 35000); // 35 second timeout
 
@@ -76,7 +76,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -100,7 +100,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -122,7 +122,7 @@ describe('E2E Performance Tests', () => {
       // Count installed dependencies
       const nodeModulesPath = path.join(testDir, 'node_modules');
       const packages = fs.readdirSync(nodeModulesPath).filter(name =>
-        !name.startsWith('.') && name !== 'figma-docker-init'
+        !name.startsWith('.') && name !== 'vibe-to-docker'
       );
 
       console.log(`Installed ${packages.length} dependencies in ${duration.toFixed(2)}ms`);
@@ -138,7 +138,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -164,7 +164,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -212,7 +212,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -262,7 +262,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -290,7 +290,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 
@@ -360,7 +360,7 @@ describe('E2E Performance Tests', () => {
             name: 'test-project',
             version: '1.0.0',
             dependencies: {
-              'figma-docker-init': `file:${process.cwd()}`
+              'vibe-to-docker': `file:${process.cwd()}`
             }
           };
 
@@ -412,7 +412,7 @@ describe('E2E Performance Tests', () => {
         name: 'test-project',
         version: '1.0.0',
         dependencies: {
-          'figma-docker-init': `file:${process.cwd()}`
+          'vibe-to-docker': `file:${process.cwd()}`
         }
       };
 

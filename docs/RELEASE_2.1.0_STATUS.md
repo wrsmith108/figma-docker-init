@@ -3,7 +3,7 @@
 **Branch:** `feature/per-project-installation-v2` → `pack-master`
 **Release Date:** October 26, 2025
 **Version:** 2.1.0 (stable)
-**NPM:** https://www.npmjs.com/package/figma-docker-init
+**NPM:** https://www.npmjs.com/package/vibe-to-docker
 
 ---
 
@@ -31,11 +31,11 @@
 
 ### [X] Beta.5 - Docker Compose Path Fix
 **Problem:** "no configuration file provided: not found"
-**Root Cause:** User running from project root, files in `.figma-docker/`
-**Solution:** Updated instructions to include `cd .figma-docker`
+**Root Cause:** User running from project root, files in `.vibe-docker/`
+**Solution:** Updated instructions to include `cd .vibe-docker`
 **Result:** Users can successfully run docker-compose
 **Files Changed:**
-- [X] figma-docker-init.js (updated Next Steps instructions)
+- [X] vibe-to-docker.js (updated Next Steps instructions)
 - [X] README.md (added beta.5 release notes)
 
 ### [X] Beta.6 & Beta.7 - Nginx SSL Crash Loop Fix
@@ -55,7 +55,7 @@
 **Solution:** Changed to detached mode with `-d` flag
 **Result:** Containers start in background, terminal returns to prompt immediately
 **Files Changed:**
-- [X] figma-docker-init.js (updated instructions to use `-d` flag)
+- [X] vibe-to-docker.js (updated instructions to use `-d` flag)
 - [X] README.md (added beta.8 release notes, log viewing instructions)
 
 ### [X] Beta.9 - Warning Cleanup
@@ -92,7 +92,7 @@
 - [X] Pushed to GitHub
 
 ### [X] NPM Publication
-- [X] Published figma-docker-init@2.1.0 to npm registry
+- [X] Published vibe-to-docker@2.1.0 to npm registry
 - [X] Package size: 35.0 kB (29 files)
 - [X] Tag: `latest`
 - [X] Visibility: Public
@@ -103,7 +103,7 @@
 
 ### Core Features
 - [X] Zero Warning Installation - Clean output with no template or configuration warnings
-- [X] Per-Project Configuration - Each project gets its own `.figma-docker/` directory
+- [X] Per-Project Configuration - Each project gets its own `.vibe-docker/` directory
 - [X] Detached Mode by Default - Containers start in background, terminal returns immediately
 - [X] HTTP-Only Development - Simplified nginx configuration without SSL complexity
 - [X] Automatic .env Creation - No manual file copying required
@@ -168,7 +168,7 @@
 - **User Feedback Loop:** Immediate testing in real Codespaces environment
 
 ### Package Stats
-- **NPM Downloads:** Available at https://npmjs.com/package/figma-docker-init
+- **NPM Downloads:** Available at https://npmjs.com/package/vibe-to-docker
 - **Package Size:** 35.0 kB (29 files)
 - **Unpacked Size:** 150.5 kB
 - **Dependencies:** 0 (removed agentdb)
@@ -187,7 +187,7 @@
 
 All success criteria met for 2.1.0 stable release:
 
-- [X] Zero warnings during `npx figma-docker-init basic` installation
+- [X] Zero warnings during `npx vibe-to-docker basic` installation
 - [X] Zero warnings during `docker-compose up -d --build` execution
 - [X] Containers start successfully in GitHub Codespaces
 - [X] Terminal returns to prompt after starting containers
@@ -204,10 +204,10 @@ All success criteria met for 2.1.0 stable release:
 ### Current Stable Installation
 ```bash
 # Global installation
-npm install -g figma-docker-init
+npm install -g vibe-to-docker
 
 # One-time use (npx)
-npx figma-docker-init basic
+npx vibe-to-docker basic
 ```
 
 ### Quick Start (Validated in Codespaces)
@@ -216,10 +216,10 @@ npx figma-docker-init basic
 cd your-project
 
 # Initialize Docker configuration
-npx figma-docker-init basic
+npx vibe-to-docker basic
 
 # Start containers in background
-cd .figma-docker && docker-compose up -d --build
+cd .vibe-docker && docker-compose up -d --build
 
 # View logs if needed
 docker-compose logs -f
@@ -253,10 +253,10 @@ docker-compose logs -f
 
 ## 🔗 References
 
-- **NPM Package:** https://www.npmjs.com/package/figma-docker-init
-- **GitHub Repository:** https://github.com/wrsmith108/figma-docker-init
-- **Issues:** https://github.com/wrsmith108/figma-docker-init/issues
-- **Latest Release:** https://github.com/wrsmith108/figma-docker-init/releases/tag/v2.1.0
+- **NPM Package:** https://www.npmjs.com/package/vibe-to-docker
+- **GitHub Repository:** https://github.com/wrsmith108/vibe-to-docker
+- **Issues:** https://github.com/wrsmith108/vibe-to-docker/issues
+- **Latest Release:** https://github.com/wrsmith108/vibe-to-docker/releases/tag/v2.1.0
 
 ---
 

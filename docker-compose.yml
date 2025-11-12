@@ -3,7 +3,7 @@ services:
   # Optimized for Figma projects with complex UI dependencies
   app-dev:
     image: node:18-alpine
-    container_name: "figma-docker-init-dev"
+    container_name: "vibe-to-docker-dev"
     working_dir: /app
     ports:
       - "3000:3000"
@@ -30,7 +30,7 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - "figma-docker-init-network"
+      - "vibe-to-docker-network"
 
   # Production service using the local Dockerfile
   app-prod:
@@ -39,7 +39,7 @@ services:
       dockerfile: Dockerfile
       args:
         - NODE_ENV=development
-    container_name: "figma-docker-init-prod"
+    container_name: "vibe-to-docker-prod"
     ports:
       - "8080:80"
     environment:
@@ -52,14 +52,14 @@ services:
       retries: 3
       start_period: 20s
     networks:
-      - "figma-docker-init-network"
+      - "vibe-to-docker-network"
     profiles:
       - production
 
   # Optional: Nginx reverse proxy for advanced development scenarios
   nginx-dev:
     image: nginx:alpine
-    container_name: "figma-docker-init-nginx"
+    container_name: "vibe-to-docker-nginx"
     ports:
       - "80:80"
     volumes:
@@ -68,7 +68,7 @@ services:
       - app-dev
     restart: unless-stopped
     networks:
-      - "figma-docker-init-network"
+      - "vibe-to-docker-network"
     profiles:
       - proxy
 
@@ -79,6 +79,6 @@ volumes:
     driver: local
 
 networks:
-  "figma-docker-init-network":
+  "vibe-to-docker-network":
     driver: bridge
-    name: "figma-docker-init-network"
+    name: "vibe-to-docker-network"

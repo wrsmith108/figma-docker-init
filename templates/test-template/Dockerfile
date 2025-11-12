@@ -1,2 +1,0 @@
-FROM node:18
-EXPOSE {{DEV_PORT}}

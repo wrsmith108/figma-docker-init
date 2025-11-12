@@ -15,11 +15,11 @@ Phase 1 implementation has created the foundation for per-project installation b
 1. **Zero test coverage** - 0% coverage across all modules (target: 90%+)
 2. **49 failing tests** - Core functionality is broken
 3. **Missing lib files in npm package** - Module imports failing after installation
-4. **No integration with main CLI** - New modules are not used by figma-docker-init.js
+4. **No integration with main CLI** - New modules are not used by vibe-to-docker.js
 
 ### 🟡 High Priority Issues
 1. **No backward compatibility testing** - Risk of breaking existing users
-2. **Missing `.figma-docker` directory implementation** - Core feature not present
+2. **Missing `.vibe-docker` directory implementation** - Core feature not present
 3. **Path resolution not integrated** - Created but not used
 4. **No cross-platform validation** - Windows/Linux testing needed
 
@@ -35,7 +35,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 
 ### 1. lib/directory-manager.js (220 lines)
 
-**Purpose:** Manage `.figma-docker/` directory structure
+**Purpose:** Manage `.vibe-docker/` directory structure
 
 #### ✅ Code Quality: GOOD
 
@@ -56,7 +56,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 🟡 **High Priority:**
 - `cleanupFigmaDockerDirectory` could be dangerous - needs confirmation prompt
 - No validation that `projectDir` is actually a valid project root
-- Missing functionality: No `.gitignore` update to exclude `.figma-docker/cache`
+- Missing functionality: No `.gitignore` update to exclude `.vibe-docker/cache`
 
 🟢 **Low Priority:**
 - Could benefit from progress callbacks for long operations
@@ -69,7 +69,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 - Directory traversal protection implicit in path.join usage
 
 **Recommended Actions:**
-1. **URGENT:** Integrate into figma-docker-init.js main flow
+1. **URGENT:** Integrate into vibe-to-docker.js main flow
 2. **URGENT:** Write comprehensive test suite (target: 95%+ coverage)
 3. Add `.gitignore` management functionality
 4. Add permission checking before directory operations
@@ -137,7 +137,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 **Issues:**
 
 🔴 **Critical:**
-- **DUPLICATED CODE** - All functions exist identically in main figma-docker-init.js
+- **DUPLICATED CODE** - All functions exist identically in main vibe-to-docker.js
 - **NOT USED** - Module created but main file still uses inline implementations
 - **NO TESTS** - No coverage despite being security-critical code
 
@@ -159,7 +159,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 - Path traversal prevention in validateFilePath
 
 **Recommended Actions:**
-1. **URGENT:** Replace inline validation in figma-docker-init.js with module imports
+1. **URGENT:** Replace inline validation in vibe-to-docker.js with module imports
 2. **URGENT:** Write security-focused test suite
 3. **URGENT:** Test all edge cases and boundary conditions
 4. Relax `validateProjectDirectory` restriction to allow parent directories
@@ -213,7 +213,7 @@ Phase 1 implementation has created the foundation for per-project installation b
 
 ---
 
-### 5. Main CLI (figma-docker-init.js) - Integration Issues
+### 5. Main CLI (vibe-to-docker.js) - Integration Issues
 
 **Purpose:** Primary CLI entry point
 
@@ -235,12 +235,12 @@ Phase 1 implementation has created the foundation for per-project installation b
 🔴 **Validation Duplication:**
 The main file has identical copies of all validator functions that exist in lib/validators.js. This violates DRY principle and creates maintenance burden.
 
-🔴 **No .figma-docker Implementation:**
-Despite being the core of Phase 1, the CLI still writes files to project root, not to `.figma-docker/` directory.
+🔴 **No .vibe-docker Implementation:**
+Despite being the core of Phase 1, the CLI still writes files to project root, not to `.vibe-docker/` directory.
 
 **Recommended Actions:**
 1. **URGENT:** Refactor to import and use lib modules
-2. **URGENT:** Implement `.figma-docker/` directory structure
+2. **URGENT:** Implement `.vibe-docker/` directory structure
 3. **URGENT:** Update copyTemplate to use directory-manager
 4. **URGENT:** Replace inline validation with imports from lib/validators.js
 5. Add integration tests for complete workflow
@@ -398,7 +398,7 @@ Lines        : 0% ( 0/419 ) - Target: 90%
 
 🟢 **User Documentation:**
 - README.md needs update for per-project installation
-- No documentation on `.figma-docker/` directory structure
+- No documentation on `.vibe-docker/` directory structure
 - No troubleshooting guide
 
 **Recommended Actions:**
@@ -459,7 +459,7 @@ Lines        : 0% ( 0/419 ) - Target: 90%
 **Compatibility Concerns:**
 
 🔴 **Breaking Changes:**
-1. **.figma-docker/ directory not implemented yet**
+1. **.vibe-docker/ directory not implemented yet**
    - If implemented, will change where files are stored
    - Existing users have files in project root
    - No migration path documented
@@ -469,7 +469,7 @@ Lines        : 0% ( 0/419 ) - Target: 90%
    - Tests expect new interfaces but code uses old
 
 3. **CLI behavior changes**
-   - If `.figma-docker/` implemented, users need to update scripts
+   - If `.vibe-docker/` implemented, users need to update scripts
    - Docker Compose volume mounts will need updates
    - Documentation will be outdated
 
@@ -540,7 +540,7 @@ Cyclomatic Complexity: Low (GOOD)
 
 | Task | Status | Assessment |
 |------|--------|------------|
-| 1.1.1 Design `.figma-docker/` structure | ✅ | Documented in code |
+| 1.1.1 Design `.vibe-docker/` structure | ✅ | Documented in code |
 | 1.1.2 Create directory-manager.js | ⚠️ | Created but not integrated |
 | 1.1.3 Implement directory validation | ⚠️ | Exists but not used |
 | 1.1.4 Add backward compatibility | ❌ | Detection exists, no migration |
@@ -573,7 +573,7 @@ Cyclomatic Complexity: Low (GOOD)
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
 | Test Coverage | 90%+ | 0% | ❌ FAIL |
-| Templates to `.figma-docker/` | Yes | No | ❌ FAIL |
+| Templates to `.vibe-docker/` | Yes | No | ❌ FAIL |
 | CLI detects project root | Yes | No | ❌ FAIL |
 | Path resolution cross-platform | Yes | Not tested | ❌ FAIL |
 | No breaking changes | Yes | Unknown | ⚠️ RISK |
@@ -593,7 +593,7 @@ To make Phase 1 production-ready, these items MUST be completed:
    ```json
    // package.json needs update:
    "files": [
-     "figma-docker-init.js",
+     "vibe-to-docker.js",
      "lib/",  // ADD THIS LINE
      "templates/",
      "README.md",
@@ -605,21 +605,21 @@ To make Phase 1 production-ready, these items MUST be completed:
 
 2. **Integrate lib modules into main CLI**
    ```javascript
-   // figma-docker-init.js needs imports:
-   import { findProjectRoot, getFigmaDockerDir } from './lib/path-resolver.js';
-   import { createFigmaDockerDirectory } from './lib/directory-manager.js';
+   // vibe-to-docker.js needs imports:
+   import { findProjectRoot, getVibeDockerDir } from './lib/path-resolver.js';
+   import { createVibeDockerDirectory } from './lib/directory-manager.js';
    import { validateTemplateName, validatePort } from './lib/validators.js';
    ```
    **Impact:** Modules are unused, code is duplicated
    **Effort:** 4 hours
 
-3. **Implement .figma-docker directory structure**
+3. **Implement .vibe-docker directory structure**
    ```javascript
    // copyTemplate needs to:
    const projectRoot = findProjectRoot();
-   const figmaDockerDir = getFigmaDockerDir(projectRoot);
-   createFigmaDockerDirectory(projectRoot);
-   // Then copy templates to figmaDockerDir instead of projectRoot
+   const vibeDockerDir = getVibeDockerDir(projectRoot);
+   createVibeDockerDirectory(projectRoot);
+   // Then copy templates to vibeDockerDir instead of projectRoot
    ```
    **Impact:** Core feature not implemented
    **Effort:** 8 hours
@@ -692,7 +692,7 @@ To make Phase 1 production-ready, these items MUST be completed:
 3. **Integration Work** (3 days)
    - Integrate lib modules into main CLI
    - Remove duplicate code
-   - Implement .figma-docker directory structure
+   - Implement .vibe-docker directory structure
    - Update templates to use new paths
 
 4. **Test Development** (1 week)
@@ -755,7 +755,7 @@ Phase 1 implementation has laid good groundwork with well-designed modules, but 
 - ✅ **Security:** No major vulnerabilities (when integrated properly)
 - ❌ **Integration:** New modules not used by main CLI
 - ❌ **Testing:** Zero coverage, many failing tests
-- ❌ **Completeness:** Core `.figma-docker/` feature not implemented
+- ❌ **Completeness:** Core `.vibe-docker/` feature not implemented
 - ⚠️ **Compatibility:** Backward compatibility not tested
 
 **Estimated Work to Production:**

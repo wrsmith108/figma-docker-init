@@ -56,20 +56,20 @@ describe('Directory Manager', () => {
   describe('Directory Creation', () => {
     test('should create .figma-docker directory in clean project', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(false);
       mockFs.mkdirSync.mockImplementation(() => {});
 
       // Simulate directory creation
       expect(() => {
-        if (!mockFs.existsSync(figmaDockerDir)) {
-          mockFs.mkdirSync(figmaDockerDir, { recursive: true });
+        if (!mockFs.existsSync(vibeDockerDir)) {
+          mockFs.mkdirSync(vibeDockerDir, { recursive: true });
         }
       }).not.toThrow();
 
       expect(mockFs.mkdirSync).toHaveBeenCalledWith(
-        figmaDockerDir,
+        vibeDockerDir,
         expect.objectContaining({ recursive: true })
       );
     });
@@ -82,7 +82,7 @@ describe('Directory Manager', () => {
       mockFs.mkdirSync.mockImplementation(() => {});
 
       subdirs.forEach(subdir => {
-        const dirPath = path.join(projectDir, '.figma-docker', subdir);
+        const dirPath = path.join(projectDir, '.vibe-docker', subdir);
         mockFs.mkdirSync(dirPath, { recursive: true });
       });
 
@@ -97,14 +97,14 @@ describe('Directory Manager', () => {
 
     test('should handle existing .figma-docker directory', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       // Should not attempt to create if exists
-      if (!mockFs.existsSync(figmaDockerDir)) {
-        mockFs.mkdirSync(figmaDockerDir, { recursive: true });
+      if (!mockFs.existsSync(vibeDockerDir)) {
+        mockFs.mkdirSync(vibeDockerDir, { recursive: true });
       }
 
       expect(mockFs.mkdirSync).not.toHaveBeenCalled();
@@ -112,15 +112,15 @@ describe('Directory Manager', () => {
 
     test('should create directory with correct permissions', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(false);
       mockFs.mkdirSync.mockImplementation(() => {});
 
-      mockFs.mkdirSync(figmaDockerDir, { recursive: true, mode: 0o755 });
+      mockFs.mkdirSync(vibeDockerDir, { recursive: true, mode: 0o755 });
 
       expect(mockFs.mkdirSync).toHaveBeenCalledWith(
-        figmaDockerDir,
+        vibeDockerDir,
         expect.objectContaining({ mode: 0o755 })
       );
     });
@@ -129,7 +129,7 @@ describe('Directory Manager', () => {
   describe('Directory Validation', () => {
     test('should validate existing .figma-docker directory', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.statSync.mockReturnValue({
@@ -137,15 +137,15 @@ describe('Directory Manager', () => {
         isFile: () => false
       });
 
-      const isValid = mockFs.existsSync(figmaDockerDir) &&
-                      mockFs.statSync(figmaDockerDir).isDirectory();
+      const isValid = mockFs.existsSync(vibeDockerDir) &&
+                      mockFs.statSync(vibeDockerDir).isDirectory();
 
       expect(isValid).toBe(true);
     });
 
     test('should detect conflicting files', () => {
       const projectDir = tempDir;
-      const figmaDockerPath = path.join(projectDir, '.figma-docker');
+      const figmaDockerPath = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.statSync.mockReturnValue({
@@ -161,7 +161,7 @@ describe('Directory Manager', () => {
 
     test('should verify write permissions', () => {
       const projectDir = tempDir;
-      const testFile = path.join(projectDir, '.figma-docker', '.test');
+      const testFile = path.join(projectDir, '.vibe-docker', '.test');
 
       mockFs.writeFileSync.mockImplementation(() => {});
       mockFs.unlinkSync.mockImplementation(() => {});
@@ -175,7 +175,7 @@ describe('Directory Manager', () => {
 
     test('should handle permission denied errors', () => {
       const projectDir = tempDir;
-      const testFile = path.join(projectDir, '.figma-docker', '.test');
+      const testFile = path.join(projectDir, '.vibe-docker', '.test');
 
       mockFs.writeFileSync.mockImplementation(() => {
         const error = new Error('EACCES: permission denied');
@@ -193,7 +193,7 @@ describe('Directory Manager', () => {
       const requiredDirs = ['configs', 'templates', 'cache'];
 
       requiredDirs.forEach(dir => {
-        const dirPath = path.join(projectDir, '.figma-docker', dir);
+        const dirPath = path.join(projectDir, '.vibe-docker', dir);
         mockFs.existsSync.mockReturnValueOnce(true);
         mockFs.statSync.mockReturnValueOnce({ isDirectory: () => true });
 
@@ -207,25 +207,25 @@ describe('Directory Manager', () => {
   describe('Cleanup on Failure', () => {
     test('should remove partially created directory on error', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.rmdirSync.mockImplementation(() => {});
 
       // Simulate cleanup
-      if (mockFs.existsSync(figmaDockerDir)) {
-        mockFs.rmdirSync(figmaDockerDir, { recursive: true });
+      if (mockFs.existsSync(vibeDockerDir)) {
+        mockFs.rmdirSync(vibeDockerDir, { recursive: true });
       }
 
       expect(mockFs.rmdirSync).toHaveBeenCalledWith(
-        figmaDockerDir,
+        vibeDockerDir,
         expect.objectContaining({ recursive: true })
       );
     });
 
     test('should handle cleanup errors gracefully', () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.rmdirSync.mockImplementation(() => {
@@ -234,7 +234,7 @@ describe('Directory Manager', () => {
 
       expect(() => {
         try {
-          mockFs.rmdirSync(figmaDockerDir, { recursive: true });
+          mockFs.rmdirSync(vibeDockerDir, { recursive: true });
         } catch (error) {
           // Should catch and handle cleanup errors
           expect(error.message).toContain('not empty');
@@ -245,8 +245,8 @@ describe('Directory Manager', () => {
     test('should remove created files on rollback', () => {
       const projectDir = tempDir;
       const createdFiles = [
-        path.join(projectDir, '.figma-docker', 'config.json'),
-        path.join(projectDir, '.figma-docker', 'docker-compose.yml')
+        path.join(projectDir, '.vibe-docker', 'config.json'),
+        path.join(projectDir, '.vibe-docker', 'docker-compose.yml')
       ];
 
       mockFs.existsSync.mockReturnValue(true);
@@ -264,7 +264,7 @@ describe('Directory Manager', () => {
     test('should restore backup on installation failure', () => {
       const projectDir = tempDir;
       const backupDir = path.join(projectDir, '.figma-docker.backup');
-      const targetDir = path.join(projectDir, '.figma-docker');
+      const targetDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValueOnce(true); // backup exists
       mockFs.rmdirSync.mockImplementation(() => {});
@@ -297,7 +297,7 @@ describe('Directory Manager', () => {
     test('should provide migration path from global to per-project', () => {
       const globalDir = path.join(os.homedir(), '.figma-docker-global');
       const projectDir = tempDir;
-      const targetDir = path.join(projectDir, '.figma-docker');
+      const targetDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue(['config.json', 'docker-compose.yml']);
@@ -318,7 +318,7 @@ describe('Directory Manager', () => {
 
     test('should maintain support for existing users', () => {
       const legacyPath = path.join(os.homedir(), '.figma-docker-legacy');
-      const projectPath = path.join(tempDir, '.figma-docker');
+      const projectPath = path.join(tempDir, '.vibe-docker');
 
       mockFs.existsSync.mockImplementation(p => {
         return p === legacyPath || p === projectPath;
@@ -331,7 +331,7 @@ describe('Directory Manager', () => {
 
     test('should prefer per-project over global installation', () => {
       const globalDir = path.join(os.homedir(), '.figma-docker-global');
-      const projectDir = path.join(tempDir, '.figma-docker');
+      const projectDir = path.join(tempDir, '.vibe-docker');
 
       mockFs.existsSync.mockImplementation(p => p === projectDir || p === globalDir);
 
@@ -347,7 +347,7 @@ describe('Directory Manager', () => {
     });
 
     test('should handle version detection for migration', () => {
-      const configPath = path.join(tempDir, '.figma-docker', 'config.json');
+      const configPath = path.join(tempDir, '.vibe-docker', 'config.json');
       const mockConfig = {
         version: '1.0.0',
         type: 'global'
@@ -366,12 +366,12 @@ describe('Directory Manager', () => {
   describe('Edge Cases', () => {
     test('should handle path with spaces', () => {
       const projectDir = path.join(tempDir, 'project with spaces');
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(false);
       mockFs.mkdirSync.mockImplementation(() => {});
 
-      mockFs.mkdirSync(figmaDockerDir, { recursive: true });
+      mockFs.mkdirSync(vibeDockerDir, { recursive: true });
 
       expect(mockFs.mkdirSync).toHaveBeenCalledWith(
         expect.stringContaining('project with spaces'),
@@ -381,24 +381,24 @@ describe('Directory Manager', () => {
 
     test('should handle Windows path separators', () => {
       const projectDir = 'C:\\Users\\test\\project';
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       // Normalize path for cross-platform testing
-      const normalizedPath = path.normalize(figmaDockerDir);
+      const normalizedPath = path.normalize(vibeDockerDir);
 
-      expect(normalizedPath).toContain('.figma-docker');
+      expect(normalizedPath).toContain('.vibe-docker');
     });
 
     test('should handle very long paths', () => {
       const longPath = 'a'.repeat(200);
       const projectDir = path.join(tempDir, longPath);
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.existsSync.mockReturnValue(false);
       mockFs.mkdirSync.mockImplementation(() => {});
 
       expect(() => {
-        mockFs.mkdirSync(figmaDockerDir, { recursive: true });
+        mockFs.mkdirSync(vibeDockerDir, { recursive: true });
       }).not.toThrow();
     });
 
@@ -419,15 +419,15 @@ describe('Directory Manager', () => {
 
     test('should handle concurrent directory creation', async () => {
       const projectDir = tempDir;
-      const figmaDockerDir = path.join(projectDir, '.figma-docker');
+      const vibeDockerDir = path.join(projectDir, '.vibe-docker');
 
       mockFs.promises.mkdir.mockResolvedValue(undefined);
 
       // Simulate concurrent calls
       const promises = [
-        mockFs.promises.mkdir(figmaDockerDir, { recursive: true }),
-        mockFs.promises.mkdir(figmaDockerDir, { recursive: true }),
-        mockFs.promises.mkdir(figmaDockerDir, { recursive: true })
+        mockFs.promises.mkdir(vibeDockerDir, { recursive: true }),
+        mockFs.promises.mkdir(vibeDockerDir, { recursive: true }),
+        mockFs.promises.mkdir(vibeDockerDir, { recursive: true })
       ];
 
       await Promise.all(promises);
@@ -448,7 +448,7 @@ describe('Directory Manager', () => {
       // Create multiple directories
       const dirs = ['configs', 'templates', 'cache', 'logs'];
       dirs.forEach(dir => {
-        mockFs.mkdirSync(path.join(projectDir, '.figma-docker', dir), { recursive: true });
+        mockFs.mkdirSync(path.join(projectDir, '.vibe-docker', dir), { recursive: true });
       });
 
       const duration = Date.now() - startTime;
@@ -466,7 +466,7 @@ describe('Directory Manager', () => {
         Array.from({ length: fileCount }, (_, i) => `file${i}.txt`)
       );
 
-      const files = mockFs.readdirSync(path.join(projectDir, '.figma-docker'));
+      const files = mockFs.readdirSync(path.join(projectDir, '.vibe-docker'));
 
       expect(files).toHaveLength(fileCount);
     });

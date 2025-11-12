@@ -12,7 +12,7 @@ import {
   detectProjectValues,
   copyTemplate,
   ValidationError
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -335,8 +335,8 @@ describe('Integration Workflow Functions', () => {
         await copyTemplate('test-template', targetDir);
 
         // Files are created in .figma-docker directory
-        const figmaDockerDir = path.join(targetDir, '.figma-docker');
-        const dockerfilePath = path.join(figmaDockerDir, 'Dockerfile');
+        const vibeDockerDir = path.join(targetDir, '.vibe-docker');
+        const dockerfilePath = path.join(vibeDockerDir, 'Dockerfile');
         expect(fs.existsSync(dockerfilePath)).toBe(true);
 
         const content = fs.readFileSync(dockerfilePath, 'utf8');
@@ -451,8 +451,8 @@ describe('Integration Workflow Functions', () => {
         await copyTemplate('replace-template', targetDir);
 
         // Files are created in .figma-docker directory
-        const figmaDockerDir = path.join(targetDir, '.figma-docker');
-        const content = fs.readFileSync(path.join(figmaDockerDir, 'config.txt'), 'utf8');
+        const vibeDockerDir = path.join(targetDir, '.vibe-docker');
+        const content = fs.readFileSync(path.join(vibeDockerDir, 'config.txt'), 'utf8');
         expect(content).toContain('Project: my-awesome-app');
         expect(content).toContain('Framework: react');
 

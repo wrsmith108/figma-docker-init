@@ -9,13 +9,13 @@ services:
         - "3000:3000"
       volumes:
         # Mount source code for hot reload
-        - /Users/williamsmith/Documents/GitHub/figma-docker-init:/app
+        - /Users/williamsmith/Documents/GitHub/vibe-to-docker:/app
         # Use named volume for node_modules to avoid cross-platform issues
         - node_modules:/app/node_modules
         # Exclude node_modules from source mount using anonymous volume
         - /app/node_modules
         # Mount .figma-docker configuration
-        - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker:/Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker:ro
+        - /Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker:/Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker:ro
       environment:
         - NODE_ENV=development
         - VITE_HOST=0.0.0.0
@@ -122,9 +122,9 @@ services:
       - "8888:80"
       - "{{NGINX_SSL_PORT:-8443}}:443"
     volumes:
-      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker/nginx.conf:/etc/nginx/nginx.conf:ro
       # SSL certificates (optional - mount if available)
-      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/ssl:/etc/ssl/certs:ro
+      - /Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker/ssl:/etc/ssl/certs:ro
     depends_on:
       - app-dev
     restart: unless-stopped
@@ -171,7 +171,7 @@ services:
       - "{{PROMETHEUS_PORT:-9090}}:9090"
     volumes:
       - prometheus_data:/prometheus
-      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -213,7 +213,7 @@ services:
       - "{{GRAFANA_PORT:-3001}}:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      - /Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /Users/williamsmith/Documents/GitHub/vibe-to-docker/.figma-docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false

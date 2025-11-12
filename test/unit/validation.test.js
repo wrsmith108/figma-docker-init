@@ -14,7 +14,7 @@ import {
   sanitizeTemplateVariable,
   validateFilePath,
   ValidationError
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 import path from 'path';
 
 describe('Validation Functions', () => {

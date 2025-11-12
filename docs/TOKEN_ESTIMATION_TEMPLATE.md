@@ -123,7 +123,7 @@ Where:
 
 ## Example Calculation
 
-### Task: Rename package from figma-docker-init to vibe-to-docker
+### Task: Rename package from vibe-to-docker to vibe-to-docker
 
 **Scope**:
 - Files to modify: 98 files, ~8,000 LOC total

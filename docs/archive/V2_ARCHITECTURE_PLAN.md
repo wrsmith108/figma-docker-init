@@ -1,6 +1,6 @@
-# V2 Architecture Plan: figma-docker-init
+# V2 Architecture Plan: vibe-to-docker
 
-**Project**: figma-docker-init
+**Project**: vibe-to-docker
 **Version**: 2.0.0
 **Date**: October 23, 2025
 **Status**: Proposed
@@ -115,7 +115,7 @@ Add explicit named exports for all public functions while keeping the file struc
 
 **Implementation**:
 ```javascript
-// At end of figma-docker-init.js
+// At end of vibe-to-docker.js
 export {
   // Validation
   sanitizeString,
@@ -449,7 +449,7 @@ function validatePort(port) {
 **Status**: Accepted
 
 **Context**:
-Tests are currently in `test/figma-docker-init.test.js`. Some projects split into `src/` and `test/` directories.
+Tests are currently in `test/vibe-to-docker.test.js`. Some projects split into `src/` and `test/` directories.
 
 **Decision**:
 Keep flat structure: main file at root, tests in `test/` directory.
@@ -462,10 +462,10 @@ Keep flat structure: main file at root, tests in `test/` directory.
 
 **Structure**:
 ```
-figma-docker-init/
-├── figma-docker-init.js          # Main CLI file
+vibe-to-docker/
+├── vibe-to-docker.js          # Main CLI file
 ├── test/
-│   └── figma-docker-init.test.js # All tests
+│   └── vibe-to-docker.test.js # All tests
 ├── templates/                     # Template files
 ├── package.json
 └── ...config files
@@ -484,13 +484,13 @@ figma-docker-init/
 ### Phase 1: Code Quality (Week 1) - PRIORITY: HIGH
 
 #### 1.1 Add Module Exports
-- **File**: `figma-docker-init.js`
+- **File**: `vibe-to-docker.js`
 - **Changes**: Add export block at end of file
 - **Testing**: Verify tests use imports instead of workarounds
 - **Risk**: LOW - Additive change only
 
 #### 1.2 Eliminate Config Parser Duplication
-- **File**: `figma-docker-init.js` (lines 141-236)
+- **File**: `vibe-to-docker.js` (lines 141-236)
 - **Changes**:
   - Create `parseConfig()` helper function
   - Replace three parsers with one-liner wrappers
@@ -499,7 +499,7 @@ figma-docker-init/
 - **Risk**: MEDIUM - Core functionality change, needs thorough testing
 
 #### 1.3 Standardize Error Handling
-- **Files**: `figma-docker-init.js`
+- **Files**: `vibe-to-docker.js`
 - **Changes**:
   - Add `ValidationError` and `ConfigError` classes
   - Update functions to throw custom errors
@@ -508,7 +508,7 @@ figma-docker-init/
 - **Risk**: MEDIUM - Changes error behavior, needs careful testing
 
 #### 1.4 Enhance Section Comments
-- **File**: `figma-docker-init.js`
+- **File**: `vibe-to-docker.js`
 - **Changes**: Expand section headers with function lists and descriptions
 - **Testing**: None needed (comments only)
 - **Risk**: NONE
@@ -530,7 +530,7 @@ figma-docker-init/
 ### Phase 2: Testing & Documentation (Week 2) - PRIORITY: MEDIUM
 
 #### 2.1 Improve Test Coverage
-- **File**: `test/figma-docker-init.test.js`
+- **File**: `test/vibe-to-docker.test.js`
 - **Changes**:
   - Add tests for error paths (ValidationError, ConfigError)
   - Add tests for `parseConfig()` helper
@@ -547,7 +547,7 @@ figma-docker-init/
   - Add "Design Principles" section explaining simplicity choice
 
 #### 2.3 Add Input Validation Tests
-- **File**: `test/figma-docker-init.test.js`
+- **File**: `test/vibe-to-docker.test.js`
 - **Changes**: Comprehensive tests for all validation functions
 - **Coverage**: 100% of validation functions
 
@@ -562,7 +562,7 @@ figma-docker-init/
 ### Phase 3: Performance & Polish (Week 3) - PRIORITY: LOW
 
 #### 3.1 Micro-Optimizations
-- **File**: `figma-docker-init.js`
+- **File**: `vibe-to-docker.js`
 - **Changes**:
   - Cache package.json reads (currently read multiple times)
   - Use `Promise.all()` for parallel port checks if beneficial
@@ -570,14 +570,14 @@ figma-docker-init/
 - **Benchmark**: Should not regress, ideally 10-20% faster
 
 #### 3.2 Enhanced CLI Output
-- **File**: `figma-docker-init.js`
+- **File**: `vibe-to-docker.js`
 - **Changes**:
   - Add progress indicators for long operations
   - Improve error messages with actionable suggestions
   - Add color coding for different message types
 
 #### 3.3 Optional: Add Debug Mode
-- **File**: `figma-docker-init.js`
+- **File**: `vibe-to-docker.js`
 - **Changes**: Add `--debug` flag for verbose output
 - **Use Case**: Helps users troubleshoot issues
 
@@ -625,8 +625,8 @@ src/
 ### ✅ ACCEPTED: Enhanced Single-File Approach
 
 ```
-figma-docker-init/
-├── figma-docker-init.js       # 790 lines (down from 854)
+vibe-to-docker/
+├── vibe-to-docker.js       # 790 lines (down from 854)
 │   ├── [Section 1] Input Validation (7 functions)
 │   ├── [Section 2] Config Parsing (5 functions, deduplicated)
 │   ├── [Section 3] Project Detection (1 function)
@@ -637,7 +637,7 @@ figma-docker-init/
 │   ├── [Section 8] Main Logic (2 functions)
 │   └── [Exports] Public API (20 exports)
 ├── test/
-│   └── figma-docker-init.test.js
+│   └── vibe-to-docker.test.js
 ├── templates/
 │   ├── basic/
 │   └── ui-heavy/

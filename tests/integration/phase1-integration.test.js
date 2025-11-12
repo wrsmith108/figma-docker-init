@@ -48,17 +48,17 @@ describe('Phase 1 Integration Tests', () => {
     });
 
     it('should create .figma-docker/ directory structure', async () => {
-      const figmaDockerDir = path.join(testProjectDir, '.figma-docker');
+      const vibeDockerDir = path.join(testProjectDir, '.vibe-docker');
 
       // Create directory structure
-      await fs.ensureDir(path.join(figmaDockerDir, 'config'));
-      await fs.ensureDir(path.join(figmaDockerDir, 'data'));
-      await fs.ensureDir(path.join(figmaDockerDir, 'logs'));
+      await fs.ensureDir(path.join(vibeDockerDir, 'config'));
+      await fs.ensureDir(path.join(vibeDockerDir, 'data'));
+      await fs.ensureDir(path.join(vibeDockerDir, 'logs'));
 
       // Verify directories exist
-      expect(await fs.pathExists(path.join(figmaDockerDir, 'config'))).toBe(true);
-      expect(await fs.pathExists(path.join(figmaDockerDir, 'data'))).toBe(true);
-      expect(await fs.pathExists(path.join(figmaDockerDir, 'logs'))).toBe(true);
+      expect(await fs.pathExists(path.join(vibeDockerDir, 'config'))).toBe(true);
+      expect(await fs.pathExists(path.join(vibeDockerDir, 'data'))).toBe(true);
+      expect(await fs.pathExists(path.join(vibeDockerDir, 'logs'))).toBe(true);
     });
 
     it('should create docker-compose.yml in project root', async () => {
@@ -95,7 +95,7 @@ services:
         : '';
 
       if (!existingContent.includes('.figma-docker/')) {
-        await fs.appendFile(gitignorePath, '\n# Figma Docker per-project data\n.figma-docker/\n');
+        await fs.appendFile(gitignorePath, '\n# Vibe Docker per-project data\n.figma-docker/\n');
       }
 
       // Verify .gitignore contains entry
@@ -104,7 +104,7 @@ services:
     });
 
     it('should create initial configuration files', async () => {
-      const configDir = path.join(testProjectDir, '.figma-docker', 'config');
+      const configDir = path.join(testProjectDir, '.vibe-docker', 'config');
       await fs.ensureDir(configDir);
 
       // Create config.json
@@ -152,7 +152,7 @@ services:
 
     it('should migrate configuration to per-project', async () => {
       const globalDir = path.join(os.homedir(), '.figma-docker-global-test');
-      const projectDir = path.join(testProjectDir, '.figma-docker');
+      const projectDir = path.join(testProjectDir, '.vibe-docker');
 
       // Simulate migration
       await fs.ensureDir(projectDir);
@@ -176,7 +176,7 @@ services:
 
     it('should preserve user data during migration', async () => {
       const globalDir = path.join(os.homedir(), '.figma-docker-global-test');
-      const projectDir = path.join(testProjectDir, '.figma-docker');
+      const projectDir = path.join(testProjectDir, '.vibe-docker');
 
       // Create test data file
       await fs.ensureDir(path.join(globalDir, 'data'));
@@ -250,22 +250,22 @@ services:
 
     it('should support multiple independent installations', async () => {
       // Setup project 1
-      await fs.ensureDir(path.join(project1Dir, '.figma-docker', 'config'));
+      await fs.ensureDir(path.join(project1Dir, '.vibe-docker', 'config'));
       await fs.writeJson(
-        path.join(project1Dir, '.figma-docker', 'config', 'config.json'),
+        path.join(project1Dir, '.vibe-docker', 'config', 'config.json'),
         { projectName: 'project1', port: 3000 }
       );
 
       // Setup project 2
-      await fs.ensureDir(path.join(project2Dir, '.figma-docker', 'config'));
+      await fs.ensureDir(path.join(project2Dir, '.vibe-docker', 'config'));
       await fs.writeJson(
-        path.join(project2Dir, '.figma-docker', 'config', 'config.json'),
+        path.join(project2Dir, '.vibe-docker', 'config', 'config.json'),
         { projectName: 'project2', port: 3001 }
       );
 
       // Verify both exist independently
-      const config1 = await fs.readJson(path.join(project1Dir, '.figma-docker', 'config', 'config.json'));
-      const config2 = await fs.readJson(path.join(project2Dir, '.figma-docker', 'config', 'config.json'));
+      const config1 = await fs.readJson(path.join(project1Dir, '.vibe-docker', 'config', 'config.json'));
+      const config2 = await fs.readJson(path.join(project2Dir, '.vibe-docker', 'config', 'config.json'));
 
       expect(config1.projectName).toBe('project1');
       expect(config2.projectName).toBe('project2');
@@ -274,22 +274,22 @@ services:
 
     it('should isolate data between projects', async () => {
       // Create data in project 1
-      await fs.ensureDir(path.join(project1Dir, '.figma-docker', 'data'));
+      await fs.ensureDir(path.join(project1Dir, '.vibe-docker', 'data'));
       await fs.writeJson(
-        path.join(project1Dir, '.figma-docker', 'data', 'data.json'),
+        path.join(project1Dir, '.vibe-docker', 'data', 'data.json'),
         { project: 'project1', files: ['file1.fig'] }
       );
 
       // Create data in project 2
-      await fs.ensureDir(path.join(project2Dir, '.figma-docker', 'data'));
+      await fs.ensureDir(path.join(project2Dir, '.vibe-docker', 'data'));
       await fs.writeJson(
-        path.join(project2Dir, '.figma-docker', 'data', 'data.json'),
+        path.join(project2Dir, '.vibe-docker', 'data', 'data.json'),
         { project: 'project2', files: ['file2.fig'] }
       );
 
       // Verify isolation
-      const data1 = await fs.readJson(path.join(project1Dir, '.figma-docker', 'data', 'data.json'));
-      const data2 = await fs.readJson(path.join(project2Dir, '.figma-docker', 'data', 'data.json'));
+      const data1 = await fs.readJson(path.join(project1Dir, '.vibe-docker', 'data', 'data.json'));
+      const data2 = await fs.readJson(path.join(project2Dir, '.vibe-docker', 'data', 'data.json'));
 
       expect(data1.project).toBe('project1');
       expect(data2.project).toBe('project2');
@@ -357,12 +357,12 @@ networks:
   describe('Cleanup and Uninstallation', () => {
     beforeEach(async () => {
       // Setup project with figma-docker installation
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'config'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'data'));
-      await fs.ensureDir(path.join(testProjectDir, '.figma-docker', 'logs'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'config'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'data'));
+      await fs.ensureDir(path.join(testProjectDir, '.vibe-docker', 'logs'));
 
       await fs.writeJson(
-        path.join(testProjectDir, '.figma-docker', 'config', 'config.json'),
+        path.join(testProjectDir, '.vibe-docker', 'config', 'config.json'),
         { version: '2.0.0', installType: 'per-project' }
       );
 
@@ -373,16 +373,16 @@ networks:
     });
 
     it('should completely remove .figma-docker/ directory', async () => {
-      const figmaDockerDir = path.join(testProjectDir, '.figma-docker');
+      const vibeDockerDir = path.join(testProjectDir, '.vibe-docker');
 
       // Verify exists before cleanup
-      expect(await fs.pathExists(figmaDockerDir)).toBe(true);
+      expect(await fs.pathExists(vibeDockerDir)).toBe(true);
 
       // Perform cleanup
-      await fs.remove(figmaDockerDir);
+      await fs.remove(vibeDockerDir);
 
       // Verify removed
-      expect(await fs.pathExists(figmaDockerDir)).toBe(false);
+      expect(await fs.pathExists(vibeDockerDir)).toBe(false);
     });
 
     it('should remove docker-compose.yml', async () => {
@@ -401,11 +401,11 @@ networks:
     it('should clean .gitignore entries', async () => {
       // Create .gitignore with figma-docker entry and comment (as CLI adds it)
       const gitignorePath = path.join(testProjectDir, '.gitignore');
-      await fs.writeFile(gitignorePath, 'node_modules/\n# Figma Docker\n.figma-docker/\n.env\n');
+      await fs.writeFile(gitignorePath, 'node_modules/\n# Vibe Docker\n.figma-docker/\n.env\n');
 
       // Remove figma-docker entry (simulating cleanup)
       let content = await fs.readFile(gitignorePath, 'utf-8');
-      content = content.replace(/\n?# Figma Docker.*\n\.figma-docker\/\n?/g, '');
+      content = content.replace(/\n?# Vibe Docker.*\n\.figma-docker\/\n?/g, '');
       await fs.writeFile(gitignorePath, content);
 
       // Verify removed
@@ -415,17 +415,17 @@ networks:
     });
 
     it('should backup data before uninstallation', async () => {
-      const figmaDockerDir = path.join(testProjectDir, '.figma-docker');
+      const vibeDockerDir = path.join(testProjectDir, '.vibe-docker');
       const backupDir = path.join(testProjectDir, '.figma-docker-backup');
 
       // Create data to backup
       await fs.writeJson(
-        path.join(figmaDockerDir, 'data', 'important.json'),
+        path.join(vibeDockerDir, 'data', 'important.json'),
         { data: 'important user data' }
       );
 
       // Perform backup
-      await fs.copy(figmaDockerDir, backupDir);
+      await fs.copy(vibeDockerDir, backupDir);
 
       // Verify backup
       expect(await fs.pathExists(backupDir)).toBe(true);
@@ -476,7 +476,7 @@ networks:
 
       const summary = {
         uninstalledAt: new Date().toISOString(),
-        removedDirectories: ['.figma-docker'],
+        removedDirectories: ['.vibe-docker'],
         removedFiles: ['docker-compose.yml'],
         backupLocation: '.figma-docker-backup',
         status: 'success'
@@ -487,7 +487,7 @@ networks:
       // Verify summary
       const saved = await fs.readJson(summaryPath);
       expect(saved.status).toBe('success');
-      expect(saved.removedDirectories).toContain('.figma-docker');
+      expect(saved.removedDirectories).toContain('.vibe-docker');
     });
   });
 
@@ -510,17 +510,17 @@ networks:
     });
 
     it('should handle existing .figma-docker/ directory', async () => {
-      const figmaDockerDir = path.join(testProjectDir, '.figma-docker');
+      const vibeDockerDir = path.join(testProjectDir, '.vibe-docker');
 
       // Create existing directory with config subdirectory
-      await fs.ensureDir(path.join(figmaDockerDir, 'config'));
+      await fs.ensureDir(path.join(vibeDockerDir, 'config'));
       await fs.writeJson(
-        path.join(figmaDockerDir, 'config', 'config.json'),
+        path.join(vibeDockerDir, 'config', 'config.json'),
         { existing: true }
       );
 
       // Attempt to install again (should preserve existing)
-      const configPath = path.join(figmaDockerDir, 'config', 'config.json');
+      const configPath = path.join(vibeDockerDir, 'config', 'config.json');
       const existingConfig = await fs.readJson(configPath);
 
       expect(existingConfig.existing).toBe(true);

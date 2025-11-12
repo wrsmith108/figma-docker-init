@@ -1,4 +1,4 @@
-# figma-docker-init v2.0.0-beta.1 Release Notes
+# vibe-to-docker v2.0.0-beta.1 Release Notes
 
 **Release Date**: October 26, 2025
 **Type**: Beta Release
@@ -11,7 +11,7 @@
 ### Major Changes
 
 #### Per-Project Installation Architecture (Partial Implementation)
-- **New Directory Structure**: Designed `.figma-docker/` per-project directory
+- **New Directory Structure**: Designed `.vibe-docker/` per-project directory
 - **Module System**: Created `src/lib/` modules for directory management and path resolution
 - **Template Caching**: 80%+ performance improvement with intelligent template caching
 
@@ -34,7 +34,7 @@ This is a **beta release** for testing purposes. The following issues are known:
 ### Critical
 1. **Test Coverage Reporting**: Shows 0% despite 97.4% tests passing
 2. **Module Integration**: `src/lib/` modules created but not fully integrated into CLI
-3. **`.figma-docker/` Directory**: Designed but creation not implemented in production flow
+3. **`.vibe-docker/` Directory**: Designed but creation not implemented in production flow
 
 ### Test Failures (13 tests)
 - Integration tests: Some phase1-integration and docker-integration tests fail
@@ -53,15 +53,15 @@ This is a **beta release** for testing purposes. The following issues are known:
 
 ### NPM (Beta Channel)
 ```bash
-npm install figma-docker-init@beta
+npm install vibe-to-docker@beta
 # or
-npx figma-docker-init@beta
+npx vibe-to-docker@beta
 ```
 
 ### From Source (Testing)
 ```bash
-git clone https://github.com/wrsmith108/figma-docker-init.git
-cd figma-docker-init
+git clone https://github.com/wrsmith108/vibe-to-docker.git
+cd vibe-to-docker
 git checkout v2.0.0-beta.1
 npm install
 npm link
@@ -75,16 +75,16 @@ Same as v1.x - no breaking changes to CLI:
 
 ```bash
 # List available templates
-figma-docker-init --list
+vibe-to-docker --list
 
 # Generate Docker setup with basic template
-figma-docker-init basic
+vibe-to-docker basic
 
 # Generate Docker setup with UI-heavy template
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 
 # Show help
-figma-docker-init --help
+vibe-to-docker --help
 ```
 
 ---
@@ -93,7 +93,7 @@ figma-docker-init --help
 
 **Good News**: No migration needed! v2.0.0-beta is backward compatible.
 
-The new `.figma-docker/` architecture is designed but not yet enforced. Current behavior:
+The new `.vibe-docker/` architecture is designed but not yet enforced. Current behavior:
 - Files still install to project root (like v1.x)
 - All existing workflows continue to work
 - New features will be available in v2.1.0
@@ -112,8 +112,8 @@ We need your help testing this beta! Please try:
 npx create-vite my-test-app --template react
 cd my-test-app
 
-# Install and run figma-docker-init beta
-npx figma-docker-init@beta basic
+# Install and run vibe-to-docker beta
+npx vibe-to-docker@beta basic
 
 # Verify files created
 ls -la docker-compose.yml Dockerfile nginx.conf
@@ -130,7 +130,7 @@ docker-compose up --build
 
 ### 3. Report Issues
 If you encounter problems:
-- **GitHub Issues**: https://github.com/wrsmith108/figma-docker-init/issues
+- **GitHub Issues**: https://github.com/wrsmith108/vibe-to-docker/issues
 - **Tag**: `beta-testing`
 - **Include**:
   - Node version (`node -v`)
@@ -166,7 +166,7 @@ Coverage: Under investigation
 After beta testing, v2.1.0 will include:
 
 1. **Full Per-Project Installation**
-   - `.figma-docker/` directory creation
+   - `.vibe-docker/` directory creation
    - Per-project configuration
    - Isolated setups for monorepos
 
@@ -191,7 +191,7 @@ After beta testing, v2.1.0 will include:
 ## 📝 Changelog
 
 ### Added
-- Created `src/lib/directory-manager.js` for .figma-docker directory management
+- Created `src/lib/directory-manager.js` for .vibe-docker directory management
 - Created `src/lib/path-resolver.js` for cross-platform path resolution
 - Created `src/lib/template-cache.js` for 80%+ performance improvement
 - Added 158 comprehensive tests (unit, integration, E2E)
@@ -201,7 +201,7 @@ After beta testing, v2.1.0 will include:
 - Fixed package.json to include src/lib/ directory in npm package
 - Fixed YAML syntax errors in docker-compose.yml templates (8 files)
 - Fixed import paths to use consistent src/lib/ structure
-- Removed non-existent ensureFigmaDockerStructure import
+- Removed non-existent ensureVibeDockerStructure import
 
 ### Changed
 - Moved template-cache.js from lib/ to src/lib/ for consistency
@@ -250,4 +250,4 @@ For production use, wait for v2.0.0 stable release.
 
 **Questions?** Open an issue on GitHub!
 
-**Ready to test?** `npx figma-docker-init@beta`
+**Ready to test?** `npx vibe-to-docker@beta`

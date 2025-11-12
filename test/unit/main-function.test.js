@@ -36,10 +36,10 @@ describe('Main Function Coverage', () => {
   describe('CLI Argument Handling', () => {
     it('should handle --help flag', async () => {
       // Dynamically import to trigger main() with new argv
-      process.argv = ['node', 'figma-docker-init.js', '--help'];
+      process.argv = ['node', 'vibe-to-docker.js', '--help'];
 
       // Import the module which will run main()
-      await import('../../figma-docker-init.js?help=' + Date.now());
+      await import('../../vibe-to-docker.js?help=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls.join('\n');
@@ -47,31 +47,31 @@ describe('Main Function Coverage', () => {
     });
 
     it('should handle -h flag', async () => {
-      process.argv = ['node', 'figma-docker-init.js', '-h'];
-      await import('../../figma-docker-init.js?h=' + Date.now());
+      process.argv = ['node', 'vibe-to-docker.js', '-h'];
+      await import('../../vibe-to-docker.js?h=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should handle --version flag', async () => {
-      process.argv = ['node', 'figma-docker-init.js', '--version'];
-      await import('../../figma-docker-init.js?version=' + Date.now());
+      process.argv = ['node', 'vibe-to-docker.js', '--version'];
+      await import('../../vibe-to-docker.js?version=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls.join('\n');
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
     });
 
     it('should handle -v flag', async () => {
-      process.argv = ['node', 'figma-docker-init.js', '-v'];
-      await import('../../figma-docker-init.js?v=' + Date.now());
+      process.argv = ['node', 'vibe-to-docker.js', '-v'];
+      await import('../../vibe-to-docker.js?v=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should handle --list flag', async () => {
-      process.argv = ['node', 'figma-docker-init.js', '--list'];
-      await import('../../figma-docker-init.js?list=' + Date.now());
+      process.argv = ['node', 'vibe-to-docker.js', '--list'];
+      await import('../../vibe-to-docker.js?list=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls.join('\n');
@@ -79,17 +79,17 @@ describe('Main Function Coverage', () => {
     });
 
     it('should show help when no arguments provided', async () => {
-      process.argv = ['node', 'figma-docker-init.js'];
-      await import('../../figma-docker-init.js?noargs=' + Date.now());
+      process.argv = ['node', 'vibe-to-docker.js'];
+      await import('../../vibe-to-docker.js?noargs=' + Date.now());
 
       expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should handle missing template name', async () => {
-      process.argv = ['node', 'figma-docker-init.js', ''];
+      process.argv = ['node', 'vibe-to-docker.js', ''];
 
       try {
-        await import('../../figma-docker-init.js?empty=' + Date.now());
+        await import('../../vibe-to-docker.js?empty=' + Date.now());
       } catch (error) {
         expect(error.message).toContain('process.exit');
       }
@@ -106,10 +106,10 @@ describe('Main Function Coverage', () => {
 
       // Change to that directory
       process.chdir(tempDir);
-      process.argv = ['node', 'figma-docker-init.js', 'basic'];
+      process.argv = ['node', 'vibe-to-docker.js', 'basic'];
 
       try {
-        await import('../../figma-docker-init.js?nopkg=' + Date.now());
+        await import('../../vibe-to-docker.js?nopkg=' + Date.now());
       } catch (error) {
         // Expected to fail (no templates in temp dir)
       }
@@ -178,7 +178,7 @@ describe('Main Function Coverage', () => {
     it('should not run main when imported (not executed directly)', async () => {
       // The module should detect it's being imported for testing
       // and not run main()
-      const module = await import('../../figma-docker-init.js');
+      const module = await import('../../vibe-to-docker.js');
       expect(module).toBeDefined();
       // Just verify the module exports are accessible
       expect(module.sanitizeString).toBeDefined();

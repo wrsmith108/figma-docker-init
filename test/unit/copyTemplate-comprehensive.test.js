@@ -13,7 +13,7 @@ import {
   showHelp,
   showVersion,
   listTemplates
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -108,7 +108,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
       expect(output).toContain('Next Steps:');
-      expect(output).toContain('cd .figma-docker && docker-compose up -d --build');
+      expect(output).toContain('cd .vibe-docker && docker-compose up -d --build');
 
       fs.rmSync(targetDir, { recursive: true, force: true });
       fs.rmSync(templateDir, { recursive: true, force: true });
@@ -147,9 +147,9 @@ describe('copyTemplate Comprehensive Coverage', () => {
       );
 
       // Create .figma-docker directory and existing file
-      const figmaDockerDir = path.join(targetDir, '.figma-docker');
-      fs.mkdirSync(figmaDockerDir, { recursive: true });
-      fs.writeFileSync(path.join(figmaDockerDir, 'existing.txt'), 'Existing content');
+      const vibeDockerDir = path.join(targetDir, '.vibe-docker');
+      fs.mkdirSync(vibeDockerDir, { recursive: true });
+      fs.writeFileSync(path.join(vibeDockerDir, 'existing.txt'), 'Existing content');
 
       const templateDir = path.join(templatesDir, 'skipped-template');
       fs.mkdirSync(templateDir, { recursive: true });
@@ -360,7 +360,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
       showHelp();
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
       expect(output).toContain('Templates:');
       expect(output).toContain('Options:');
@@ -372,7 +372,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
     it('showVersion should read from package.json when available', () => {
       showVersion();
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
       expect(output).toMatch(/v\d+\.\d+\.\d+/);
     });
 

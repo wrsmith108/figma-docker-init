@@ -94,7 +94,7 @@ afterAll(() => {
   mockExit.mockRestore();
 });
 
-describe('Figma Docker Init', () => {
+describe('Vibe to Docker', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     consoleOutput = [];

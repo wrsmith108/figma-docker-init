@@ -4,7 +4,7 @@ describe('Custom Error Classes', () => {
   let module;
 
   beforeAll(async () => {
-    module = await import('../../figma-docker-init.js');
+    module = await import('../../vibe-to-docker.js');
   });
 
   describe('ValidationError', () => {

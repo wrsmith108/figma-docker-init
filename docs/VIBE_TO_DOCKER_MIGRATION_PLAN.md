@@ -2,12 +2,12 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive plan to migrate `figma-docker-init` to `vibe-to-docker`, a more generalized Docker containerization tool for projects created by various "vibe-coding" tools including Figma Make, Lovable, V0, Bolt, and others.
+This document outlines the comprehensive plan to migrate `vibe-to-docker` to `vibe-to-docker`, a more generalized Docker containerization tool for projects created by various "vibe-coding" tools including Figma Make, Lovable, V0, Bolt, and others.
 
 ## Background
 
 ### Current State
-- **Package Name**: `figma-docker-init`
+- **Package Name**: `vibe-to-docker`
 - **Purpose**: Docker setup specifically for Figma Make exported projects
 - **Target Stack**: React/Vite/TypeScript projects
 - **Current Version**: 2.1.0
@@ -62,14 +62,14 @@ This document outlines the comprehensive plan to migrate `figma-docker-init` to 
 ### Phase 2: Code Refactoring (3-5 days)
 
 #### 2.1 Rename Package
-- [ ] Change package name from `figma-docker-init` to `vibe-to-docker`
+- [ ] Change package name from `vibe-to-docker` to `vibe-to-docker`
 - [ ] Update all references in package.json
-- [ ] Update bin command from `figma-docker-init` to `vibe-to-docker`
+- [ ] Update bin command from `vibe-to-docker` to `vibe-to-docker`
 - [ ] Create legacy alias for backward compatibility
 
 #### 2.2 Directory Structure Changes
 ```
-Current:  .figma-docker/
+Current:  .vibe-docker/
 New:      .vibe-docker/
           ├── config.json          # Project detection metadata
           ├── source-tool.json     # Which tool generated the project
@@ -121,20 +121,20 @@ New templates:
 
 ##### Core Files
 1. **package.json** - Name, description, keywords, bin command
-2. **figma-docker-init.js** → **vibe-to-docker.js** - Main CLI entry
+2. **vibe-to-docker.js** → **vibe-to-docker.js** - Main CLI entry
 3. **README.md** - Full rewrite for multi-tool support
 4. **CONTRIBUTING.md** - Update references
 5. **LICENSE** - Update copyright if needed
 
 ##### Source Code Files
 6. **src/lib/path-resolver.js** - Rename functions:
-   - `resolveFigmaDockerPath()` → `resolveVibeDockerPath()`
-   - `getFigmaDockerDir()` → `getVibeDockerDir()`
-   - `.figma-docker` → `.vibe-docker`
+   - `resolveVibeDockerPath()` → `resolveVibeDockerPath()`
+   - `getVibeDockerDir()` → `getVibeDockerDir()`
+   - `.vibe-docker` → `.vibe-docker`
 
 7. **src/lib/directory-manager.js** - Update directory constants:
-   - `figmaDockerDir` → `vibeDockerDir`
-   - All references to `.figma-docker` → `.vibe-docker`
+   - `vibeDockerDir` → `vibeDockerDir`
+   - All references to `.vibe-docker` → `.vibe-docker`
 
 8. **src/lib/template-cache.js** - Update cache paths
 
@@ -183,7 +183,7 @@ Update all test files to use new naming:
 
 #### Documentation Updates
 - [ ] Complete README rewrite
-- [ ] Add migration guide from figma-docker-init
+- [ ] Add migration guide from vibe-to-docker
 - [ ] Create tool-specific guides:
   - Figma Make → Docker guide
   - Lovable → Docker guide
@@ -194,8 +194,8 @@ Update all test files to use new naming:
 
 #### Release Strategy
 - [ ] Publish as new package: `vibe-to-docker@1.0.0`
-- [ ] Keep `figma-docker-init` active with deprecation notice
-- [ ] Add forwarding: `figma-docker-init` can install `vibe-to-docker`
+- [ ] Keep `vibe-to-docker` active with deprecation notice
+- [ ] Add forwarding: `vibe-to-docker` can install `vibe-to-docker`
 - [ ] Update NPM keywords for discoverability
 
 ## Implementation Details
@@ -284,7 +284,7 @@ async function detectBackend(projectRoot) {
 #### Option 1: Alias Support (Recommended)
 ```bash
 # Old command still works via alias
-npx figma-docker-init basic
+npx vibe-to-docker basic
 
 # New command
 npx vibe-to-docker basic --tool=figma-make
@@ -292,11 +292,11 @@ npx vibe-to-docker basic --tool=figma-make
 
 #### Option 2: Migration Tool
 ```bash
-# Migrate existing .figma-docker to .vibe-docker
+# Migrate existing .vibe-docker to .vibe-docker
 npx vibe-to-docker migrate
 
 # This will:
-# 1. Rename .figma-docker to .vibe-docker
+# 1. Rename .vibe-docker to .vibe-docker
 # 2. Update config.json with tool metadata
 # 3. Update docker-compose.yml references
 # 4. Preserve all customizations
@@ -304,9 +304,9 @@ npx vibe-to-docker migrate
 
 ### Backward Compatibility Strategy
 
-1. **Keep figma-docker-init alive**: Publish updates that redirect to vibe-to-docker
+1. **Keep vibe-to-docker alive**: Publish updates that redirect to vibe-to-docker
 2. **Deprecation notice**: Show message but continue working
-3. **Support both directory names**: Accept both `.figma-docker/` and `.vibe-docker/`
+3. **Support both directory names**: Accept both `.vibe-docker/` and `.vibe-docker/`
 4. **12-month migration period**: Full support for old package
 
 ## Risk Assessment
@@ -346,8 +346,8 @@ npx vibe-to-docker migrate
 ## File Change Summary
 
 ### Files to Rename/Move (5 core files)
-- `figma-docker-init.js` → `vibe-to-docker.js`
-- All internal `.figma-docker` references → `.vibe-docker`
+- `vibe-to-docker.js` → `vibe-to-docker.js`
+- All internal `.vibe-docker` references → `.vibe-docker`
 
 ### Files to Modify (98 files)
 - 1 package.json
@@ -408,7 +408,7 @@ npx vibe-to-docker migrate
 
 ## Conclusion
 
-This migration will transform `figma-docker-init` from a Figma-specific tool into a universal Docker containerization solution for all vibe-coded projects. The plan ensures backward compatibility, comprehensive testing, and clear documentation while expanding capabilities to support the growing ecosystem of AI-assisted development tools.
+This migration will transform `vibe-to-docker` from a Figma-specific tool into a universal Docker containerization solution for all vibe-coded projects. The plan ensures backward compatibility, comprehensive testing, and clear documentation while expanding capabilities to support the growing ecosystem of AI-assisted development tools.
 
 The phased approach allows for incremental progress with validation at each step, minimizing risk while maximizing value to users across multiple platforms.
 

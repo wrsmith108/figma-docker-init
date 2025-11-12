@@ -18,7 +18,7 @@ export default {
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    'figma-docker-init.js',
+    'vibe-to-docker.js',
     '!node_modules/**',
     '!coverage/**',
     '!**/*.config.js',
