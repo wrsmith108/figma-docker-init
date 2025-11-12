@@ -1,0 +1,3 @@
+# Supabase Backend Configuration
+ENV VITE_SUPABASE_URL=your-project-url
+ENV VITE_SUPABASE_ANON_KEY=your-anon-key

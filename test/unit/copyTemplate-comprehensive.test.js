@@ -365,7 +365,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
       expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
-      expect(output).toContain('Templates:');
+      expect(output).toContain('Legacy Templates'); // Phase 3 changed "Templates:" to "Legacy Templates (Backward Compatible):"
       expect(output).toContain('Options:');
       expect(output).toContain('Examples:');
       expect(output).toContain('basic');

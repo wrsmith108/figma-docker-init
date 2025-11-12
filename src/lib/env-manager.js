@@ -457,6 +457,69 @@ export class EnvManager {
   }
 
   /**
+   * Validate an environment file for secrets and issues
+   *
+   * @async
+   * @param {string} envFilePath - Path to environment file to validate
+   * @returns {Promise<Object[]>} Array of warning objects
+   */
+  async validateEnvFile(envFilePath) {
+    const warnings = [];
+
+    try {
+      const content = await fs.readFile(envFilePath, 'utf-8');
+      const lines = content.split('\n');
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        const lineNum = i + 1;
+
+        // Skip comments and empty lines
+        if (!line || line.startsWith('#')) {
+          continue;
+        }
+
+        // Parse VAR=value format
+        const match = line.match(/^([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/);
+        if (match) {
+          const [, name, value] = match;
+
+          // Check if variable appears to be a secret
+          if (this._isSecretVar(name)) {
+            // Check if it has an actual value (not placeholder)
+            if (value && value !== '' && !value.startsWith('your-') && !value.startsWith('your_')) {
+              warnings.push({
+                type: 'secret',
+                severity: 'high',
+                variable: name,
+                line: lineNum,
+                message: `Variable '${name}' appears to be a secret with an actual value in ${path.basename(envFilePath)}`,
+                recommendation: 'Do not commit actual secrets to .env.example. Use placeholder values instead.'
+              });
+            }
+          }
+
+          // Check for common mistakes
+          if (value.includes(' ') && !value.match(/^["'].*["']$/)) {
+            warnings.push({
+              type: 'format',
+              severity: 'medium',
+              variable: name,
+              line: lineNum,
+              message: `Variable '${name}' value contains spaces but is not quoted`,
+              recommendation: 'Quote values with spaces: VAR="value with spaces"'
+            });
+          }
+        }
+      }
+    } catch (error) {
+      // File doesn't exist or can't be read - not an error for validation
+    }
+
+    return warnings;
+  }
+
+  /**
    * Get statistics about detected variables
    *
    * @returns {Object} Statistics object

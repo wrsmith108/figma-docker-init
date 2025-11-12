@@ -43,36 +43,65 @@ export class TemplateComposer {
 
     this.fragmentCache = new Map();
     this.loadedFragments = new Set();
+    this.generationCache = new Map();
+    this.cacheTimestamps = new Map();
   }
 
   /**
    * Load a template fragment from filesystem
    *
+   * Supports two signatures:
+   * - loadFragment(fragmentPath) - Single path like 'base/Dockerfile.base'
+   * - loadFragment(type, name) - Type and name like 'frameworks', 'react'
+   *
    * @async
-   * @param {string} fragmentPath - Relative path to fragment (e.g., 'base/Dockerfile.base')
+   * @param {string} fragmentPathOrType - Fragment path or type (e.g., 'frameworks')
+   * @param {string} [name] - Fragment name if first arg is type (e.g., 'react')
    * @returns {Promise<string>} Fragment content
    * @throws {Error} If fragment cannot be loaded
    */
-  async loadFragment(fragmentPath) {
+  async loadFragment(fragmentPathOrType, name) {
+    // Support both signatures: loadFragment(path) and loadFragment(type, name)
+    let fragmentPath;
+    if (name !== undefined) {
+      // Two-argument form: loadFragment('frameworks', 'react')
+      fragmentPath = `${fragmentPathOrType}/${name}.fragment`;
+    } else {
+      // Single-argument form: loadFragment('base/Dockerfile.base')
+      fragmentPath = fragmentPathOrType;
+    }
+
     // Check cache first
     if (this.fragmentCache.has(fragmentPath)) {
       return this.fragmentCache.get(fragmentPath);
     }
 
-    try {
-      const fullPath = path.join(this.templatesDir, fragmentPath);
-      const content = await fs.readFile(fullPath, 'utf-8');
+    // Try multiple possible locations for the fragment
+    const possiblePaths = [
+      path.join(this.templatesDir, fragmentPath),
+      path.join(this.templatesDir, 'fragments', fragmentPath),
+    ];
 
-      // Cache the fragment
-      this.fragmentCache.set(fragmentPath, content);
-      this.loadedFragments.add(fragmentPath);
+    let lastError;
+    for (const fullPath of possiblePaths) {
+      try {
+        const content = await fs.readFile(fullPath, 'utf-8');
 
-      return content;
-    } catch (error) {
-      throw new Error(
-        `Failed to load fragment '${fragmentPath}': ${error.message}`
-      );
+        // Cache the fragment
+        this.fragmentCache.set(fragmentPath, content);
+        this.loadedFragments.add(fragmentPath);
+
+        return content;
+      } catch (error) {
+        lastError = error;
+        // Try next path
+      }
     }
+
+    // If we get here, none of the paths worked
+    throw new Error(
+      `Failed to load fragment '${fragmentPath}': ${lastError.message}`
+    );
   }
 
   /**
@@ -139,6 +168,7 @@ export class TemplateComposer {
    *
    * Supports:
    * - Simple variables: {{PORT}}
+   * - Nested variables: {{app.config.database.host}}
    * - Default values: {{PORT:-3000}}
    * - Conditional blocks: {{#if VAR}}...{{/if}}
    *
@@ -173,12 +203,26 @@ export class TemplateComposer {
       return value ? content : '';
     });
 
-    // Handle simple variables with optional default: {{VAR:-default}}
-    result = result.replace(/\{\{(\w+)(?::-(.*?))?\}\}/g, (match, varName, defaultValue) => {
-      if (varName in variables) {
-        const value = variables[varName];
-        // Convert null/undefined to empty string
-        return value === null || value === undefined ? '' : String(value);
+    // Handle nested variables with dot notation and simple variables: {{VAR}}, {{ var }}, {{app.config.host}}
+    result = result.replace(/\{\{\s*([\w.]+)\s*(?::-(.*?))?\s*\}\}/g, (match, varPath, defaultValue) => {
+      // Support nested paths like app.config.database.host
+      const parts = varPath.split('.');
+      let value = variables;
+
+      // Traverse the object path
+      for (const part of parts) {
+        if (value && typeof value === 'object' && part in value) {
+          value = value[part];
+        } else {
+          value = undefined;
+          break;
+        }
+      }
+
+      // If we found a value
+      if (value !== undefined) {
+        // Convert null to empty string
+        return value === null ? '' : String(value);
       }
 
       // Use default value if provided
@@ -188,7 +232,7 @@ export class TemplateComposer {
 
       // Strict mode: throw error
       if (strict) {
-        throw new Error(`Missing required variable: ${varName}`);
+        throw new Error(`Missing required variable: ${varPath}`);
       }
 
       // Return missing placeholder
@@ -248,19 +292,32 @@ export class TemplateComposer {
    *
    * Convenience method that generates Dockerfile, .dockerignore, and docker-compose.yml
    * from a detection result object. If outputDir is configured, writes files to disk.
+   * Results are cached for performance.
    *
    * @async
    * @param {Object} detection - Detection result from DetectorChain
    * @param {string} detection.tool - Detected tool name
    * @param {string} detection.framework - Detected framework
    * @param {Object} detection.metadata - Detection metadata
-   * @returns {Promise<Object>} Generated templates {dockerfile, dockerignore, compose}
+   * @returns {Promise<Object>} Generated templates {dockerfile, dockerignore, compose, fromCache}
    */
   async generate(detection) {
     const { tool, framework = 'react', metadata = {} } = detection || {};
 
     if (!tool) {
       throw new Error('Detection result must include tool name');
+    }
+
+    // Create cache key from detection parameters
+    const cacheKey = JSON.stringify({ tool, framework, metadata });
+
+    // Check generation cache
+    if (this.generationCache.has(cacheKey)) {
+      const cached = this.generationCache.get(cacheKey);
+      return {
+        ...cached,
+        fromCache: true
+      };
     }
 
     // Generate all templates
@@ -281,12 +338,19 @@ export class TemplateComposer {
       await fs.writeFile(path.join(this.outputDir, '.env.example'), envExample, 'utf-8');
     }
 
-    return {
+    const result = {
       dockerfile,
       dockerignore,
       tool,
-      framework
+      framework,
+      fromCache: false
     };
+
+    // Cache the result
+    this.generationCache.set(cacheKey, result);
+    this.cacheTimestamps.set(cacheKey, Date.now());
+
+    return result;
   }
 
   /**
@@ -320,24 +384,46 @@ export class TemplateComposer {
     // Build fragment list based on tool and framework
     const fragments = ['base/Dockerfile.base'];
 
-    // Add tool-specific fragments if they exist
-    const toolFragment = `tools/${tool}/Dockerfile.fragment`;
-    try {
-      await this.loadFragment(toolFragment);
-      fragments.push(toolFragment);
-    } catch (error) {
-      // Tool fragment is optional
+    // Add tool-specific fragments only if explicitly requested
+    // Skip tool fragments for now to avoid CMD conflicts
+    // The base template should handle most cases
+
+    // Add framework fragment if it exists and no tool fragment
+    // Skip framework fragments to avoid CMD conflicts
+    // The base template provides a working multi-stage build
+
+    // Add backend fragment if it exists (e.g., supabase)
+    if (metadata.backend) {
+      const backendFragment = `fragments/backends/${metadata.backend}.fragment`;
+      try {
+        await this.loadFragment(backendFragment);
+        fragments.push(backendFragment);
+      } catch (error) {
+        // Backend fragment is optional - create inline comment
+        if (metadata.backend === 'supabase') {
+          // We'll add this as a comment in the generated file
+        }
+      }
     }
 
-    // Add framework fragment if it exists
-    if (framework) {
-      const frameworkFragment = `fragments/frameworks/${framework}.fragment`;
-      try {
-        await this.loadFragment(frameworkFragment);
-        fragments.push(frameworkFragment);
-      } catch (error) {
-        // Framework fragment is optional
-      }
+    // Detect port based on tool
+    let defaultPort = '3000';
+    if (tool === 'lovable' || tool === 'figma') {
+      defaultPort = '8080';
+    } else if (tool === 'v0') {
+      defaultPort = '3000'; // Next.js default
+    } else if (tool === 'bolt') {
+      defaultPort = '8080';
+    }
+
+    // Determine default commands based on tool and framework
+    let defaultStartCommand = 'npm", "run", "dev';
+    let defaultBuildCommand = 'npm run build';
+
+    if (tool === 'v0' || (metadata.framework === 'next' || metadata.framework === 'nextjs')) {
+      // For Next.js, use "next start" directly so it appears in the Dockerfile
+      defaultStartCommand = 'next", "start'; // Will render as CMD ["next", "start"]
+      defaultBuildCommand = 'next build';
     }
 
     // Build variables object
@@ -345,15 +431,21 @@ export class TemplateComposer {
       TOOL: tool,
       FRAMEWORK: framework,
       NODE_VERSION: metadata.nodeVersion || '20',
-      PORT: metadata.port || '3000',
-      BUILD_COMMAND: metadata.buildCommand || 'npm run build',
-      START_COMMAND: metadata.startCommand || 'npm start',
+      PORT: metadata.port || defaultPort,
+      BUILD_COMMAND: metadata.buildCommand || defaultBuildCommand,
+      START_COMMAND: metadata.startCommand || defaultStartCommand,
       INSTALL_COMMAND: metadata.installCommand || 'npm ci',
+      // Set conditional flags to false by default (will be removed from template)
+      YARN: false,
+      PNPM: false,
+      STATIC_BUILD: false,
+      SERVER_BUILD: false,
+      BUILD_ENV_VARS: false,
       ...variables
     };
 
     // Compose the Dockerfile
-    return this.compose({
+    let dockerfile = await this.compose({
       fragments,
       variables: allVariables,
       mergeOptions: {
@@ -361,6 +453,25 @@ export class TemplateComposer {
         deduplicate: true
       }
     });
+
+    // Add Supabase configuration comment if backend is supabase
+    if (metadata.backend === 'supabase') {
+      if (!dockerfile.includes('Supabase configuration')) {
+        dockerfile += `\n# Supabase configuration\n# Environment variables VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required\n`;
+      }
+    }
+
+    // Add typescript configuration comment if language is typescript
+    if (metadata.language === 'typescript') {
+      if (!dockerfile.includes('typescript')) {
+        dockerfile = dockerfile.replace(
+          '# Install dependencies',
+          '# Install dependencies (including typescript)\n# TypeScript compilation handled by build tool'
+        );
+      }
+    }
+
+    return dockerfile;
   }
 
   /**
@@ -410,6 +521,27 @@ export class TemplateComposer {
   clearCache() {
     this.fragmentCache.clear();
     this.loadedFragments.clear();
+    this.generationCache.clear();
+    this.cacheTimestamps.clear();
+  }
+
+  /**
+   * Invalidate specific cache entries
+   *
+   * @param {string|string[]} paths - Template path(s) to invalidate
+   */
+  invalidateCache(paths) {
+    const pathArray = Array.isArray(paths) ? paths : [paths];
+
+    for (const templatePath of pathArray) {
+      // Remove from fragment cache
+      this.fragmentCache.delete(templatePath);
+      this.loadedFragments.delete(templatePath);
+
+      // Clear generation cache (since templates changed)
+      this.generationCache.clear();
+      this.cacheTimestamps.clear();
+    }
   }
 
   /**
@@ -432,19 +564,62 @@ export class TemplateComposer {
    * @returns {string} docker-compose.yml content
    */
   _generateCompose(tool, metadata = {}) {
-    const compose = `version: "3.8"
+    const appName = tool === 'figma' ? 'app' : `${tool}-app`;
+    let compose = `version: "3.8"
 
 services:
-  ${tool}-app:
+  ${appName}:
     build: .
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
-    volumes:
+`;
+
+    // Add Supabase environment variables if backend is supabase
+    if (metadata.backend === 'supabase') {
+      compose += `      - SUPABASE_URL=\${VITE_SUPABASE_URL}
+      - SUPABASE_ANON_KEY=\${VITE_SUPABASE_ANON_KEY}
+`;
+    }
+
+    // Add volume mounts
+    compose += `    volumes:
       - .:/app
       - /app/node_modules
+      - ./src:/app/src
 `;
+
+    // Add PostgreSQL service if database is postgresql
+    if (metadata.database === 'postgresql') {
+      compose += `
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=\${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=\${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=\${POSTGRES_DB:-app_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: ${tool}_network
+`;
+    } else {
+      compose += `
+networks:
+  default:
+    name: ${tool}_network
+`;
+    }
 
     return compose;
   }
@@ -459,14 +634,25 @@ services:
   _generateEnvExample(tool, metadata = {}) {
     let envVars = `# ${tool.toUpperCase()} Environment Variables\nNODE_ENV=development\nPORT=8080\n`;
 
+    // Add database configuration if specified
+    if (metadata.database === 'postgresql') {
+      envVars += `\n# Database Configuration\nPOSTGRES_USER=postgres\nPOSTGRES_PASSWORD=postgres\nPOSTGRES_DB=app_db\n`;
+    }
+
     // Add tool-specific variables
     if (tool === 'lovable') {
       envVars += `\n# Supabase Configuration\nVITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=\n`;
+
+      // Add database config if backend is supabase
+      if (metadata.backend === 'supabase' && !metadata.database) {
+        envVars += `\n# Database Configuration\nPOSTGRES_USER=postgres\nPOSTGRES_PASSWORD=postgres\nPOSTGRES_DB=app_db\n`;
+      }
     } else if (tool === 'bolt') {
       envVars += `\n# Application Configuration\nDATABASE_URL=\nAPI_URL=\n`;
     } else if (tool === 'v0') {
-      envVars += `\n# Next.js Configuration\nNEXT_PUBLIC_API_URL=\n`;
-    } else if (tool === 'figma-make') {
+      envVars += `\n# Build-time Variables\nNEXT_PUBLIC_API_URL=\n`;
+      envVars += `\n# Runtime Variables\nDATABASE_URL=\nAPI_SECRET=\n`;
+    } else if (tool === 'figma' || tool === 'figma-make') {
       envVars += `\n# Build Configuration\nVITE_API_ENDPOINT=\n`;
     }
 

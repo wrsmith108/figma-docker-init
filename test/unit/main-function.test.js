@@ -88,11 +88,20 @@ describe('Main Function Coverage', () => {
     it('should handle missing template name', async () => {
       process.argv = ['node', 'vibe-to-docker.js', ''];
 
-      try {
-        await import('../../vibe-to-docker.js?empty=' + Date.now());
-      } catch (error) {
-        expect(error.message).toContain('process.exit');
-      }
+      // For this test, we need process.exit to not throw during module evaluation
+      // so we can check if it was called
+      processExitSpy.mockRestore();
+      processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+
+      await import('../../vibe-to-docker.js?empty=' + Date.now());
+
+      expect(processExitSpy).toHaveBeenCalledWith(1);
+
+      // Restore throwing behavior for other tests
+      processExitSpy.mockRestore();
+      processExitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+        throw new Error(`process.exit(${code})`);
+      });
     });
   });
 
@@ -108,11 +117,11 @@ describe('Main Function Coverage', () => {
       process.chdir(tempDir);
       process.argv = ['node', 'vibe-to-docker.js', 'basic'];
 
-      try {
-        await import('../../vibe-to-docker.js?nopkg=' + Date.now());
-      } catch (error) {
-        // Expected to fail (no templates in temp dir)
-      }
+      // For this test, we need process.exit to not throw during module evaluation
+      processExitSpy.mockRestore();
+      processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+
+      await import('../../vibe-to-docker.js?nopkg=' + Date.now());
 
       const output = consoleLogSpy.mock.calls.join('\n');
       expect(output).toContain('No package.json found');
@@ -125,6 +134,12 @@ describe('Main Function Coverage', () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       fs.rmSync(tempDir, { recursive: true, force: true });
+
+      // Restore throwing behavior for other tests
+      processExitSpy.mockRestore();
+      processExitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+        throw new Error(`process.exit(${code})`);
+      });
     });
   });
 

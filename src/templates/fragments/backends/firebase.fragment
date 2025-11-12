@@ -1,0 +1,3 @@
+# Firebase Backend Configuration
+ENV FIREBASE_API_KEY=your-api-key
+ENV FIREBASE_PROJECT_ID=your-project-id

@@ -30,22 +30,24 @@ import fsSync from 'fs';
 import path from 'path';
 
 export class LovableDetector {
-  constructor(projectRoot) {
-    this.projectRoot = projectRoot;
+  constructor() {
     this.priority = 2; // High priority
+  }
+
+  /**
+   * Main detection method
+   * @param {string} projectRoot - Project root directory
+   * @returns {Promise<Object>} Detection result
+   */
+  async detect(projectRoot) {
+    this.projectRoot = projectRoot;
     this.indicators = {
       strong: 0,
       medium: 0,
       weak: 0
     };
     this.findings = [];
-  }
 
-  /**
-   * Main detection method
-   * @returns {Promise<Object>} Detection result
-   */
-  async detect() {
     try {
       // Run all checks
       await this.checkPackageJson();
@@ -609,8 +611,8 @@ async function main() {
     process.exit(1);
   }
 
-  const detector = new LovableDetector(projectRoot);
-  const result = await detector.detect();
+  const detector = new LovableDetector();
+  const result = await detector.detect(projectRoot);
 
   detector.displayResults(result);
 

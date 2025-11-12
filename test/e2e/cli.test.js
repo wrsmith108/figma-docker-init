@@ -54,7 +54,7 @@ describe('CLI E2E Tests', () => {
 
       expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
-      expect(output).toContain('Templates:');
+      expect(output).toContain('Legacy Templates'); // Phase 3 changed "Templates:" to "Legacy Templates (Backward Compatible):"
       expect(output).toContain('basic');
       expect(output).toContain('ui-heavy');
       expect(output).toContain('Options:');

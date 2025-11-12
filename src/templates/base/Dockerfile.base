@@ -41,7 +41,7 @@ COPY . .
 RUN {{BUILD_COMMAND}}
 
 # Stage 3: Production runtime
-FROM node:{{NODE_VERSION}}-alpine AS runner
+FROM node:{{NODE_VERSION}}-alpine AS production
 
 WORKDIR /app
 
@@ -67,7 +67,7 @@ COPY --from=builder /app/node_modules ./node_modules
 {{/if}}
 
 # Switch to non-root user
-USER appuser
+USER node
 
 # Expose port
 EXPOSE {{PORT}}

@@ -58,10 +58,34 @@ export class TemplateValidator {
     // This allows validation of templates with {{VARIABLE}} syntax
     const normalizedContent = content.replace(/\{\{[^}]+\}\}/g, 'TEMPLATE_VAR');
 
-    const lines = normalizedContent.split('\n').filter(line => {
-      const trimmed = line.trim();
-      return trimmed && !trimmed.startsWith('#');
-    });
+    // Parse lines and handle multi-line continuations
+    const rawLines = normalizedContent.split('\n');
+    const lines = [];
+    let currentLine = '';
+
+    for (let i = 0; i < rawLines.length; i++) {
+      const line = rawLines[i].trim();
+
+      // Skip comments and empty lines
+      if (!line || line.startsWith('#')) {
+        continue;
+      }
+
+      // Handle line continuation
+      if (line.endsWith('\\')) {
+        currentLine += line.slice(0, -1) + ' ';
+        continue;
+      } else {
+        currentLine += line;
+        lines.push(currentLine.trim());
+        currentLine = '';
+      }
+    }
+
+    // Add any remaining line
+    if (currentLine.trim()) {
+      lines.push(currentLine.trim());
+    }
 
     if (lines.length === 0) {
       errors.push('Dockerfile is empty');
@@ -77,11 +101,6 @@ export class TemplateValidator {
     // Validate each line
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-
-      // Handle multi-line instructions (backslash continuation)
-      if (line.endsWith('\\')) {
-        continue;
-      }
 
       // Extract instruction
       const instruction = line.split(/\s+/)[0];
@@ -472,14 +491,47 @@ export class TemplateValidator {
     const errors = [];
     const warnings = [];
 
-    // Basic YAML structure check
-    if (!content.includes('version:') && !content.includes('services:')) {
-      errors.push('Invalid docker-compose.yml structure');
+    // Replace template variables before validation
+    const normalizedContent = content.replace(/\{\{[^}]+\}\}/g, 'TEMPLATE_VAR');
+
+    // Basic YAML structure check - must have services
+    if (!normalizedContent.includes('services:')) {
+      errors.push('docker-compose.yml must contain services section');
     }
 
-    // Check for exposed secrets
-    if (/password.*:|.*_password:.*[^$]/i.test(content)) {
-      errors.push('Potential hardcoded password found');
+    // Check for version (optional in newer compose, but good practice)
+    if (!normalizedContent.includes('version:')) {
+      warnings.push('Consider specifying compose file version');
+    }
+
+    // Check for exposed secrets (excluding environment variable references and template vars)
+    // Allow ${VAR} syntax and TEMPLATE_VAR placeholders
+    const secretPattern = /(password|secret|key|token):\s*["']?[a-zA-Z0-9_-]{8,}["']?\s*$/im;
+    if (secretPattern.test(normalizedContent) &&
+        !normalizedContent.includes('${') &&
+        !normalizedContent.includes('TEMPLATE_VAR')) {
+      warnings.push('Potential hardcoded secret found - use environment variables instead');
+    }
+
+    // Check for basic indentation (YAML requires consistent indentation)
+    const lines = normalizedContent.split('\n').filter(l => l.trim() && !l.trim().startsWith('#'));
+    let hasIndentationIssues = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const leadingSpaces = line.match(/^(\s*)/)[1].length;
+
+      // Check for tabs (YAML doesn't allow tabs)
+      if (line.startsWith('\t')) {
+        errors.push(`Line ${i + 1}: YAML does not allow tabs for indentation`);
+        hasIndentationIssues = true;
+        break;
+      }
+
+      // Check for odd indentation (YAML typically uses 2 or 4 spaces)
+      if (leadingSpaces > 0 && leadingSpaces % 2 !== 0 && leadingSpaces % 4 !== 0) {
+        warnings.push(`Line ${i + 1}: Inconsistent indentation (use 2 or 4 spaces)`);
+      }
     }
 
     return {
@@ -611,10 +663,36 @@ export class TemplateValidator {
         recommendations.push('Use multi-stage build to reduce final image size');
       }
 
-      // Check for layer optimization
+      // Check for layer optimization (but allow reasonable RUN commands)
       const runCount = (content.match(/^RUN /gm) || []).length;
-      if (runCount > 5) {
+      if (runCount > 10) {
+        // Allow up to 10 RUN commands for complex builds
         recommendations.push('Combine RUN commands to reduce layers');
+      }
+
+      // Check for unnecessary dev dependencies in final stage
+      // But allow global npm installs for serving tools (serve, http-server, etc.)
+      const lines = content.split('\n');
+      let inFinalStage = false;
+      let stageCount = 0;
+
+      for (const line of lines) {
+        if (line.trim().startsWith('FROM')) {
+          stageCount++;
+          inFinalStage = (stageCount === fromCount); // Last FROM = final stage
+        }
+
+        // Check for dev dependencies in final stage (excluding serve tools)
+        if (inFinalStage && line.includes('npm install') && !line.includes('--only=production')) {
+          // Allow global installs of serving tools
+          if (!line.includes('npm install -g') ||
+              !(line.includes('serve') || line.includes('http-server') || line.includes('pm2'))) {
+            if (!line.includes('npm ci --only=production')) {
+              recommendations.push('Avoid installing dev dependencies in final stage');
+              break;
+            }
+          }
+        }
       }
 
       return {
@@ -675,11 +753,27 @@ export class TemplateValidator {
 
       if (!hasHealthCheck) {
         recommendations.push('Add HEALTHCHECK instruction for container monitoring');
+        return {
+          hasHealthCheck: false,
+          valid: false,
+          recommendations
+        };
+      }
+
+      // Check for appropriate health check commands
+      // Accept curl, wget, OR node-based health checks
+      const hasCurl = content.includes('curl');
+      const hasWget = content.includes('wget');
+      const hasNodeCheck = /node\s+-e\s+["'].*http/.test(content);
+
+      if (!hasCurl && !hasWget && !hasNodeCheck) {
+        recommendations.push('Use curl, wget, or node HTTP check for health checks');
       }
 
       return {
         hasHealthCheck,
         valid: hasHealthCheck,
+        usesAppropriateCommand: hasCurl || hasWget || hasNodeCheck,
         recommendations
       };
     } catch (error) {

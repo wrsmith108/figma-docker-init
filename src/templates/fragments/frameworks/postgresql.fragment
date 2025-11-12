@@ -1,0 +1,2 @@
+# PostgreSQL Configuration
+ENV DATABASE_URL=postgresql://user:password@postgres:5432/dbname

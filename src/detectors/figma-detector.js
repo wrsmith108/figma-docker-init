@@ -14,7 +14,7 @@ import { BaseDetector } from './base-detector.js';
 
 export class FigmaDetector extends BaseDetector {
   priority = 4; // Lower priority than V0 (priority 3)
-  tool = 'figma-make';
+  tool = 'figma';
 
   /**
    * Detect Figma Make projects with comprehensive analysis
@@ -55,7 +55,7 @@ export class FigmaDetector extends BaseDetector {
     const uiLibrary = this.detectUILibrary(pkg);
 
     return {
-      tool: normalizedConfidence > 0.7 ? 'figma-make' : null,
+      tool: normalizedConfidence > 0.5 ? 'figma' : null,
       confidence: normalizedConfidence,
       evidence,
       metadata: {

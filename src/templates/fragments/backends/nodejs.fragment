@@ -1,0 +1,3 @@
+# Node.js Backend Configuration
+EXPOSE 3000
+CMD ["node", "server.js"]

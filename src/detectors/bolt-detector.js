@@ -26,7 +26,15 @@ const __dirname = path.dirname(__filename);
 const fsPromises = fs.promises;
 
 class BoltDetector {
-  constructor(projectRoot) {
+  constructor() {
+    this.priority = 2; // High priority
+  }
+
+  /**
+   * Main detection method
+   * @param {string} projectRoot - Project root directory
+   */
+  async detect(projectRoot) {
     this.projectRoot = projectRoot;
     this.indicators = {
       strong: 0,
@@ -35,12 +43,7 @@ class BoltDetector {
     };
     this.findings = [];
     this.metadata = {};
-  }
 
-  /**
-   * Main detection method
-   */
-  async detect() {
     try {
       // Check primary signatures first (100% confidence)
       const primaryDetection = await this.checkPrimarySignatures();
