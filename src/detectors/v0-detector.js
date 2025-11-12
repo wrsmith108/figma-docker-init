@@ -52,7 +52,7 @@ export class V0Detector extends BaseDetector {
     const normalizedConfidence = Math.min(confidence / 4.0, 1.0);
 
     return {
-      tool: normalizedConfidence > 0.5 ? 'v0' : null,
+      tool: normalizedConfidence >= 0.45 ? 'v0' : null,
       confidence: normalizedConfidence,
       evidence,
       metadata: {

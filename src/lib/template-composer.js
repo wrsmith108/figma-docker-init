@@ -308,6 +308,12 @@ export class TemplateComposer {
       throw new Error('Detection result must include tool name');
     }
 
+    // Check if tool template exists, throw error if unknown tool
+    const validTools = ['lovable', 'bolt', 'v0', 'figma', 'figma-make'];
+    if (!validTools.includes(tool)) {
+      throw new Error(`Template not found for unknown tool: ${tool}`);
+    }
+
     // Create cache key from detection parameters
     const cacheKey = JSON.stringify({ tool, framework, metadata });
 
@@ -433,9 +439,15 @@ export class TemplateComposer {
     let defaultBuildCommand = 'npm run build';
 
     if (tool === 'v0' || (metadata.framework === 'next' || metadata.framework === 'nextjs')) {
-      // For Next.js, use "next start" directly so it appears in the Dockerfile
-      defaultStartCommand = 'next", "start'; // Will render as CMD ["next", "start"]
-      defaultBuildCommand = 'next build';
+      // For Next.js/V0, use npm run start (which internally runs next start)
+      defaultStartCommand = 'npm", "run", "start';
+      defaultBuildCommand = 'npm run build';
+    } else if (tool === 'lovable') {
+      defaultStartCommand = 'serve", "-s", "dist", "-l", "8080';
+      defaultBuildCommand = 'npm run build';
+    } else if (tool === 'figma') {
+      defaultStartCommand = 'npm", "run", "dev';
+      defaultBuildCommand = 'vite build'; // Use vite directly for Figma projects
     }
 
     // Build variables object
@@ -577,13 +589,26 @@ export class TemplateComposer {
    */
   _generateCompose(tool, metadata = {}) {
     const appName = tool === 'figma' ? 'app' : `${tool}-app`;
+
+    // Detect port based on tool
+    let port = '8080'; // default
+    if (tool === 'v0') {
+      port = '3000'; // Next.js default
+    } else if (tool === 'lovable' || tool === 'figma' || tool === 'bolt') {
+      port = '8080';
+    }
+    // Allow metadata override
+    if (metadata.port) {
+      port = String(metadata.port);
+    }
+
     let compose = `version: "3.8"
 
 services:
   ${appName}:
     build: .
     ports:
-      - "8080:8080"
+      - "${port}:${port}"
     env_file:
       - .env
     environment:

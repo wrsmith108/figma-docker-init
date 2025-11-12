@@ -38,9 +38,9 @@ describe('FigmaDetector', () => {
       expect(detector.priority).toBe(4);
     });
 
-    it('should identify as figma-make tool', () => {
+    it('should identify as figma tool', () => {
       const detector = new FigmaDetector();
-      expect(detector.tool).toBe('figma-make');
+      expect(detector.tool).toBe('figma');
     });
   });
 
@@ -615,7 +615,7 @@ describe('FigmaDetector', () => {
       const detector = new FigmaDetector();
       const result = await detector.detect(projectDir);
 
-      expect(result.tool).toBe('figma-make');
+      expect(result.tool).toBe('figma');
       expect(result.confidence).toBeGreaterThan(0.5);
 
       fs.rmSync(projectDir, { recursive: true, force: true });
