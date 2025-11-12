@@ -24,14 +24,25 @@ export class EnvManager {
   /**
    * Create a new EnvManager instance
    *
-   * @param {string} projectRoot - Project root directory
+   * @param {string|Object} projectRootOrOptions - Project root directory or options object
+   * @param {string} projectRootOrOptions.projectRoot - Project root (if using options)
+   * @param {string} projectRootOrOptions.projectDir - Alias for projectRoot (if using options)
    */
-  constructor(projectRoot) {
-    if (!projectRoot || typeof projectRoot !== 'string') {
+  constructor(projectRootOrOptions) {
+    // Support both string (projectRoot) and object (options) for backward compatibility
+    if (typeof projectRootOrOptions === 'string') {
+      this.projectRoot = projectRootOrOptions;
+    } else if (projectRootOrOptions && typeof projectRootOrOptions === 'object') {
+      this.projectRoot = projectRootOrOptions.projectRoot || projectRootOrOptions.projectDir;
+    } else {
+      this.projectRoot = null;
+    }
+
+    if (!this.projectRoot || typeof this.projectRoot !== 'string') {
       throw new Error('Project root is required');
     }
 
-    this.projectRoot = projectRoot;
+    this.projectRoot = this.projectRoot;
     this.detectedVars = new Map();
     this.buildTimeVars = new Set();
     this.runtimeVars = new Set();

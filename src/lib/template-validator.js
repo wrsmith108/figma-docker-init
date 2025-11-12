@@ -550,6 +550,193 @@ export class TemplateValidator {
 
     return requiredVars.includes(varName);
   }
+
+  /**
+   * Validate a single Dockerfile instruction
+   * @param {string} instruction - Dockerfile instruction to validate
+   * @returns {Promise<boolean>} True if instruction is valid
+   */
+  async validateInstruction(instruction) {
+    const trimmed = instruction.trim();
+
+    // Empty lines are valid
+    if (!trimmed || trimmed.startsWith('#')) {
+      return true;
+    }
+
+    // Extract instruction keyword
+    const instructionMatch = trimmed.match(/^([A-Z]+)\s+/);
+    if (!instructionMatch) {
+      return false;
+    }
+
+    const keyword = instructionMatch[1];
+
+    // Check if instruction keyword is valid
+    if (!this.validInstructions.has(keyword)) {
+      return false;
+    }
+
+    // FROM instruction must have an image
+    if (keyword === 'FROM' && !trimmed.match(/^FROM\s+\S+/)) {
+      return false;
+    }
+
+    // RUN instruction must have a command
+    if (keyword === 'RUN' && !trimmed.match(/^RUN\s+.+/)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Estimate the complexity of building the Docker image
+   * @param {string} dockerfilePath - Path to Dockerfile
+   * @returns {Promise<object>} Complexity estimate
+   */
+  async estimateBuildComplexity(dockerfilePath) {
+    try {
+      const content = await fs.readFile(dockerfilePath, 'utf-8');
+      const lines = content.split('\n');
+
+      const runCommands = lines.filter(l => l.trim().startsWith('RUN')).length;
+      const copyCommands = lines.filter(l => l.trim().startsWith('COPY')).length;
+      const fromStages = lines.filter(l => l.trim().startsWith('FROM')).length;
+
+      const complexity = runCommands * 2 + copyCommands + fromStages * 3;
+
+      return {
+        score: complexity,
+        level: complexity < 10 ? 'low' : complexity < 20 ? 'medium' : 'high',
+        runCommands,
+        copyCommands,
+        stages: fromStages
+      };
+    } catch (error) {
+      return { score: 0, level: 'unknown', error: error.message };
+    }
+  }
+
+  /**
+   * Check if Dockerfile minimizes final stage size
+   * @param {string} dockerfilePath - Path to Dockerfile
+   * @returns {Promise<object>} Validation result
+   */
+  async minimizeFinalStageSize(dockerfilePath) {
+    try {
+      const content = await fs.readFile(dockerfilePath, 'utf-8');
+
+      const recommendations = [];
+
+      // Check for Alpine base
+      if (!content.includes('alpine')) {
+        recommendations.push('Consider using Alpine-based images for smaller size');
+      }
+
+      // Check for multi-stage build
+      const fromCount = (content.match(/^FROM /gm) || []).length;
+      if (fromCount < 2) {
+        recommendations.push('Use multi-stage build to reduce final image size');
+      }
+
+      // Check for layer optimization
+      const runCount = (content.match(/^RUN /gm) || []).length;
+      if (runCount > 5) {
+        recommendations.push('Combine RUN commands to reduce layers');
+      }
+
+      return {
+        optimized: recommendations.length === 0,
+        recommendations
+      };
+    } catch (error) {
+      return { optimized: false, recommendations: [], error: error.message };
+    }
+  }
+
+  /**
+   * Validate base image for security vulnerabilities
+   * @param {string} dockerfilePath - Path to Dockerfile
+   * @returns {Promise<object>} Security validation result
+   */
+  async validateSecurityVulnerabilities(dockerfilePath) {
+    try {
+      const content = await fs.readFile(dockerfilePath, 'utf-8');
+      const issues = [];
+
+      // Check for latest tag
+      if (content.includes(':latest')) {
+        issues.push('Using :latest tag creates unpredictable builds');
+      }
+
+      // Check for running as root
+      if (!content.includes('USER ')) {
+        issues.push('Container runs as root user');
+      }
+
+      // Check for exposed secrets
+      if (/password|secret|key/i.test(content) && /[=:]\s*\w+/.test(content)) {
+        issues.push('Potential hardcoded secrets detected');
+      }
+
+      return {
+        secure: issues.length === 0,
+        issues,
+        severity: issues.length > 2 ? 'high' : issues.length > 0 ? 'medium' : 'low'
+      };
+    } catch (error) {
+      return { secure: false, issues: [], error: error.message };
+    }
+  }
+
+  /**
+   * Validate health check command configuration
+   * @param {string} dockerfilePath - Path to Dockerfile
+   * @returns {Promise<object>} Health check validation result
+   */
+  async validateHealthCheckCommand(dockerfilePath) {
+    try {
+      const content = await fs.readFile(dockerfilePath, 'utf-8');
+
+      const hasHealthCheck = content.includes('HEALTHCHECK');
+      const recommendations = [];
+
+      if (!hasHealthCheck) {
+        recommendations.push('Add HEALTHCHECK instruction for container monitoring');
+      }
+
+      return {
+        hasHealthCheck,
+        valid: hasHealthCheck,
+        recommendations
+      };
+    } catch (error) {
+      return { hasHealthCheck: false, valid: false, error: error.message };
+    }
+  }
+
+  /**
+   * Check if Dockerfile uses non-root user
+   * @param {string} dockerfilePath - Path to Dockerfile
+   * @returns {Promise<object>} Non-root user check result
+   */
+  async checkNonRootUser(dockerfilePath) {
+    try {
+      const content = await fs.readFile(dockerfilePath, 'utf-8');
+
+      const hasUserInstruction = content.includes('USER ');
+      const usesNodeUser = /USER\s+node/.test(content);
+
+      return {
+        usesNonRoot: hasUserInstruction,
+        usesNodeUser,
+        recommended: usesNodeUser || hasUserInstruction
+      };
+    } catch (error) {
+      return { usesNonRoot: false, usesNodeUser: false, error: error.message };
+    }
+  }
 }
 
 export default TemplateValidator;
