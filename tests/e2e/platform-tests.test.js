@@ -7,13 +7,12 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-
-const {
+import {
   createTestProject,
   cleanupTestProject,
   getPlatformInfo,
   isCI
-} = require('../helpers/platform-helpers');
+} from '../helpers/platform-helpers.js';
 
 describe('E2E Platform Tests', () => {
   let testDir;
