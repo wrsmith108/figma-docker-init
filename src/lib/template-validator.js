@@ -512,6 +512,44 @@ export class TemplateValidator {
 
     return { recommendations };
   }
+
+  /**
+   * Check if a template variable has a default value
+   * @param {string} varName - Variable name to check
+   * @returns {Promise<boolean>} True if variable has default value
+   */
+  async hasDefaultValue(varName) {
+    // Check if variable uses ${VAR:-default} syntax
+    const defaultValuePattern = new RegExp(`\\$\\{${varName}:-[^}]+\\}`, 'g');
+
+    // This would need to scan template files to check
+    // For now, return false as default (conservative approach)
+    // In a full implementation, this would scan actual template content
+    return false;
+  }
+
+  /**
+   * Check if a template variable is marked as required
+   * @param {string} varName - Variable name to check
+   * @returns {Promise<boolean>} True if variable is required
+   */
+  async isRequiredVariable(varName) {
+    // List of variables that are typically required in Docker templates
+    const requiredVars = [
+      'PROJECT_NAME',
+      'NODE_VERSION',
+      'PORT',
+      'DEV_PORT',
+      'PROD_PORT',
+      'BUILD_OUTPUT_DIR',
+      'FRAMEWORK',
+      'INSTALL_COMMAND',
+      'BUILD_COMMAND',
+      'DEV_COMMAND'
+    ];
+
+    return requiredVars.includes(varName);
+  }
 }
 
 export default TemplateValidator;

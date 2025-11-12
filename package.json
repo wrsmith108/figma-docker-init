@@ -61,6 +61,8 @@
   "files": [
     "vibe-to-docker.js",
     "src/lib/",
+    "src/detectors/",
+    "src/templates/",
     "templates/",
     "README.md",
     "LICENSE",

@@ -27,10 +27,20 @@ export class TemplateComposer {
   /**
    * Create a new TemplateComposer instance
    *
-   * @param {string} templatesDir - Base directory for templates (defaults to src/templates)
+   * @param {Object|string} options - Configuration options or templates directory path
+   * @param {string} options.templatesDir - Base directory for templates
+   * @param {string} options.outputDir - Output directory for generated files
    */
-  constructor(templatesDir = null) {
-    this.templatesDir = templatesDir || path.resolve(__dirname, '../templates');
+  constructor(options = {}) {
+    // Support both string (templatesDir) and object (options) for backward compatibility
+    if (typeof options === 'string') {
+      this.templatesDir = options;
+      this.outputDir = null;
+    } else {
+      this.templatesDir = options.templatesDir || path.resolve(__dirname, '../templates');
+      this.outputDir = options.outputDir || null;
+    }
+
     this.fragmentCache = new Map();
     this.loadedFragments = new Set();
   }
@@ -231,6 +241,67 @@ export class TemplateComposer {
     } catch (error) {
       throw new Error(`Template composition failed: ${error.message}`);
     }
+  }
+
+  /**
+   * Generate complete Docker configuration from detection result
+   *
+   * Convenience method that generates Dockerfile, .dockerignore, and docker-compose.yml
+   * from a detection result object. If outputDir is configured, writes files to disk.
+   *
+   * @async
+   * @param {Object} detection - Detection result from DetectorChain
+   * @param {string} detection.tool - Detected tool name
+   * @param {string} detection.framework - Detected framework
+   * @param {Object} detection.metadata - Detection metadata
+   * @returns {Promise<Object>} Generated templates {dockerfile, dockerignore, compose}
+   */
+  async generate(detection) {
+    const { tool, framework = 'react', metadata = {} } = detection || {};
+
+    if (!tool) {
+      throw new Error('Detection result must include tool name');
+    }
+
+    // Generate all templates
+    const dockerfile = await this.generateDockerfile({ tool, framework, metadata });
+    const dockerignore = await this.generateDockerignore();
+
+    // If outputDir is configured, write files to disk
+    if (this.outputDir) {
+      await fs.writeFile(path.join(this.outputDir, 'Dockerfile'), dockerfile, 'utf-8');
+      await fs.writeFile(path.join(this.outputDir, '.dockerignore'), dockerignore, 'utf-8');
+
+      // Generate a basic docker-compose.yml
+      const compose = `version: "3.8"
+
+services:
+  ${tool}-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+`;
+      await fs.writeFile(path.join(this.outputDir, 'docker-compose.yml'), compose, 'utf-8');
+
+      // Generate basic .env.example
+      const envExample = `# ${tool.toUpperCase()} Environment Variables
+NODE_ENV=development
+PORT=8080
+`;
+      await fs.writeFile(path.join(this.outputDir, '.env.example'), envExample, 'utf-8');
+    }
+
+    return {
+      dockerfile,
+      dockerignore,
+      tool,
+      framework
+    };
   }
 
   /**
