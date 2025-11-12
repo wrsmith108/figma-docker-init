@@ -53,7 +53,12 @@ export class TemplateValidator {
   validateDockerfileContent(content) {
     const errors = [];
     const warnings = [];
-    const lines = content.split('\n').filter(line => {
+
+    // Replace template variables with placeholders before validation
+    // This allows validation of templates with {{VARIABLE}} syntax
+    const normalizedContent = content.replace(/\{\{[^}]+\}\}/g, 'TEMPLATE_VAR');
+
+    const lines = normalizedContent.split('\n').filter(line => {
       const trimmed = line.trim();
       return trimmed && !trimmed.startsWith('#');
     });
@@ -91,8 +96,8 @@ export class TemplateValidator {
         errors.push(`Line ${i + 1}: Instruction '${instruction}' missing arguments`);
       }
 
-      // Check for secrets in ENV
-      if (instruction === 'ENV' && /password|secret|key|token/i.test(line)) {
+      // Check for secrets in ENV (but not template variables)
+      if (instruction === 'ENV' && /password|secret|key|token/i.test(line) && !line.includes('TEMPLATE_VAR')) {
         errors.push(`Line ${i + 1}: Potential secret in ENV instruction`);
       }
 
@@ -556,40 +561,6 @@ export class TemplateValidator {
    * @param {string} instruction - Dockerfile instruction to validate
    * @returns {Promise<boolean>} True if instruction is valid
    */
-  async validateInstruction(instruction) {
-    const trimmed = instruction.trim();
-
-    // Empty lines are valid
-    if (!trimmed || trimmed.startsWith('#')) {
-      return true;
-    }
-
-    // Extract instruction keyword
-    const instructionMatch = trimmed.match(/^([A-Z]+)\s+/);
-    if (!instructionMatch) {
-      return false;
-    }
-
-    const keyword = instructionMatch[1];
-
-    // Check if instruction keyword is valid
-    if (!this.validInstructions.has(keyword)) {
-      return false;
-    }
-
-    // FROM instruction must have an image
-    if (keyword === 'FROM' && !trimmed.match(/^FROM\s+\S+/)) {
-      return false;
-    }
-
-    // RUN instruction must have a command
-    if (keyword === 'RUN' && !trimmed.match(/^RUN\s+.+/)) {
-      return false;
-    }
-
-    return true;
-  }
-
   /**
    * Estimate the complexity of building the Docker image
    * @param {string} dockerfilePath - Path to Dockerfile
@@ -736,6 +707,65 @@ export class TemplateValidator {
     } catch (error) {
       return { usesNonRoot: false, usesNodeUser: false, error: error.message };
     }
+  }
+
+  /**
+   * Check Docker image for known vulnerabilities
+   * @param {string} baseImage - Base image name (e.g., 'node:20-alpine')
+   * @returns {Promise<Array<object>>} Array of vulnerabilities with severity levels
+   *
+   * NOTE: This is a simple implementation that checks for known patterns.
+   * For production use, integrate with actual vulnerability scanners like:
+   * - Trivy (trivy image <image>)
+   * - Snyk (snyk container test <image>)
+   * - Docker Scout (docker scout cves <image>)
+   */
+  async checkImageVulnerabilities(baseImage) {
+    const vulnerabilities = [];
+
+    // Check for using latest tag (security anti-pattern)
+    if (baseImage.includes(':latest') || !baseImage.includes(':')) {
+      vulnerabilities.push({
+        severity: 'high',
+        title: 'Using :latest or untagged image',
+        description: 'Unversioned images create unpredictable builds and security risks',
+        recommendation: 'Pin to a specific version tag (e.g., node:20.8.1-alpine)'
+      });
+    }
+
+    // Check for non-Alpine images (larger attack surface)
+    if (!baseImage.includes('alpine') && !baseImage.includes('slim')) {
+      vulnerabilities.push({
+        severity: 'medium',
+        title: 'Using full-size base image',
+        description: 'Full images have larger attack surface and more vulnerabilities',
+        recommendation: 'Consider using Alpine-based images for smaller size and fewer vulnerabilities'
+      });
+    }
+
+    // Check for outdated Node.js versions
+    const nodeVersionMatch = baseImage.match(/node:(\d+)/);
+    if (nodeVersionMatch) {
+      const majorVersion = parseInt(nodeVersionMatch[1]);
+      if (majorVersion < 18) {
+        vulnerabilities.push({
+          severity: 'critical',
+          title: 'Outdated Node.js version',
+          description: `Node.js ${majorVersion} is past or approaching end-of-life`,
+          recommendation: 'Upgrade to Node.js 18 LTS or 20 LTS'
+        });
+      }
+    }
+
+    // Alpine-based images generally have very few vulnerabilities
+    // Return low vulnerability count for properly versioned Alpine images
+    if (baseImage.includes('alpine') && baseImage.match(/:\d+/)) {
+      // These images typically have 0-2 low-severity vulnerabilities
+      // Return empty or minimal vulnerabilities for well-maintained Alpine images
+      return vulnerabilities.length > 0 ? vulnerabilities : [];
+    }
+
+    return vulnerabilities;
   }
 }
 
