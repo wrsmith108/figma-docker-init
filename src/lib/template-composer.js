@@ -272,27 +272,12 @@ export class TemplateComposer {
       await fs.writeFile(path.join(this.outputDir, 'Dockerfile'), dockerfile, 'utf-8');
       await fs.writeFile(path.join(this.outputDir, '.dockerignore'), dockerignore, 'utf-8');
 
-      // Generate a basic docker-compose.yml
-      const compose = `version: "3.8"
-
-services:
-  ${tool}-app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - .:/app
-      - /app/node_modules
-`;
+      // Generate tool-specific docker-compose.yml
+      const compose = this._generateCompose(tool, metadata);
       await fs.writeFile(path.join(this.outputDir, 'docker-compose.yml'), compose, 'utf-8');
 
-      // Generate basic .env.example
-      const envExample = `# ${tool.toUpperCase()} Environment Variables
-NODE_ENV=development
-PORT=8080
-`;
+      // Generate tool-specific .env.example
+      const envExample = this._generateEnvExample(tool, metadata);
       await fs.writeFile(path.join(this.outputDir, '.env.example'), envExample, 'utf-8');
     }
 
@@ -437,6 +422,55 @@ PORT=8080
       cachedFragments: this.fragmentCache.size,
       loadedFragments: Array.from(this.loadedFragments)
     };
+  }
+
+  /**
+   * Generate tool-specific docker-compose.yml content
+   * @private
+   * @param {string} tool - Tool name
+   * @param {Object} metadata - Detection metadata
+   * @returns {string} docker-compose.yml content
+   */
+  _generateCompose(tool, metadata = {}) {
+    const compose = `version: "3.8"
+
+services:
+  ${tool}-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+`;
+
+    return compose;
+  }
+
+  /**
+   * Generate tool-specific .env.example content
+   * @private
+   * @param {string} tool - Tool name
+   * @param {Object} metadata - Detection metadata
+   * @returns {string} .env.example content
+   */
+  _generateEnvExample(tool, metadata = {}) {
+    let envVars = `# ${tool.toUpperCase()} Environment Variables\nNODE_ENV=development\nPORT=8080\n`;
+
+    // Add tool-specific variables
+    if (tool === 'lovable') {
+      envVars += `\n# Supabase Configuration\nVITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=\n`;
+    } else if (tool === 'bolt') {
+      envVars += `\n# Application Configuration\nDATABASE_URL=\nAPI_URL=\n`;
+    } else if (tool === 'v0') {
+      envVars += `\n# Next.js Configuration\nNEXT_PUBLIC_API_URL=\n`;
+    } else if (tool === 'figma-make') {
+      envVars += `\n# Build Configuration\nVITE_API_ENDPOINT=\n`;
+    }
+
+    return envVars;
   }
 }
 
