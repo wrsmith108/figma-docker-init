@@ -33,7 +33,7 @@ describe('Template Validation', () => {
   describe('Dockerfile Syntax Validation', () => {
 
     test('should validate Lovable Dockerfile syntax', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
 
       const result = await validator.validateDockerfile(dockerfilePath);
 
@@ -42,7 +42,7 @@ describe('Template Validation', () => {
     });
 
     test('should validate Bolt Dockerfile syntax', async () => {
-      const dockerfilePath = path.join(templatesDir, 'bolt', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'bolt', 'Dockerfile');
 
       const result = await validator.validateDockerfile(dockerfilePath);
 
@@ -51,7 +51,7 @@ describe('Template Validation', () => {
     });
 
     test('should validate V0 Dockerfile syntax', async () => {
-      const dockerfilePath = path.join(templatesDir, 'v0', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'v0', 'Dockerfile');
 
       const result = await validator.validateDockerfile(dockerfilePath);
 
@@ -60,7 +60,7 @@ describe('Template Validation', () => {
     });
 
     test('should validate Figma Make Dockerfile syntax', async () => {
-      const dockerfilePath = path.join(templatesDir, 'figma-make', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'figma-make', 'Dockerfile');
 
       const result = await validator.validateDockerfile(dockerfilePath);
 
@@ -103,7 +103,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should have at least builder and production stages
@@ -113,7 +113,7 @@ describe('Template Validation', () => {
     });
 
     test('should validate stage naming conventions', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       const stages = content.match(/FROM .+ AS (\w+)/gi) || [];
@@ -127,7 +127,7 @@ describe('Template Validation', () => {
     });
 
     test('should copy artifacts between stages correctly', async () => {
-      const dockerfilePath = path.join(templatesDir, 'v0', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'v0', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       // Should copy from builder stage
@@ -138,7 +138,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         const productionStage = content.match(/FROM .+ AS production[\s\S]*$/i)?.[0] || '';
@@ -160,7 +160,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should use Alpine variant
@@ -172,7 +172,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should NOT use 'latest' tag
@@ -197,7 +197,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Alpine is minimal (~5MB vs ~900MB for full Node)
@@ -215,7 +215,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         const lines = content.split('\n');
@@ -233,7 +233,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Prefer npm ci for deterministic builds
@@ -245,7 +245,7 @@ describe('Template Validation', () => {
     });
 
     test('should combine RUN commands to reduce layers', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       // Count RUN instructions
@@ -259,7 +259,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should clean npm cache or use --no-cache flag
@@ -278,7 +278,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         expect(content).toMatch(/HEALTHCHECK/i);
@@ -286,7 +286,7 @@ describe('Template Validation', () => {
     });
 
     test('should configure appropriate health check intervals', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       const healthcheck = content.match(/HEALTHCHECK.+/i)?.[0] || '';
@@ -306,7 +306,7 @@ describe('Template Validation', () => {
       ];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool.name, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool.name, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         const healthcheck = content.match(/HEALTHCHECK.+/i)?.[0] || '';
@@ -323,7 +323,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should have USER instruction
@@ -338,7 +338,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         expect(content).toContain('USER node');
@@ -346,7 +346,7 @@ describe('Template Validation', () => {
     });
 
     test('should set correct file permissions for non-root user', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       // Should change ownership or use --chown flag
@@ -363,7 +363,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const composePath = path.join(templatesDir, tool, 'docker-compose.yml.template');
+        const composePath = path.join(templatesDir, tool, 'docker-compose.yml');
 
         const result = await validator.validateComposeFile(composePath);
 
@@ -376,7 +376,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const composePath = path.join(templatesDir, tool, 'docker-compose.yml.template');
+        const composePath = path.join(templatesDir, tool, 'docker-compose.yml');
         const content = await fs.readFile(composePath, 'utf-8');
 
         expect(content).toMatch(/version:\s*["']3\.8["']/);
@@ -387,7 +387,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const composePath = path.join(templatesDir, tool, 'docker-compose.yml.template');
+        const composePath = path.join(templatesDir, tool, 'docker-compose.yml');
         const content = await fs.readFile(composePath, 'utf-8');
 
         expect(content).toContain('services:');
@@ -400,7 +400,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const composePath = path.join(templatesDir, tool, 'docker-compose.yml.template');
+        const composePath = path.join(templatesDir, tool, 'docker-compose.yml');
         const content = await fs.readFile(composePath, 'utf-8');
 
         // Should mount source code
@@ -415,7 +415,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const composePath = path.join(templatesDir, tool, 'docker-compose.yml.template');
+        const composePath = path.join(templatesDir, tool, 'docker-compose.yml');
         const content = await fs.readFile(composePath, 'utf-8');
 
         // Should reference .env file or define environment
@@ -427,7 +427,7 @@ describe('Template Validation', () => {
     });
 
     test('should configure proper networks', async () => {
-      const composePath = path.join(templatesDir, 'lovable', 'docker-compose.yml.template');
+      const composePath = path.join(templatesDir, 'lovable', 'docker-compose.yml');
       const content = await fs.readFile(composePath, 'utf-8');
 
       if (content.includes('networks:')) {
@@ -443,7 +443,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Variables should use {{ variable }} syntax
@@ -457,8 +457,8 @@ describe('Template Validation', () => {
     });
 
     test('should validate all template variables are defined', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
-      const composePath = path.join(templatesDir, 'lovable', 'docker-compose.yml.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
+      const composePath = path.join(templatesDir, 'lovable', 'docker-compose.yml');
 
       const dockerfileVars = await validator.extractTemplateVariables(dockerfilePath);
       const composeVars = await validator.extractTemplateVariables(composePath);
@@ -481,7 +481,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should not contain hardcoded secrets
@@ -495,7 +495,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
         const content = await fs.readFile(dockerfilePath, 'utf-8');
 
         // Should not use --ignore-scripts unless necessary
@@ -510,7 +510,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerignorePath = path.join(templatesDir, tool, '.dockerignore.template');
+        const dockerignorePath = path.join(templatesDir, tool, '.dockerignore');
         const content = await fs.readFile(dockerignorePath, 'utf-8');
 
         // Should ignore sensitive files
@@ -528,7 +528,7 @@ describe('Template Validation', () => {
       const tools = ['lovable', 'bolt', 'v0', 'figma-make'];
 
       for (const tool of tools) {
-        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile.template');
+        const dockerfilePath = path.join(templatesDir, tool, 'Dockerfile');
 
         const complexity = await validator.estimateBuildComplexity(dockerfilePath);
 
@@ -538,7 +538,7 @@ describe('Template Validation', () => {
     });
 
     test('should use build cache effectively', async () => {
-      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile.template');
+      const dockerfilePath = path.join(templatesDir, 'lovable', 'Dockerfile');
       const content = await fs.readFile(dockerfilePath, 'utf-8');
 
       const lines = content.split('\n').filter(l => l.trim());

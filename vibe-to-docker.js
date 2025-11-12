@@ -15,7 +15,18 @@ import {
   getRelativeFromRoot,
   templateCache,
   ensureVibeDockerStructure
-} from './src/lib/project.js'; 
+} from './src/lib/project.js';
+
+// Phase 2: Template Composition System
+import { TemplateComposer } from './src/lib/template-composer.js';
+import { EnvManager } from './src/lib/env-manager.js';
+import { TemplateValidator } from './src/lib/template-validator.js';
+
+// Phase 1: Tool Detection System
+import LovableDetector from './src/detectors/lovable-detector.js';
+import BoltDetector from './src/detectors/bolt-detector.js';
+import { V0Detector } from './src/detectors/v0-detector.js';
+import { FigmaDetector } from './src/detectors/figma-detector.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -788,15 +799,28 @@ async function assignDynamicPorts() {
  */
 function showHelp() {
   log(`
-${colors.bold}${colors.blue}Vibe to Docker${colors.reset}
-Universal Docker containerization for AI-generated projects (Figma, Lovable, V0, Bolt)
+${colors.bold}${colors.blue}Vibe to Docker v2.0${colors.reset}
+Universal Docker containerization for AI-generated projects
 
 ${colors.bold}Usage:${colors.reset}
-  vibe-to-docker [template] [options]
+  vibe-to-docker [command] [options]
+  vibe-to-docker init --tool=<tool-name>
+  vibe-to-docker [template]  ${colors.dim}(legacy mode)${colors.reset}
 
-${colors.bold}Templates:${colors.reset}
-  basic      Basic Docker setup with minimal configuration
-  ui-heavy   Optimized for UI-heavy applications with advanced caching
+${colors.bold}Commands:${colors.reset}
+  init           Initialize Docker setup with tool detection
+
+${colors.bold}Tool Options (Phase 3):${colors.reset}
+  --tool=<name>  Specify AI tool type:
+                   lovable     Lovable (formerly GPT Engineer)
+                   bolt        Bolt (StackBlitz)
+                   v0          V0 (Vercel)
+                   figma-make  Figma Make (Figma)
+                   auto        Automatic detection
+
+${colors.bold}Legacy Templates (Backward Compatible):${colors.reset}
+  basic          Basic Docker setup with minimal configuration
+  ui-heavy       Optimized for UI-heavy applications with advanced caching
 
 ${colors.bold}Options:${colors.reset}
   -h, --help     Show this help message
@@ -804,9 +828,23 @@ ${colors.bold}Options:${colors.reset}
   --list         List available templates
 
 ${colors.bold}Examples:${colors.reset}
+  ${colors.dim}# Automatic detection${colors.reset}
+  vibe-to-docker init --tool=auto
+
+  ${colors.dim}# Specific tool${colors.reset}
+  vibe-to-docker init --tool=lovable
+  vibe-to-docker init --tool=bolt
+
+  ${colors.dim}# Legacy mode (backward compatible)${colors.reset}
   vibe-to-docker basic
   vibe-to-docker ui-heavy
-  vibe-to-docker --list
+
+${colors.bold}Features:${colors.reset}
+  ✓ Automatic tool detection (Lovable, Bolt, V0, Figma Make)
+  ✓ Smart environment variable detection
+  ✓ Multi-stage Docker builds
+  ✓ Framework-specific optimizations
+  ✓ Security best practices validation
 `);
 }
 
@@ -824,33 +862,67 @@ function showVersion() {
 }
 
 /**
- * Lists available templates.
+ * Lists available templates (both Phase 3 tools and legacy templates).
  */
 function listTemplates() {
   log(`${colors.bold}Available Templates:${colors.reset}\n`);
 
-  // Get package templates directory
-  const templatesDir = getTemplatesDir();
+  // Phase 3: Tool-specific templates
+  log(`${colors.bold}${colors.blue}Tool-Specific Templates (Phase 3):${colors.reset}`);
+  const toolsDir = path.join(__dirname, 'src', 'templates', 'tools');
 
-  if (!fs.existsSync(templatesDir)) {
-    log(`Error: Templates directory not found at ${templatesDir}. Please ensure the templates directory exists and is accessible.`, colors.red);
-    return;
+  if (fs.existsSync(toolsDir)) {
+    const tools = fs.readdirSync(toolsDir).filter(item => {
+      return fs.statSync(path.join(toolsDir, item)).isDirectory();
+    });
+
+    if (tools.length > 0) {
+      log(`${colors.dim}Location: ${toolsDir}${colors.reset}\n`);
+      tools.forEach(tool => {
+        const toolPath = path.join(toolsDir, tool);
+        const files = fs.readdirSync(toolPath);
+        const hasDockerfile = files.includes('Dockerfile') || files.includes('Dockerfile.fragment');
+        const icon = hasDockerfile ? '✓' : '○';
+        log(`  ${colors.green}${icon}${colors.reset} ${colors.blue}${tool}${colors.reset}`);
+
+        // Show what files are included
+        const templateFiles = files.filter(f => !f.startsWith('.'));
+        if (templateFiles.length > 0) {
+          log(`    ${colors.dim}Files: ${templateFiles.join(', ')}${colors.reset}`);
+        }
+      });
+    }
+  } else {
+    log(`  ${colors.yellow}No tool-specific templates found${colors.reset}`);
   }
 
-  const templates = fs.readdirSync(templatesDir).filter(item => {
-    return fs.statSync(path.join(templatesDir, item)).isDirectory();
-  });
+  log('');
 
-  if (templates.length === 0) {
-    log('No templates available', colors.yellow);
-    return;
+  // Legacy templates (backward compatibility)
+  log(`${colors.bold}${colors.yellow}Legacy Templates (Backward Compatible):${colors.reset}`);
+  const legacyTemplatesDir = getTemplatesDir();
+
+  if (fs.existsSync(legacyTemplatesDir)) {
+    const templates = fs.readdirSync(legacyTemplatesDir).filter(item => {
+      return fs.statSync(path.join(legacyTemplatesDir, item)).isDirectory();
+    });
+
+    if (templates.length > 0) {
+      log(`${colors.dim}Location: ${legacyTemplatesDir}${colors.reset}\n`);
+      templates.forEach(template => {
+        log(`  ${colors.yellow}•${colors.reset} ${colors.blue}${template}${colors.reset}`);
+      });
+    } else {
+      log(`  ${colors.yellow}No legacy templates available${colors.reset}`);
+    }
   }
 
-  log(`${colors.dim}Templates location: ${templatesDir}${colors.reset}\n`);
-
-  templates.forEach(template => {
-    log(`  ${colors.blue}${template}${colors.reset}`);
-  });
+  log(`\n${colors.bold}Usage:${colors.reset}`);
+  log(`  ${colors.dim}# Use tool-specific template:${colors.reset}`);
+  log(`  vibe-to-docker init --tool=lovable`);
+  log(`  vibe-to-docker init --tool=auto\n`);
+  log(`  ${colors.dim}# Use legacy template:${colors.reset}`);
+  log(`  vibe-to-docker basic`);
 }
 
 // =============================================================================
@@ -867,7 +939,8 @@ const colors = {
   yellow: '\x1b[33m',
   red: '\x1b[31m',
   reset: '\x1b[0m',
-  bold: '\x1b[1m'
+  bold: '\x1b[1m',
+  dim: '\x1b[2m'
 };
 
 /**
@@ -877,6 +950,314 @@ const colors = {
  */
 function log(message, color = colors.reset) {
   console.log(`${color}${message}${colors.reset}`);
+}
+
+// =============================================================================
+// PHASE 3: CLI INTEGRATION WITH TEMPLATE COMPOSITION
+// =============================================================================
+// Functions: showProgress, autoDetectToolType, generateWithComposer, initializeWithTool
+// Purpose: Integrate Phase 1 detection and Phase 2 composition into CLI workflow
+// =============================================================================
+
+/**
+ * Display progress indicator with color-coded stages.
+ * @param {string} stage - Current stage name
+ * @param {number} percentage - Progress percentage (0-100)
+ * @param {string} message - Progress message
+ */
+function showProgress(stage, percentage, message) {
+  const barLength = 30;
+  const filled = Math.floor((percentage / 100) * barLength);
+  const empty = barLength - filled;
+  const bar = '█'.repeat(filled) + '░'.repeat(empty);
+
+  log(`${colors.blue}[${stage}]${colors.reset} ${bar} ${percentage}% - ${message}`);
+}
+
+/**
+ * Automatically detect tool type using Phase 1 detectors.
+ * @param {string} projectDir - Project directory to analyze
+ * @returns {Promise<Object>} Detection result with tool, confidence, and metadata
+ */
+async function autoDetectToolType(projectDir) {
+  showProgress('DETECT', 0, 'Initializing tool detection...');
+
+  const validatedProjectDir = validateProjectDirectory(projectDir);
+
+  // Initialize all detectors
+  const detectors = [
+    new LovableDetector(validatedProjectDir),
+    new BoltDetector(validatedProjectDir),
+    new V0Detector(validatedProjectDir),
+    new FigmaDetector(validatedProjectDir)
+  ];
+
+  showProgress('DETECT', 25, 'Scanning project files...');
+
+  // Run all detectors in parallel
+  const results = await Promise.all(
+    detectors.map(detector =>
+      detector.detect().catch(error => ({
+        tool: null,
+        confidence: 0,
+        error: error.message,
+        evidence: [],
+        metadata: {}
+      }))
+    )
+  );
+
+  showProgress('DETECT', 75, 'Analyzing detection results...');
+
+  // Find highest confidence result
+  let bestResult = results[0];
+  for (let i = 1; i < results.length; i++) {
+    if (results[i].confidence > bestResult.confidence) {
+      bestResult = results[i];
+    }
+  }
+
+  showProgress('DETECT', 100, `Detection complete: ${bestResult.tool || 'unknown'} (${(bestResult.confidence * 100).toFixed(1)}%)`);
+
+  return bestResult;
+}
+
+/**
+ * Generate Docker configuration using TemplateComposer.
+ * @param {string} tool - Tool name (lovable, bolt, v0, figma-make)
+ * @param {string} projectDir - Project directory
+ * @param {Object} detection - Detection result from autoDetectToolType
+ * @returns {Promise<void>}
+ */
+async function generateWithComposer(tool, projectDir, detection = {}) {
+  const validatedProjectDir = validateProjectDirectory(projectDir);
+  const projectRoot = findProjectRoot(validatedProjectDir) || validatedProjectDir;
+  const vibeDockerDir = getVibeDockerDir(projectRoot);
+
+  // Ensure .vibe-docker directory structure exists
+  const directories = ensureVibeDockerStructure(projectRoot);
+
+  showProgress('COMPOSE', 10, 'Loading template fragments...');
+
+  // Initialize TemplateComposer
+  const templatesDir = path.join(__dirname, 'src', 'templates');
+  const composer = new TemplateComposer(templatesDir);
+
+  showProgress('COMPOSE', 20, 'Detecting project values...');
+
+  // Detect project values for variable substitution
+  const projectValues = await detectProjectValues(validatedProjectDir);
+
+  // Merge detection metadata with project values
+  const variables = {
+    ...projectValues,
+    TOOL: tool,
+    FRAMEWORK: detection.metadata?.framework || projectValues.FRAMEWORK,
+    BUILD_TOOL: detection.metadata?.buildTool || 'vite',
+    BACKEND: detection.metadata?.backend || 'none',
+    LANGUAGE: detection.metadata?.language || 'javascript',
+    STYLING: detection.metadata?.styling || 'css'
+  };
+
+  showProgress('COMPOSE', 30, 'Composing Dockerfile...');
+
+  // Generate Dockerfile
+  try {
+    const dockerfile = await composer.generateDockerfile({
+      tool,
+      framework: variables.FRAMEWORK,
+      metadata: detection.metadata || {},
+      variables
+    });
+
+    showProgress('COMPOSE', 50, 'Composing .dockerignore...');
+
+    // Generate .dockerignore
+    const dockerignore = await composer.generateDockerignore({
+      tool,
+      additionalPatterns: []
+    });
+
+    showProgress('COMPOSE', 60, 'Detecting environment variables...');
+
+    // Initialize EnvManager for environment variable detection
+    const envManager = new EnvManager(validatedProjectDir);
+    await envManager.detectVariables();
+
+    showProgress('COMPOSE', 70, 'Generating environment files...');
+
+    // Generate .env.example
+    const envExample = envManager.generateEnvExample({
+      includeComments: true,
+      groupByType: true
+    });
+
+    // Validate environment variables
+    const envWarnings = envManager.validateVariables();
+
+    showProgress('COMPOSE', 80, 'Validating configuration...');
+
+    // Initialize TemplateValidator
+    const validator = new TemplateValidator();
+
+    // Validate Dockerfile
+    const dockerfileValidation = validator.validateDockerfile(dockerfile);
+
+    if (dockerfileValidation.errors.length > 0) {
+      log(`${colors.red}Dockerfile validation errors:${colors.reset}`);
+      dockerfileValidation.errors.forEach(error => log(`  ${colors.red}✗${colors.reset} ${error}`));
+      throw new Error('Dockerfile validation failed');
+    }
+
+    if (dockerfileValidation.warnings.length > 0) {
+      log(`${colors.yellow}Dockerfile validation warnings:${colors.reset}`);
+      dockerfileValidation.warnings.forEach(warning => log(`  ${colors.yellow}⚠${colors.reset} ${warning}`));
+    }
+
+    showProgress('COMPOSE', 90, 'Writing files...');
+
+    // Write Dockerfile
+    const dockerfilePath = path.join(vibeDockerDir, 'Dockerfile');
+    fs.writeFileSync(dockerfilePath, dockerfile);
+    log(`  ${colors.green}Created${colors.reset} Dockerfile in .vibe-docker/`);
+
+    // Write .dockerignore
+    const dockerignorePath = path.join(vibeDockerDir, '.dockerignore');
+    fs.writeFileSync(dockerignorePath, dockerignore);
+    log(`  ${colors.green}Created${colors.reset} .dockerignore in .vibe-docker/`);
+
+    // Write .env.example
+    const envExamplePath = path.join(vibeDockerDir, '.env.example');
+    fs.writeFileSync(envExamplePath, envExample);
+    log(`  ${colors.green}Created${colors.reset} .env.example in .vibe-docker/`);
+
+    // Copy tool-specific template files (docker-compose.yml, README.md, etc.)
+    const toolTemplatePath = path.join(templatesDir, 'tools', tool);
+    if (fs.existsSync(toolTemplatePath)) {
+      const toolFiles = fs.readdirSync(toolTemplatePath).filter(file =>
+        !file.endsWith('.fragment') && file !== 'Dockerfile' && file !== '.dockerignore' && file !== '.env.example'
+      );
+
+      for (const file of toolFiles) {
+        const sourcePath = path.join(toolTemplatePath, file);
+        const targetPath = path.join(vibeDockerDir, file);
+
+        if (fs.statSync(sourcePath).isFile()) {
+          if (!fs.existsSync(targetPath)) {
+            // Read and process template variables
+            let content = fs.readFileSync(sourcePath, 'utf8');
+            content = replaceTemplateVariables(content, variables);
+            fs.writeFileSync(targetPath, content);
+            log(`  ${colors.green}Created${colors.reset} ${file} in .vibe-docker/`);
+          } else {
+            log(`  ${colors.yellow}Skipped${colors.reset} ${file} (already exists)`);
+          }
+        }
+      }
+    }
+
+    // Create .env from .env.example if it doesn't exist
+    const envPath = path.join(vibeDockerDir, '.env');
+    if (!fs.existsSync(envPath)) {
+      fs.copyFileSync(envExamplePath, envPath);
+      log(`  ${colors.green}Created${colors.reset} .env from .env.example`);
+    }
+
+    showProgress('COMPOSE', 100, 'Setup complete!');
+
+    // Display environment variable warnings
+    if (envWarnings.length > 0) {
+      log(`\n${colors.yellow}Environment Variable Warnings:${colors.reset}`);
+      envWarnings.forEach(warning => {
+        const icon = warning.severity === 'critical' ? '⚠⚠⚠' :
+                     warning.severity === 'high' ? '⚠⚠' : '⚠';
+        log(`  ${colors.yellow}${icon}${colors.reset} ${warning.message}`);
+        if (warning.recommendation) {
+          log(`      ${colors.dim}→ ${warning.recommendation}${colors.reset}`);
+        }
+      });
+    }
+
+    // Display setup summary
+    log(`\n${colors.bold}${colors.green}Setup Complete!${colors.reset}`);
+    log(`${colors.bold}Tool:${colors.reset} ${tool}`);
+    log(`${colors.bold}Framework:${colors.reset} ${variables.FRAMEWORK}`);
+    log(`${colors.bold}Build Tool:${colors.reset} ${variables.BUILD_TOOL}`);
+
+    const envStats = envManager.getStats();
+    log(`${colors.bold}Environment Variables:${colors.reset} ${envStats.total} detected (${envStats.secrets} secrets)`);
+
+    log(`\n${colors.bold}Port Assignments:${colors.reset}`);
+    log(`  ${colors.blue}Development server:${colors.reset} http://localhost:${variables.DEV_PORT}`);
+    log(`  ${colors.blue}Production server:${colors.reset} http://localhost:${variables.PROD_PORT}`);
+    log(`  ${colors.blue}Nginx proxy:${colors.reset} http://localhost:${variables.NGINX_PORT}`);
+
+    log(`\n${colors.bold}Next Steps:${colors.reset}`);
+    log(`1. Review and customize the generated Docker configuration files`);
+    log(`2. Update environment variables in .vibe-docker/.env if needed`);
+    log(`3. Build and run your Docker container:`);
+    log(`   ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
+    log(`\n${colors.bold}To view logs:${colors.reset}`);
+    log(`   ${colors.blue}docker-compose logs -f${colors.reset}`);
+
+  } catch (error) {
+    log(`${colors.red}Error during template composition: ${error.message}${colors.reset}`);
+    throw error;
+  }
+}
+
+/**
+ * Initialize Docker setup with tool-specific template.
+ * Main entry point for Phase 3 CLI integration.
+ * @param {string} toolName - Tool name (lovable, bolt, v0, figma-make, auto)
+ * @param {string} projectDir - Project directory (default: '.')
+ * @param {Object} options - Additional options
+ * @returns {Promise<void>}
+ */
+async function initializeWithTool(toolName, projectDir = '.', options = {}) {
+  log(`${colors.bold}${colors.blue}Vibe to Docker - Phase 3${colors.reset}`);
+  log(`${colors.dim}Universal Docker containerization for AI-generated projects${colors.reset}\n`);
+
+  let tool = toolName;
+  let detection = null;
+
+  // Handle automatic detection
+  if (toolName === 'auto') {
+    log(`${colors.blue}Running automatic tool detection...${colors.reset}\n`);
+    detection = await autoDetectToolType(projectDir);
+
+    if (!detection.tool || detection.confidence < 0.5) {
+      log(`${colors.red}Unable to automatically detect tool type.${colors.reset}`);
+      log(`${colors.yellow}Confidence: ${(detection.confidence * 100).toFixed(1)}%${colors.reset}`);
+      log(`\nPlease specify a tool explicitly using --tool=<tool-name>`);
+      log(`Available tools: lovable, bolt, v0, figma-make`);
+      process.exit(1);
+    }
+
+    tool = detection.tool;
+    log(`\n${colors.green}✓ Detected: ${tool} (confidence: ${(detection.confidence * 100).toFixed(1)}%)${colors.reset}`);
+
+    if (detection.evidence && detection.evidence.length > 0) {
+      log(`${colors.dim}Evidence:${colors.reset}`);
+      detection.evidence.slice(0, 3).forEach(evidence => {
+        log(`  ${colors.dim}• ${evidence}${colors.reset}`);
+      });
+    }
+    log('');
+  }
+
+  // Validate tool name
+  const validTools = ['lovable', 'bolt', 'v0', 'figma-make'];
+  if (!validTools.includes(tool)) {
+    log(`${colors.red}Invalid tool: ${tool}${colors.reset}`);
+    log(`Available tools: ${validTools.join(', ')}`);
+    process.exit(1);
+  }
+
+  log(`${colors.blue}Initializing Docker setup for ${tool}...${colors.reset}\n`);
+
+  // Generate Docker configuration
+  await generateWithComposer(tool, projectDir, detection || {});
 }
 
 // =============================================================================
@@ -1061,7 +1442,7 @@ async function copyTemplate(templateName, targetDir = '.') {
 /**
  * Main entry point for the CLI application.
  */
-function main() {
+async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes('-h') || args.includes('--help')) {
@@ -1079,10 +1460,49 @@ function main() {
     return;
   }
 
+  // Parse --tool flag for Phase 3 integration
+  const toolArg = args.find(arg => arg.startsWith('--tool='));
+  const command = args[0];
+
+  // Phase 3: New tool-based workflow
+  if (command === 'init' || toolArg) {
+    if (!toolArg) {
+      log(`${colors.red}Error: --tool flag is required for init command${colors.reset}`);
+      log(`\nUsage: vibe-to-docker init --tool=<tool-name>`);
+      log(`Available tools: lovable, bolt, v0, figma-make, auto\n`);
+      log(`Example: vibe-to-docker init --tool=auto`);
+      process.exit(1);
+    }
+
+    const toolName = toolArg.split('=')[1];
+
+    if (!toolName) {
+      log(`${colors.red}Error: Please specify a tool name${colors.reset}`);
+      log(`\nExample: vibe-to-docker init --tool=lovable`);
+      process.exit(1);
+    }
+
+    // Validate current directory has package.json (basic sanity check)
+    if (!fs.existsSync('./package.json')) {
+      log(`${colors.yellow}Warning: No package.json found in current directory.${colors.reset}`);
+      log(`${colors.yellow}Make sure you're in the root of your project.${colors.reset}\n`);
+    }
+
+    try {
+      await initializeWithTool(toolName, '.');
+    } catch (error) {
+      log(`${colors.red}Error: ${error.message}${colors.reset}`);
+      process.exit(1);
+    }
+
+    return;
+  }
+
+  // Legacy mode: Backward compatibility with old template names
   const templateName = args[0];
 
   if (!templateName) {
-    log('Please specify a template name!', colors.red);
+    log('Please specify a template name or use init command!', colors.red);
     showHelp();
     process.exit(1);
   }
@@ -1093,7 +1513,14 @@ function main() {
     log(`${colors.yellow}Make sure you're in the root of your project.${colors.reset}\n`);
   }
 
-  copyTemplate(templateName);
+  log(`${colors.dim}Using legacy template mode (for new features, use: vibe-to-docker init --tool=auto)${colors.reset}\n`);
+
+  try {
+    await copyTemplate(templateName);
+  } catch (error) {
+    log(`${colors.red}Error: ${error.message}${colors.reset}`);
+    process.exit(1);
+  }
 }
 
 // Error handling
@@ -1163,5 +1590,11 @@ export {
   listTemplates,
 
   // Main Logic Functions
-  copyTemplate
+  copyTemplate,
+
+  // Phase 3: CLI Integration Functions
+  showProgress,
+  autoDetectToolType,
+  generateWithComposer,
+  initializeWithTool
 };

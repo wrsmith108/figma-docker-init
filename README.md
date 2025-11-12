@@ -220,6 +220,17 @@ npx vibe-to-docker@beta basic
 
 ## 🚀 Features
 
+### v3.0.0 - Universal Tool Support (Coming Soon)
+
+- **🎯 Automatic Tool Detection**: Intelligent detection of Figma Make, Lovable, V0, and Bolt projects
+- **🔧 Tool-Specific Optimizations**: Tailored Docker configurations for each AI development tool
+- **⚡ Enhanced CLI**: New `--tool` flag for explicit tool selection
+- **📚 Comprehensive Guides**: Detailed documentation for each supported tool
+- **🔄 Multi-Service Support**: Docker Compose orchestration for fullstack applications
+- **🗄️ Database Integration**: Automatic Supabase, PostgreSQL, MySQL configuration
+
+### Core Features
+
 - **Per-Project Configuration**: Each project gets its own `.vibe-docker/` directory
 - **Multiple Templates**: Choose from optimized configurations for different project types
 - **Production Ready**: Includes Nginx configuration, multi-stage builds, and security best practices
@@ -266,7 +277,20 @@ docker-compose up --build
 
 ## 🛠️ Usage
 
-### Basic Command
+### Quick Start (v3.0.0 Preview)
+
+```bash
+# Auto-detect project type and initialize
+vibe-to-docker init
+
+# Or specify tool explicitly
+vibe-to-docker init --tool=lovable
+vibe-to-docker init --tool=figma-make
+vibe-to-docker init --tool=v0
+vibe-to-docker init --tool=bolt
+```
+
+### Basic Command (v2.x Compatible)
 
 ```bash
 vibe-to-docker [template] [options]
@@ -275,25 +299,68 @@ vibe-to-docker [template] [options]
 ### Available Templates
 
 #### `basic`
-Minimal Docker setup with essential configuration:
+Minimal Docker setup for simple frontend projects:
 - Basic Dockerfile with Node.js
 - Simple docker-compose.yml
 - Basic Nginx configuration
 - Environment file template
+
+**Best For:** Figma Make, simple React/Vue/Svelte apps
 
 ```bash
 vibe-to-docker basic
 ```
 
 #### `ui-heavy`
-Optimized for UI-heavy applications with advanced caching and performance optimizations:
+Optimized for UI-heavy applications with advanced caching:
 - Multi-stage Dockerfile with build optimization
 - Advanced Nginx configuration with gzip and caching
 - Performance-optimized docker-compose setup
 - Comprehensive environment configuration
 
+**Best For:** Large component libraries, design systems
+
 ```bash
 vibe-to-docker ui-heavy
+```
+
+#### `fullstack` (v3.0.0)
+Complete setup for fullstack applications:
+- Multi-service docker-compose
+- Frontend + Backend containers
+- Database service (PostgreSQL/MySQL)
+- Nginx reverse proxy
+
+**Best For:** Lovable, Bolt fullstack projects
+
+```bash
+vibe-to-docker init --template=fullstack
+```
+
+#### `nextjs` (v3.0.0)
+Optimized for Next.js applications:
+- Next.js standalone build
+- Server-side rendering support
+- API routes configuration
+- Static + dynamic optimization
+
+**Best For:** V0, Next.js projects
+
+```bash
+vibe-to-docker init --template=nextjs
+```
+
+#### `supabase` (v3.0.0)
+Configured for Supabase integration:
+- Supabase client setup
+- Environment variable templates
+- Authentication configuration
+- Real-time features support
+
+**Best For:** Lovable projects with Supabase
+
+```bash
+vibe-to-docker init --template=supabase
 ```
 
 ### Command Options
@@ -309,6 +376,18 @@ vibe-to-docker -v
 
 # List all available templates
 vibe-to-docker --list
+
+# Initialize with auto-detection (v3.0.0)
+vibe-to-docker init
+
+# Specify tool explicitly (v3.0.0)
+vibe-to-docker init --tool=<tool>
+
+# Preview without writing files (v3.0.0)
+vibe-to-docker init --dry-run
+
+# Overwrite existing configuration (v3.0.0)
+vibe-to-docker init --force
 ```
 
 ## 📁 Generated Files
@@ -491,13 +570,51 @@ jobs:
 
 ## 📚 Examples
 
-### Basic React App
+### Figma Make Project
 
 ```bash
-# In your React project
-vibe-to-docker basic
-docker-compose up --build
-# App available at http://localhost
+cd my-figma-project
+vibe-to-docker init --tool=figma-make
+cd .vibe-docker && docker-compose up -d --build
+# App available at http://localhost:3000
+```
+
+### Lovable Fullstack Project
+
+```bash
+cd my-lovable-app
+vibe-to-docker init --tool=lovable
+
+# Configure Supabase credentials
+nano .vibe-docker/.env
+# Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+
+cd .vibe-docker && docker-compose up -d --build
+# App available at http://localhost:3000
+```
+
+### V0 Next.js Project
+
+```bash
+cd my-v0-project
+vibe-to-docker init --tool=v0
+
+cd .vibe-docker && docker-compose up -d --build
+# App available at http://localhost:3000
+```
+
+### Bolt Multi-Service Project
+
+```bash
+cd my-bolt-app
+vibe-to-docker init --tool=bolt
+
+# Review generated multi-service configuration
+cat .vibe-docker/docker-compose.yml
+
+cd .vibe-docker && docker-compose up -d --build
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:3001
 ```
 
 ### Complex UI Application
@@ -505,15 +622,17 @@ docker-compose up --build
 ```bash
 # For apps with heavy UI components
 vibe-to-docker ui-heavy
+cd .vibe-docker
 cp .env.example .env
 # Edit .env with your configuration
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 ### Production Deployment
 
 ```bash
 # Build production image
+cd .vibe-docker
 docker build --target production -t myapp:v1.0.0 .
 
 # Tag for registry
@@ -535,9 +654,13 @@ sudo chown -R $USER:$USER .
 
 **Port already in use:**
 ```bash
-# Change port in docker-compose.yml
+# Change port in docker-compose.yml or .env
 ports:
   - "8080:80"  # Use different host port
+
+# Or update .env
+DEV_PORT=5000
+NGINX_PORT=7000
 ```
 
 **Out of disk space:**
@@ -552,22 +675,75 @@ docker system prune -a
 docker-compose build --no-cache
 ```
 
+**Supabase connection fails (Lovable projects):**
+```bash
+# Verify credentials in .vibe-docker/.env
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=your-key
+
+# Rebuild container
+cd .vibe-docker
+docker-compose up -d --build
+```
+
+**Environment variables not available:**
+```bash
+# Ensure variables are prefixed correctly:
+# - VITE_* for Vite projects
+# - NEXT_PUBLIC_* for Next.js projects
+# - No prefix for server-side only
+
+# Rebuild after changing .env
+docker-compose up -d --build
+```
+
+### Tool-Specific Troubleshooting
+
+For detailed troubleshooting, see the tool-specific guides:
+- [Lovable Troubleshooting](docs/guides/LOVABLE_GUIDE.md#troubleshooting)
+- [Figma Make Troubleshooting](docs/guides/FIGMA_MAKE_GUIDE.md#troubleshooting)
+- [V0 Troubleshooting](docs/guides/V0_GUIDE.md#troubleshooting)
+- [Bolt Troubleshooting](docs/guides/BOLT_GUIDE.md#troubleshooting)
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
+## 📖 Documentation
+
+### User Guides
+
+- **[CLI User Guide](docs/CLI_USER_GUIDE.md)** - Complete CLI reference and usage
+- **[Migration Guide v2→v3](docs/MIGRATION_V2_TO_V3.md)** - Upgrade from v2.x to v3.0
+
+### Tool-Specific Guides
+
+- **[Lovable Guide](docs/guides/LOVABLE_GUIDE.md)** - Fullstack apps with Supabase
+- **[Figma Make Guide](docs/guides/FIGMA_MAKE_GUIDE.md)** - Design-to-code projects
+- **[V0 Guide](docs/guides/V0_GUIDE.md)** - Next.js and Tailwind projects
+- **[Bolt Guide](docs/guides/BOLT_GUIDE.md)** - WebContainer fullstack apps
+
+### Technical Documentation
+
+- **[API Reference](docs/API.md)** - Programmatic usage
+- **[Architecture](docs/TEMPLATE_ARCHITECTURE.md)** - Template system design
+- **[Contributing](CONTRIBUTING.md)** - Development guide
+
 ## 🤝 Support
 
-- 📖 [Documentation](https://github.com/your-username/vibe-to-docker#readme)
-- 🐛 [Issue Tracker](https://github.com/your-username/vibe-to-docker/issues)
-- 💬 [Discussions](https://github.com/your-username/vibe-to-docker/discussions)
+- 📖 [Documentation](https://github.com/wrsmith108/vibe-to-docker#readme)
+- 🐛 [Issue Tracker](https://github.com/wrsmith108/vibe-to-docker/issues)
+- 💬 [Discussions](https://github.com/wrsmith108/vibe-to-docker/discussions)
 
 ## 🙏 Acknowledgments
 
 - Inspired by create-react-app and similar bootstrapping tools
-- Built for the Figma developer community
-- Optimized for modern React/Vite/TypeScript workflows
+- Built for the AI-powered development community
+- Optimized for Figma Make, Lovable, V0, Bolt, and modern frameworks
+- Special thanks to all contributors and early adopters
 
 ---
 
-**Made with ❤️ for the Figma developer community**
+**Made with ❤️ for the AI-powered development community**
+
+Supporting: Figma Make • Lovable • V0 • Bolt • And more...
