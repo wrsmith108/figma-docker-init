@@ -44,12 +44,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wrsmith108/vibe-to-docker.git"
+    "url": "https://github.com/wrsmith108/figma-docker-init.git"
   },
   "bugs": {
-    "url": "https://github.com/wrsmith108/vibe-to-docker/issues"
+    "url": "https://github.com/wrsmith108/figma-docker-init/issues"
   },
-  "homepage": "https://github.com/wrsmith108/vibe-to-docker",
+  "homepage": "https://github.com/wrsmith108/figma-docker-init",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/wrsmith108"
