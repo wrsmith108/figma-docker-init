@@ -33,7 +33,7 @@ Successfully optimized port allocation system to eliminate EACCES errors and exc
 
 ### 1. Environment-Aware Logging ✅
 
-**File**: `figma-docker-init.js`
+**File**: `vibe-to-docker.js`
 **Functions**: `checkPortAvailability`, `assignDynamicPorts`
 
 ```javascript
@@ -53,7 +53,7 @@ if (!isTestEnv) {
 
 ### 2. Intelligent Privileged Port Handling ✅
 
-**File**: `figma-docker-init.js`
+**File**: `vibe-to-docker.js`
 **Function**: `findAvailablePort`
 
 **Enhancements**:
@@ -82,7 +82,7 @@ if (eaccesCount >= maxEaccesAttempts && port < 1024) {
 
 ### 3. Port Check Timeout ✅
 
-**File**: `figma-docker-init.js`
+**File**: `vibe-to-docker.js`
 **Function**: `findAvailablePort`
 
 ```javascript
@@ -107,7 +107,7 @@ const available = await new Promise((resolve) => {
 
 ### 4. NGINX_PORT Default Change ✅
 
-**File**: `figma-docker-init.js`
+**File**: `vibe-to-docker.js`
 **Function**: `assignDynamicPorts`
 
 ```javascript
@@ -182,7 +182,7 @@ Total: 31 tests, 31 passed, 0 failed
 
 ## Files Modified
 
-### 1. `/figma-docker-init.js`
+### 1. `/vibe-to-docker.js`
 
 **Changes**:
 - Lines 562-594: Added environment detection to `checkPortAvailability`
@@ -250,7 +250,7 @@ NODE_ENV=production npm test
 ### In Production
 ```bash
 # Verify logging works in production
-node figma-docker-init.js basic
+node vibe-to-docker.js basic
 
 # Check port assignments
 # Should see yellow warnings if default ports are occupied

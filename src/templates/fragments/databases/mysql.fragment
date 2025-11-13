@@ -1,0 +1,2 @@
+# MySQL Database Configuration
+ENV DATABASE_URL=mysql://user:password@mysql:3306/dbname

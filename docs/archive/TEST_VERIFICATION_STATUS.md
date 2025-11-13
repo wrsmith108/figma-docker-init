@@ -87,7 +87,7 @@ Failing Tests (10):
 
 ### Critical Issue: parseConfig() Signature Mismatch
 
-**Current Implementation** (figma-docker-init.js:167-193):
+**Current Implementation** (vibe-to-docker.js:167-193):
 ```javascript
 function parseConfig(projectDir, configName, extractPattern) {
   // Synchronous implementation
@@ -136,7 +136,7 @@ Untracked:
 **NOT YET RUN** - Waiting for parseConfig() fix
 
 Planned:
-- test/figma-docker-init.test.js (should be 9/9)
+- test/vibe-to-docker.test.js (should be 9/9)
 
 ---
 
@@ -145,9 +145,9 @@ Planned:
 **NOT YET RUN** - Waiting for parseConfig() fix
 
 Planned:
-- `node figma-docker-init.js --help`
-- `node figma-docker-init.js --list`
-- `node figma-docker-init.js --version`
+- `node vibe-to-docker.js --help`
+- `node vibe-to-docker.js --list`
+- `node vibe-to-docker.js --version`
 
 ---
 

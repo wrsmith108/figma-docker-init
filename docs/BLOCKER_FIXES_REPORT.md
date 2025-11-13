@@ -29,10 +29,10 @@ Successfully fixed **3 critical blockers** that prevented Phase 1 from being pro
 **Fix**:
 ```json
 // Before:
-"files": ["figma-docker-init.js", "lib/", "templates/", ...]
+"files": ["vibe-to-docker.js", "lib/", "templates/", ...]
 
 // After:
-"files": ["figma-docker-init.js", "src/lib/", "templates/", ...]
+"files": ["vibe-to-docker.js", "src/lib/", "templates/", ...]
 ```
 
 **Impact**: NPM package now includes all required modules for distribution
@@ -72,12 +72,12 @@ Successfully fixed **3 critical blockers** that prevented Phase 1 from being pro
 
 **Fixes**:
 1. Moved `lib/template-cache.js` → `src/lib/template-cache.js`
-2. Updated `figma-docker-init.js` imports: `./lib/` → `./src/lib/`
-3. Removed non-existent import: `ensureFigmaDockerStructure`
+2. Updated `vibe-to-docker.js` imports: `./lib/` → `./src/lib/`
+3. Removed non-existent import: `ensureVibeDockerStructure`
 4. Fixed test imports: `../../lib/` → `../../src/lib/`
 
 **Files Modified**:
-- `figma-docker-init.js` (2 import lines)
+- `vibe-to-docker.js` (2 import lines)
 - `test/unit/template-engine-refactor.test.js` (2 import lines)
 
 **Impact**: All module resolution errors eliminated
@@ -134,8 +134,8 @@ Pass Rate: 97.4%
 
 3. **Module Integration Gap**
    - `src/lib/` modules created but not fully integrated into main CLI
-   - Functions like `createFigmaDockerDirectory()` unused in production code
-   - `.figma-docker/` directory structure designed but not implemented
+   - Functions like `createVibeDockerDirectory()` unused in production code
+   - `.vibe-docker/` directory structure designed but not implemented
 
 ---
 
@@ -164,7 +164,7 @@ Pass Rate: 97.4%
 1. Fix coverage reporting (0% → 90%+)
 2. Resolve remaining test failures (13 → 0)
 3. Integrate `src/lib/` modules into production CLI
-4. Implement `.figma-docker/` directory creation in main flow
+4. Implement `.vibe-docker/` directory creation in main flow
 
 ### Medium-term (Weeks)
 1. Complete Phase 1 integration work (4-6 weeks)
@@ -184,7 +184,7 @@ Pass Rate: 97.4%
 - `templates/ui-heavy/docker-compose.yml` (4 lines)
 
 **Source Code**:
-- `figma-docker-init.js` (2 import lines)
+- `vibe-to-docker.js` (2 import lines)
 - Moved: `lib/template-cache.js` → `src/lib/template-cache.js`
 
 **Tests**:

@@ -1,4 +1,4 @@
-# Agentic Sprint Plan: figma-docker-init v1.1.0
+# Agentic Sprint Plan: vibe-to-docker v1.1.0
 
 **Sprint Goal**: Implement V2 Architecture Plan (Phase 1) using parallel agent development
 **Target Version**: 1.1.0
@@ -89,7 +89,7 @@ npm test  # All tests must pass
       "type": "coder",
       "priority": "high",
       "dependencies": ["test-writer"],
-      "outputs": ["figma-docker-init.js"]
+      "outputs": ["vibe-to-docker.js"]
     },
     {
       "id": "qa-validator",
@@ -274,7 +274,7 @@ git checkout -b feature/v1.1-refactor
 
 1. **Task 2.1: Add Module Exports**
    ```bash
-   ./claude-flow sparc run coder "Add explicit exports to figma-docker-init.js"
+   ./claude-flow sparc run coder "Add explicit exports to vibe-to-docker.js"
    ```
 
    **Implementation**:
@@ -422,7 +422,7 @@ git checkout -b feature/v1.1-refactor
    describe('Integration: Module Imports', () => {
      test('should import functions from module', async () => {
        const { sanitizeString, validateTemplateName } = await import(
-         '../../figma-docker-init.js'
+         '../../vibe-to-docker.js'
        );
 
        expect(sanitizeString('test')).toBe('test');
@@ -527,7 +527,7 @@ git checkout -b feature/v1.1-refactor
      });
 
      test('should run help command', () => {
-       const output = execSync('node figma-docker-init.js --help', {
+       const output = execSync('node vibe-to-docker.js --help', {
          encoding: 'utf8'
        });
        expect(output).toContain('Usage:');
@@ -535,7 +535,7 @@ git checkout -b feature/v1.1-refactor
      });
 
      test('should list templates', () => {
-       const output = execSync('node figma-docker-init.js --list', {
+       const output = execSync('node vibe-to-docker.js --list', {
          encoding: 'utf8'
        });
        expect(output).toContain('basic');
@@ -545,7 +545,7 @@ git checkout -b feature/v1.1-refactor
      test('should create Docker setup for basic template', () => {
        process.chdir(testProjectDir);
 
-       execSync('node ../../figma-docker-init.js basic', {
+       execSync('node ../../vibe-to-docker.js basic', {
          encoding: 'utf8'
        });
 
@@ -603,7 +603,7 @@ git checkout -b feature/v1.1-refactor
        execSync(`npm install ${path.join(projectRoot, packageFile)}`);
 
        // Verify CLI is accessible
-       const output = execSync('npx figma-docker-init --version', {
+       const output = execSync('npx vibe-to-docker --version', {
          encoding: 'utf8'
        });
 
@@ -621,7 +621,7 @@ git checkout -b feature/v1.1-refactor
 
        // Test global command
        const output = execSync(
-         `${path.join(globalDir, 'bin', 'figma-docker-init')} --help`,
+         `${path.join(globalDir, 'bin', 'vibe-to-docker')} --help`,
          { encoding: 'utf8' }
        );
 
@@ -823,7 +823,7 @@ Closes #<issue-number>
 **Git Commands**:
 ```bash
 # Stage all changes
-git add figma-docker-init.js
+git add vibe-to-docker.js
 git add test/
 git add .github/workflows/ci.yml  # Updated for pack-master
 
@@ -1005,15 +1005,15 @@ gh pr merge feature/v1.1-refactor \
 gh release view v1.1.0
 
 # Verify npm publication
-npm view figma-docker-init@1.1.0
+npm view vibe-to-docker@1.1.0
 
 # Test installation in separate project
 mkdir /tmp/test-install
 cd /tmp/test-install
 npm init -y
-npm install figma-docker-init@1.1.0
-npx figma-docker-init --version  # Should show 1.1.0
-npx figma-docker-init --help
+npm install vibe-to-docker@1.1.0
+npx vibe-to-docker --version  # Should show 1.1.0
+npx vibe-to-docker --help
 
 # Clean up
 cd -
@@ -1046,7 +1046,7 @@ git push origin pack-master
 
 ```bash
 # Deprecate bad version
-npm deprecate figma-docker-init@1.1.0 "Release failed, use 1.0.2"
+npm deprecate vibe-to-docker@1.1.0 "Release failed, use 1.0.2"
 
 # Fix issues and re-release as 1.1.1
 ```
@@ -1055,10 +1055,10 @@ npm deprecate figma-docker-init@1.1.0 "Release failed, use 1.0.2"
 
 ```bash
 # Unpublish within 72 hours (npm policy)
-npm unpublish figma-docker-init@1.1.0
+npm unpublish vibe-to-docker@1.1.0
 
 # Or deprecate and release hotfix
-npm deprecate figma-docker-init@1.1.0 "Critical bug, use 1.1.1"
+npm deprecate vibe-to-docker@1.1.0 "Critical bug, use 1.1.1"
 ```
 
 ---
@@ -1130,7 +1130,7 @@ npm deprecate figma-docker-init@1.1.0 "Critical bug, use 1.1.1"
 ./claude-flow agent spawn coder \
   --name code-implementer \
   --task "Implement code to make tests pass" \
-  --output figma-docker-init.js \
+  --output vibe-to-docker.js \
   --priority high \
   --depends-on test-writer
 

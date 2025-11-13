@@ -127,7 +127,7 @@ Status:      RED PHASE COMPLETE ✅
 ### Deliverables
 
 #### 1. Module Exports Added (ADR-002) ✅
-**Location**: figma-docker-init.js:874-913
+**Location**: vibe-to-docker.js:874-913
 
 **Export Block Created**:
 - Custom Error Classes (ValidationError, ConfigError)
@@ -141,7 +141,7 @@ Status:      RED PHASE COMPLETE ✅
 **Total**: 30+ functions exported
 
 #### 2. Unified parseConfig Helper (ADR-003) ✅
-**Location**: figma-docker-init.js:167-192
+**Location**: vibe-to-docker.js:167-192
 
 **Implementation**:
 ```javascript
@@ -172,7 +172,7 @@ function parseConfig(projectDir, configName, extractPattern) {
 **Code Reduction**: Eliminated ~60 lines of duplication
 
 #### 3. Custom Error Classes (ADR-004) ✅
-**Location**: figma-docker-init.js:22-37
+**Location**: vibe-to-docker.js:22-37
 
 ```javascript
 class ValidationError extends Error {
@@ -193,7 +193,7 @@ class ConfigError extends Error {
 **Updated Functions**: Validation functions now throw ValidationError
 
 #### 4. Main Execution Guard ✅
-**Location**: figma-docker-init.js:859-868
+**Location**: vibe-to-docker.js:859-868
 
 ```javascript
 const isMainModule = process.argv[1] && (
@@ -209,7 +209,7 @@ if (isMainModule) {
 ### Implementation Metrics
 
 ```
-File: figma-docker-init.js
+File: vibe-to-docker.js
 Total Lines: 912 (up from 854)
 Changes: +123 lines, -65 lines (net +58)
 Architecture: Single-file maintained ✅ (ADR-001)
@@ -217,7 +217,7 @@ Architecture: Single-file maintained ✅ (ADR-001)
 
 ### Coordination Hooks Executed
 ✅ Memory store: `code_status` → "implementation-complete"
-✅ Memory store: `lines_changed` → "figma-docker-init.js: +123/-65 lines"
+✅ Memory store: `lines_changed` → "vibe-to-docker.js: +123/-65 lines"
 
 ---
 
@@ -396,7 +396,7 @@ Failing: 11/30 (37%)
 ### Critical Issues Requiring Remediation ❌
 
 #### 1. Module Execution Conflict 🚨 CRITICAL
-**File**: figma-docker-init.js:859-868
+**File**: vibe-to-docker.js:859-868
 **Issue**: Module execution guard may not work in all environments
 **Impact**: Tests cannot run reliably
 **Fix**: Implement stricter execution condition
@@ -622,7 +622,7 @@ npm_test_status: "verified_with_warnings"
 - docs/SPRINT_SUMMARY.md (this document)
 
 **Modified**:
-- figma-docker-init.js (+123 lines, -65 lines)
+- vibe-to-docker.js (+123 lines, -65 lines)
 
 ### Swarm Configuration
 

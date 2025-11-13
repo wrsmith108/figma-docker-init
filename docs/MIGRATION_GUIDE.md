@@ -2,7 +2,7 @@
 
 ## Overview
 
-Version 2.0.0 introduces a new per-project installation architecture where Docker configurations are stored in a `.figma-docker/` directory within each project. This guide helps you migrate from the global installation pattern to the new per-project structure.
+Version 2.0.0 introduces a new per-project installation architecture where Docker configurations are stored in a `.vibe-docker/` directory within each project. This guide helps you migrate from the global installation pattern to the new per-project structure.
 
 ## What Changed?
 
@@ -20,7 +20,7 @@ your-project/
 ### After (v2.0.0+)
 ```
 your-project/
-├── .figma-docker/          # New centralized directory
+├── .vibe-docker/          # New centralized directory
 │   ├── config.json
 │   ├── Dockerfile
 │   ├── docker-compose.yml
@@ -77,13 +77,13 @@ Run the tool with your preferred template:
 
 ```bash
 # For basic template
-figma-docker-init basic
+vibe-to-docker basic
 
 # For UI-heavy template
-figma-docker-init ui-heavy
+vibe-to-docker ui-heavy
 ```
 
-This will create the new `.figma-docker/` directory structure.
+This will create the new `.vibe-docker/` directory structure.
 
 ### Step 4: Migrate Custom Configuration
 
@@ -91,12 +91,12 @@ If you had customized your Docker configuration, migrate those changes:
 
 ```bash
 # Compare your backup with new files
-diff docker-backup/Dockerfile .figma-docker/Dockerfile
-diff docker-backup/docker-compose.yml .figma-docker/docker-compose.yml
-diff docker-backup/nginx.conf .figma-docker/nginx.conf
+diff docker-backup/Dockerfile .vibe-docker/Dockerfile
+diff docker-backup/docker-compose.yml .vibe-docker/docker-compose.yml
+diff docker-backup/nginx.conf .vibe-docker/nginx.conf
 ```
 
-Apply your custom changes to the new files in `.figma-docker/`.
+Apply your custom changes to the new files in `.vibe-docker/`.
 
 ### Step 5: Update Environment Variables
 
@@ -104,10 +104,10 @@ If you had a `.env` file (not `.env.example`):
 
 ```bash
 # Copy your environment variables to the new location
-cp .env .figma-docker/.env
+cp .env .vibe-docker/.env
 
-# Or manually update .figma-docker/.env.example and rename it
-cd .figma-docker
+# Or manually update .vibe-docker/.env.example and rename it
+cd .vibe-docker
 mv .env.example .env
 # Edit .env with your values
 ```
@@ -124,8 +124,8 @@ docker build -f Dockerfile .
 
 **After:**
 ```bash
-docker-compose -f .figma-docker/docker-compose.yml up --build
-docker build -f .figma-docker/Dockerfile .
+docker-compose -f .vibe-docker/docker-compose.yml up --build
+docker build -f .vibe-docker/Dockerfile .
 ```
 
 Or use the new npm scripts (automatically added to `package.json`):
@@ -141,16 +141,16 @@ Update your `.gitignore` to include the new structure:
 
 ```gitignore
 # Docker configuration (if you want to ignore environment files)
-.figma-docker/.env
-.figma-docker/*.log
+.vibe-docker/.env
+.vibe-docker/*.log
 
 # Keep the configuration in version control
-!.figma-docker/config.json
-!.figma-docker/Dockerfile
-!.figma-docker/docker-compose.yml
-!.figma-docker/nginx.conf
-!.figma-docker/.dockerignore
-!.figma-docker/.env.example
+!.vibe-docker/config.json
+!.vibe-docker/Dockerfile
+!.vibe-docker/docker-compose.yml
+!.vibe-docker/nginx.conf
+!.vibe-docker/.dockerignore
+!.vibe-docker/.env.example
 ```
 
 ### Step 8: Test the Migration
@@ -163,7 +163,7 @@ npm run docker:build
 npm run docker:up
 
 # Or manually
-cd .figma-docker
+cd .vibe-docker
 docker-compose up --build
 
 # Verify your application runs correctly
@@ -189,7 +189,7 @@ For convenience, here's an automated migration script:
 
 set -e
 
-echo "🔄 Migrating figma-docker-init to v2.0.0..."
+echo "🔄 Migrating vibe-to-docker to v2.0.0..."
 
 # Check if old files exist
 if [ ! -f "Dockerfile" ] && [ ! -f "docker-compose.yml" ]; then
@@ -222,21 +222,21 @@ rm -f Dockerfile docker-compose.yml nginx.conf .dockerignore .env.example DOCKER
 
 # Install new configuration
 echo "📥 Installing new configuration..."
-figma-docker-init $TEMPLATE
+vibe-to-docker $TEMPLATE
 
 # Migrate .env if it exists
 if [ -f "docker-backup/.env" ]; then
   echo "🔐 Migrating environment variables..."
-  cp docker-backup/.env .figma-docker/.env
+  cp docker-backup/.env .vibe-docker/.env
 fi
 
 # Test build
 echo "🧪 Testing new configuration..."
-cd .figma-docker
+cd .vibe-docker
 docker-compose config > /dev/null
 
 echo "✅ Migration complete!"
-echo "📖 Review changes in .figma-docker/ directory"
+echo "📖 Review changes in .vibe-docker/ directory"
 echo "🗑️  Remove docker-backup/ when satisfied"
 ```
 
@@ -255,7 +255,7 @@ chmod +x migrate-to-v2.sh
 
 **Solution**: Use the new file paths:
 ```bash
-docker-compose -f .figma-docker/docker-compose.yml up
+docker-compose -f .vibe-docker/docker-compose.yml up
 ```
 
 Or use npm scripts:
@@ -268,7 +268,7 @@ npm run docker:up
 **Problem**: Application can't read environment variables.
 
 **Solution**:
-1. Ensure `.env` file is in `.figma-docker/` directory
+1. Ensure `.env` file is in `.vibe-docker/` directory
 2. Update `docker-compose.yml` to reference correct env file path
 3. Verify `env_file` directive points to correct location
 
@@ -282,14 +282,14 @@ services:
   app:
     build:
       context: ..  # Build from project root
-      dockerfile: .figma-docker/Dockerfile
+      dockerfile: .vibe-docker/Dockerfile
 ```
 
 ### Issue: Port conflicts
 
 **Problem**: Ports already in use after migration.
 
-**Solution**: Check `.figma-docker/config.json` for assigned ports:
+**Solution**: Check `.vibe-docker/config.json` for assigned ports:
 ```json
 {
   "ports": {
@@ -308,7 +308,7 @@ Update `docker-compose.yml` if needed.
 
 **Solution**: Compare backup with new files:
 ```bash
-diff docker-backup/Dockerfile .figma-docker/Dockerfile
+diff docker-backup/Dockerfile .vibe-docker/Dockerfile
 ```
 
 Manually apply your customizations to new files.
@@ -322,10 +322,10 @@ If you need to rollback to v1.x:
 cp docker-backup/* .
 
 # Remove new directory
-rm -rf .figma-docker
+rm -rf .vibe-docker
 
 # Downgrade package
-npm install -g figma-docker-init@1.1.0
+npm install -g vibe-to-docker@1.1.0
 ```
 
 ## Getting Help
@@ -334,7 +334,7 @@ If you encounter issues during migration:
 
 1. Check the [troubleshooting guide](./TROUBLESHOOTING.md)
 2. Review [API documentation](./API.md)
-3. Open an issue on [GitHub](https://github.com/wrsmith108/figma-docker-init/issues)
+3. Open an issue on [GitHub](https://github.com/wrsmith108/vibe-to-docker/issues)
 4. Include your backup files and error messages
 
 ## Next Steps
@@ -349,7 +349,7 @@ After successful migration:
 
 ## Version Compatibility
 
-- **v2.0.0+**: Uses `.figma-docker/` directory structure
+- **v2.0.0+**: Uses `.vibe-docker/` directory structure
 - **v1.x**: Uses root-level configuration files
 - **Migration**: Supported from v1.0.0 to v2.0.0+
 

@@ -1,6 +1,6 @@
-# Contributing to figma-docker-init
+# Contributing to vibe-to-docker
 
-First off, thank you for considering contributing to figma-docker-init! It's people like you that make this tool better for everyone.
+First off, thank you for considering contributing to vibe-to-docker! It's people like you that make this tool better for everyone.
 
 ## Table of Contents
 
@@ -31,8 +31,8 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 1. Fork the repository
 2. Clone your fork:
 ```bash
-git clone https://github.com/YOUR_USERNAME/figma-docker-init.git
-cd figma-docker-init
+git clone https://github.com/YOUR_USERNAME/vibe-to-docker.git
+cd vibe-to-docker
 ```
 
 3. Install dependencies:
@@ -49,13 +49,13 @@ npm test
 
 ### Per-Project Installation Architecture (v2.0.0+)
 
-The v2.0.0 release introduced a new per-project architecture where Docker configurations are stored in a `.figma-docker/` directory within each project.
+The v2.0.0 release introduced a new per-project architecture where Docker configurations are stored in a `.vibe-docker/` directory within each project.
 
 #### Directory Structure
 
 ```
-figma-docker-init/
-├── figma-docker-init.js    # Main CLI entry point
+vibe-to-docker/
+├── vibe-to-docker.js    # Main CLI entry point
 ├── lib/                     # Planned: Modular library code (Phase 1)
 │   ├── path-resolver.js     # Path resolution utilities
 │   ├── directory-manager.js # Directory structure management
@@ -85,7 +85,7 @@ figma-docker-init/
 
 #### Current Architecture (v2.0.0)
 
-The current implementation uses a monolithic `figma-docker-init.js` file with well-organized sections:
+The current implementation uses a monolithic `vibe-to-docker.js` file with well-organized sections:
 
 1. **Custom Error Classes**: `ValidationError`, `ConfigError`
 2. **Input Validation**: String sanitization, path validation
@@ -101,7 +101,7 @@ The current implementation uses a monolithic `figma-docker-init.js` file with we
 We're refactoring to a modular architecture:
 
 ```
-[Current: figma-docker-init.js] → [Planned: Modular lib/ structure]
+[Current: vibe-to-docker.js] → [Planned: Modular lib/ structure]
                                          ↓
                         ┌────────────────┴────────────────┐
                         │                                 │
@@ -128,7 +128,7 @@ Handles all path resolution for per-project installations:
 // Resolves project root by finding package.json
 resolveProjectRoot(startDir)
 
-// Resolves .figma-docker/ directory
+// Resolves .vibe-docker/ directory
 resolveDockerDir(projectRoot)
 
 // Validates file paths for security
@@ -137,10 +137,10 @@ validateFilePath(filePath, baseDir)
 
 #### 2. Directory Manager (Planned: lib/directory-manager.js)
 
-Manages `.figma-docker/` directory structure:
+Manages `.vibe-docker/` directory structure:
 
 ```javascript
-// Creates .figma-docker/ with proper structure
+// Creates .vibe-docker/ with proper structure
 createDockerDirectory(projectRoot, options)
 
 // Validates directory structure
@@ -232,7 +232,7 @@ Validate template
 Process template files
   ├─ Read template
   ├─ Substitute variables
-  └─ Write to .figma-docker/
+  └─ Write to .vibe-docker/
       ↓
 Show next steps
 ```
@@ -246,7 +246,7 @@ Path Resolver
   └─ Find project root
       ↓
 Directory Manager
-  └─ Create .figma-docker/
+  └─ Create .vibe-docker/
       ↓
 Project Detector
   └─ Auto-detect config
@@ -276,7 +276,7 @@ npm link
 
 3. Test your changes:
 ```bash
-figma-docker-init basic
+vibe-to-docker basic
 ```
 
 ### Running Tests
@@ -533,7 +533,7 @@ We're currently refactoring the monolithic structure into modular components. Se
 **How to contribute to Phase 1:**
 1. Pick a module from the checklist
 2. Create the module in `lib/` directory
-3. Extract relevant code from `figma-docker-init.js`
+3. Extract relevant code from `vibe-to-docker.js`
 4. Write comprehensive tests
 5. Update documentation
 
@@ -563,8 +563,8 @@ We're currently refactoring the monolithic structure into modular components. Se
 
 ## Questions?
 
-- Open a [GitHub issue](https://github.com/wrsmith108/figma-docker-init/issues)
-- Start a [discussion](https://github.com/wrsmith108/figma-docker-init/discussions)
+- Open a [GitHub issue](https://github.com/wrsmith108/vibe-to-docker/issues)
+- Start a [discussion](https://github.com/wrsmith108/vibe-to-docker/discussions)
 
 ## License
 
@@ -572,4 +572,4 @@ By contributing, you agree that your contributions will be licensed under the pr
 
 ---
 
-**Thank you for contributing to figma-docker-init! 🎉**
+**Thank you for contributing to vibe-to-docker! 🎉**

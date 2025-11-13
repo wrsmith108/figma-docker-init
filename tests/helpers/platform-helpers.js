@@ -3,11 +3,11 @@
  * Utilities for cross-platform testing
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const { execSync } = require('child_process');
-const { performance } = require('perf_hooks');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { execSync } from 'child_process';
+import { performance } from 'perf_hooks';
 
 /**
  * Get platform information
@@ -361,7 +361,7 @@ function getMemoryInfo() {
   };
 }
 
-module.exports = {
+export {
   getPlatformInfo,
   isCI,
   createTestProject,

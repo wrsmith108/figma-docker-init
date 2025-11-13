@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  bolt-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{PROJECT_NAME}}-bolt
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    environment:
+      - NODE_ENV=production
+      - PORT={{PORT}}
+      - HOST=0.0.0.0
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - bolt-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:{{PORT}}/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      # Optional: Mount public assets for development
+      # - ./public:/app/public:ro
+
+networks:
+  bolt-network:
+    driver: bridge

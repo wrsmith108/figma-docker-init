@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 describe('CLI E2E Tests', () => {
   const projectRoot = path.join(__dirname, '../..');
-  const cliPath = path.join(projectRoot, 'figma-docker-init.js');
+  const cliPath = path.join(projectRoot, 'vibe-to-docker.js');
   let testDir;
 
   beforeEach(() => {
@@ -52,9 +52,9 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
-      expect(output).toContain('Templates:');
+      expect(output).toContain('Legacy Templates'); // Phase 3 changed "Templates:" to "Legacy Templates (Backward Compatible):"
       expect(output).toContain('basic');
       expect(output).toContain('ui-heavy');
       expect(output).toContain('Options:');
@@ -69,7 +69,7 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
     });
 
@@ -79,7 +79,7 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
     });
   });
@@ -91,7 +91,7 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      expect(output).toMatch(/figma-docker-init v\d+\.\d+\.\d+/);
+      expect(output).toMatch(/vibe-to-docker v\d+\.\d+\.\d+/);
     });
 
     it('should show version with -v flag', () => {
@@ -100,7 +100,7 @@ describe('CLI E2E Tests', () => {
         cwd: testDir
       });
 
-      expect(output).toMatch(/figma-docker-init v\d+\.\d+\.\d+/);
+      expect(output).toMatch(/vibe-to-docker v\d+\.\d+\.\d+/);
     });
   });
 
@@ -120,7 +120,8 @@ describe('CLI E2E Tests', () => {
       expect(() => {
         execSync(`node "${cliPath}" --list`, {
           encoding: 'utf8',
-          cwd: testDir
+          cwd: testDir,
+          stdio: 'pipe'
         });
       }).not.toThrow();
     });
@@ -138,7 +139,7 @@ describe('CLI E2E Tests', () => {
       expect(output).toContain('Setup Complete!');
 
       // Verify files were created in .figma-docker directory
-      const figmaDockerDir = path.join(testDir, '.figma-docker');
+      const vibeDockerDir = path.join(testDir, '.vibe-docker');
       const expectedFiles = [
         'Dockerfile',
         'docker-compose.yml',
@@ -147,7 +148,7 @@ describe('CLI E2E Tests', () => {
       ];
 
       expectedFiles.forEach(file => {
-        const filePath = path.join(figmaDockerDir, file);
+        const filePath = path.join(vibeDockerDir, file);
         expect(fs.existsSync(filePath)).toBe(true);
       });
     });
@@ -159,9 +160,9 @@ describe('CLI E2E Tests', () => {
       });
 
       // Read Dockerfile from .figma-docker and check for variable replacement
-      const figmaDockerDir = path.join(testDir, '.figma-docker');
+      const vibeDockerDir = path.join(testDir, '.vibe-docker');
       const dockerfile = fs.readFileSync(
-        path.join(figmaDockerDir, 'Dockerfile'),
+        path.join(vibeDockerDir, 'Dockerfile'),
         'utf8'
       );
 
@@ -180,7 +181,7 @@ describe('CLI E2E Tests', () => {
       });
 
       const dockerCompose = fs.readFileSync(
-        path.join(testDir, 'docker-compose.yml'),
+        path.join(testDir, '.vibe-docker', 'docker-compose.yml'),
         'utf8'
       );
 
@@ -203,9 +204,9 @@ describe('CLI E2E Tests', () => {
 
     it('should skip existing files', () => {
       // Create .figma-docker directory and a file that already exists
-      const figmaDockerDir = path.join(testDir, '.figma-docker');
-      fs.mkdirSync(figmaDockerDir, { recursive: true });
-      fs.writeFileSync(path.join(figmaDockerDir, 'Dockerfile'), 'existing content');
+      const vibeDockerDir = path.join(testDir, '.vibe-docker');
+      fs.mkdirSync(vibeDockerDir, { recursive: true });
+      fs.writeFileSync(path.join(vibeDockerDir, 'Dockerfile'), 'existing content');
 
       const output = execSync(`node "${cliPath}" basic`, {
         encoding: 'utf8',
@@ -217,7 +218,7 @@ describe('CLI E2E Tests', () => {
 
       // Verify existing file wasn't overwritten
       const content = fs.readFileSync(
-        path.join(figmaDockerDir, 'Dockerfile'),
+        path.join(vibeDockerDir, 'Dockerfile'),
         'utf8'
       );
       expect(content).toBe('existing content');
@@ -234,7 +235,7 @@ describe('CLI E2E Tests', () => {
       expect(output).toContain('Setup Complete!');
 
       // Files are created in .figma-docker directory
-      const figmaDockerDir = path.join(testDir, '.figma-docker');
+      const vibeDockerDir = path.join(testDir, '.vibe-docker');
       const expectedFiles = [
         'Dockerfile',
         'docker-compose.yml',
@@ -243,7 +244,7 @@ describe('CLI E2E Tests', () => {
       ];
 
       expectedFiles.forEach(file => {
-        expect(fs.existsSync(path.join(figmaDockerDir, file))).toBe(true);
+        expect(fs.existsSync(path.join(vibeDockerDir, file))).toBe(true);
       });
     });
 
@@ -254,9 +255,9 @@ describe('CLI E2E Tests', () => {
       });
 
       // Files are created in .figma-docker directory
-      const figmaDockerDir = path.join(testDir, '.figma-docker');
+      const vibeDockerDir = path.join(testDir, '.vibe-docker');
       const dockerfile = fs.readFileSync(
-        path.join(figmaDockerDir, 'Dockerfile'),
+        path.join(vibeDockerDir, 'Dockerfile'),
         'utf8'
       );
 
@@ -304,7 +305,7 @@ describe('CLI E2E Tests', () => {
       expect(output).toContain('Next Steps:');
       expect(output).toContain('Review and customize');
       expect(output).toContain('Update environment variables');
-      expect(output).toContain('cd .figma-docker && docker-compose up -d --build');
+      expect(output).toContain('cd .vibe-docker && docker-compose up -d --build');
     });
 
     it('should mention DOCKER.md if it exists', () => {

@@ -47,7 +47,31 @@
 
 ## Project Overview
 
+**Current State**: vibe-to-docker v2.1.0 - Docker setup for Figma Make exported projects
+**Migration Target**: vibe-to-docker v1.0.0 - Universal Docker containerization for AI-generated projects
+
+This project is undergoing migration from Figma-specific tool to universal vibe-coding support.
+
+### Vibe-to-Docker Initiative
+**Goal**: Transform vibe-to-docker into a universal Docker containerization tool supporting:
+- Figma Make (React/Vite/TypeScript)
+- Lovable (formerly GPT Engineer) - Multi-framework fullstack
+- V0 (Vercel) - Next.js/React/Tailwind
+- Bolt (StackBlitz) - Multi-framework WebContainers
+
+### Initialized Tools
+- **Claude-Flow v2.7.33**: Swarm orchestration, neural training, GitHub integration
+- **AgentDB v1.6.1**: Vector database for persistent agent memory (sqlite @ ./agentdb.db)
+- **Agentic-Flow v1.10.2**: Multi-agent coordination with 213+ MCP tools
+
+### Development Methodology
 This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
+
+### Token-Based Estimation
+**No time estimates** - All planning uses token consumption estimates
+- Estimation template: docs/TOKEN_ESTIMATION_TEMPLATE.md
+- Retro template: docs/RETROSPECTIVE_TEMPLATE.md
+- Migration plan: docs/VIBE_TO_DOCKER_MIGRATION_PLAN.md
 
 ## SPARC Commands
 

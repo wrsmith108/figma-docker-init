@@ -13,7 +13,7 @@ import {
   showHelp,
   showVersion,
   listTemplates
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -108,7 +108,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
       expect(output).toContain('Next Steps:');
-      expect(output).toContain('cd .figma-docker && docker-compose up -d --build');
+      expect(output).toContain('cd .vibe-docker && docker-compose up -d --build');
 
       fs.rmSync(targetDir, { recursive: true, force: true });
       fs.rmSync(templateDir, { recursive: true, force: true });
@@ -147,9 +147,9 @@ describe('copyTemplate Comprehensive Coverage', () => {
       );
 
       // Create .figma-docker directory and existing file
-      const figmaDockerDir = path.join(targetDir, '.figma-docker');
-      fs.mkdirSync(figmaDockerDir, { recursive: true });
-      fs.writeFileSync(path.join(figmaDockerDir, 'existing.txt'), 'Existing content');
+      const vibeDockerDir = path.join(targetDir, '.vibe-docker');
+      fs.mkdirSync(vibeDockerDir, { recursive: true });
+      fs.writeFileSync(path.join(vibeDockerDir, 'existing.txt'), 'Existing content');
 
       const templateDir = path.join(templatesDir, 'skipped-template');
       fs.mkdirSync(templateDir, { recursive: true });
@@ -167,12 +167,15 @@ describe('copyTemplate Comprehensive Coverage', () => {
 
     it('should count created and skipped files correctly', async () => {
       const targetDir = path.join(fixturesDir, 'file-counts');
+      const vibeDockerDir = path.join(targetDir, '.vibe-docker');
       fs.mkdirSync(targetDir, { recursive: true });
+      fs.mkdirSync(vibeDockerDir, { recursive: true });
       fs.writeFileSync(
         path.join(targetDir, 'package.json'),
         JSON.stringify({ name: 'test-app' })
       );
-      fs.writeFileSync(path.join(targetDir, 'existing.txt'), 'Existing');
+      // Create existing file in .vibe-docker/ where files will be copied
+      fs.writeFileSync(path.join(vibeDockerDir, 'existing.txt'), 'Existing');
 
       const templateDir = path.join(templatesDir, 'counts-template');
       fs.mkdirSync(templateDir, { recursive: true });
@@ -360,9 +363,9 @@ describe('copyTemplate Comprehensive Coverage', () => {
       showHelp();
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
 
-      expect(output).toContain('Figma Docker Init');
+      expect(output).toContain('Vibe to Docker');
       expect(output).toContain('Usage:');
-      expect(output).toContain('Templates:');
+      expect(output).toContain('Legacy Templates'); // Phase 3 changed "Templates:" to "Legacy Templates (Backward Compatible):"
       expect(output).toContain('Options:');
       expect(output).toContain('Examples:');
       expect(output).toContain('basic');
@@ -372,7 +375,7 @@ describe('copyTemplate Comprehensive Coverage', () => {
     it('showVersion should read from package.json when available', () => {
       showVersion();
       const output = consoleLogSpy.mock.calls.map(call => call.join(' ')).join('\n');
-      expect(output).toContain('figma-docker-init');
+      expect(output).toContain('vibe-to-docker');
       expect(output).toMatch(/v\d+\.\d+\.\d+/);
     });
 

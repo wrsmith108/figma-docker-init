@@ -96,21 +96,21 @@ describe('Path Resolver', () => {
 
     test('should handle tilde expansion', () => {
       const homeDir = os.homedir();
-      const tildeExpanded = '~/.figma-docker'.replace('~', homeDir);
+      const tildeExpanded = '~/.vibe-docker'.replace('~', homeDir);
 
       expect(tildeExpanded).toContain(homeDir);
-      expect(tildeExpanded).toContain('.figma-docker');
+      expect(tildeExpanded).toContain('.vibe-docker');
     });
 
     test('should handle symlinks', () => {
-      const symlinkPath = '/tmp/link/.figma-docker';
+      const symlinkPath = '/tmp/link/.vibe-docker';
       const resolved = path.resolve(symlinkPath);
 
       expect(path.isAbsolute(resolved)).toBe(true);
     });
 
     test('should handle paths with spaces', () => {
-      const spacePath = '/Users/test user/my project/.figma-docker';
+      const spacePath = '/Users/test user/my project/.vibe-docker';
       const resolved = path.resolve(spacePath);
 
       expect(resolved).toContain('test user');
@@ -118,11 +118,11 @@ describe('Path Resolver', () => {
     });
 
     test('should handle hidden directories', () => {
-      const hiddenPath = '/Users/test/.hidden/.figma-docker';
+      const hiddenPath = '/Users/test/.hidden/.vibe-docker';
       const resolved = path.resolve(hiddenPath);
 
       expect(resolved).toContain('.hidden');
-      expect(resolved).toContain('.figma-docker');
+      expect(resolved).toContain('.vibe-docker');
     });
   });
 
@@ -157,21 +157,21 @@ describe('Path Resolver', () => {
 
     test('should resolve relative to specific base directory', () => {
       const baseDir = '/Users/test/project';
-      const relativePath = 'src/.figma-docker';
+      const relativePath = 'src/.vibe-docker';
       const resolved = path.resolve(baseDir, relativePath);
 
       expect(resolved).toContain('/Users/test/project');
       expect(resolved).toContain('src');
-      expect(resolved).toContain('.figma-docker');
+      expect(resolved).toContain('.vibe-docker');
     });
 
     test('should handle empty path components', () => {
-      const emptyComponents = path.join('', 'project', '', '.figma-docker');
+      const emptyComponents = path.join('', 'project', '', '.vibe-docker');
       const resolved = path.resolve(emptyComponents);
 
       expect(path.isAbsolute(resolved)).toBe(true);
       expect(resolved).toContain('project');
-      expect(resolved).toContain('.figma-docker');
+      expect(resolved).toContain('.vibe-docker');
     });
   });
 
@@ -190,14 +190,14 @@ describe('Path Resolver', () => {
     });
 
     test('should preserve absolute paths during resolution', () => {
-      const absolutePath = path.resolve('/Users/test/project/.figma-docker');
+      const absolutePath = path.resolve('/Users/test/project/.vibe-docker');
       const resolved = path.resolve(absolutePath);
 
       expect(resolved).toBe(absolutePath);
     });
 
     test('should handle absolute path with relative components', () => {
-      const mixedPath = '/Users/test/../test/./project/.figma-docker';
+      const mixedPath = '/Users/test/../test/./project/.vibe-docker';
       const normalized = path.normalize(mixedPath);
 
       expect(normalized).not.toContain('..');
@@ -333,16 +333,16 @@ describe('Path Resolver', () => {
     });
 
     test('should handle mixed path separators', () => {
-      const mixedPath = 'project/.figma-docker\\config/settings.json';
+      const mixedPath = 'project/.vibe-docker\\config/settings.json';
       const normalized = path.normalize(mixedPath);
 
       // Should normalize to current platform's separator
       expect(normalized).toContain('project');
-      expect(normalized).toContain('.figma-docker');
+      expect(normalized).toContain('.vibe-docker');
     });
 
     test('should convert between path formats', () => {
-      const unixPath = '/Users/test/project/.figma-docker';
+      const unixPath = '/Users/test/project/.vibe-docker';
       const parts = unixPath.split('/').filter(Boolean);
 
       const reconstructed = path.join(...parts);
@@ -350,7 +350,7 @@ describe('Path Resolver', () => {
     });
 
     test('should handle platform-specific path methods', () => {
-      const testPath = path.join('project', '.figma-docker', 'config');
+      const testPath = path.join('project', '.vibe-docker', 'config');
 
       expect(path.dirname(testPath)).toBeTruthy();
       expect(path.basename(testPath)).toBe('config');
@@ -381,7 +381,7 @@ describe('Path Resolver', () => {
     });
 
     test('should handle Unicode characters in paths', () => {
-      const unicodePath = '/Users/test/プロジェクト/.figma-docker';
+      const unicodePath = '/Users/test/プロジェクト/.vibe-docker';
       const resolved = path.resolve(unicodePath);
 
       expect(resolved).toContain('プロジェクト');
@@ -452,11 +452,11 @@ describe('Path Resolver', () => {
     });
 
     test('should join path components', () => {
-      const components = ['Users', 'test', 'project', '.figma-docker'];
+      const components = ['Users', 'test', 'project', '.vibe-docker'];
       const joined = path.join(...components);
 
       expect(joined).toContain('Users');
-      expect(joined).toContain('.figma-docker');
+      expect(joined).toContain('.vibe-docker');
     });
 
     test('should calculate relative path between two paths', () => {

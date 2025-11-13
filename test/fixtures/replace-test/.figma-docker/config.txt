@@ -1,2 +1,0 @@
-Project: my-awesome-app
-Framework: react

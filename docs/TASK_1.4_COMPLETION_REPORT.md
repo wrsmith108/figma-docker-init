@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-Successfully refactored the template processing engine to support per-project `.figma-docker/` installation with new template variables (`{{PROJECT_ROOT}}`, `{{FIGMA_DOCKER_DIR}}`), comprehensive path resolution, and performance-optimized template caching achieving **>80% speed improvement** on cached operations.
+Successfully refactored the template processing engine to support per-project `.vibe-docker/` installation with new template variables (`{{PROJECT_ROOT}}`, `{{FIGMA_DOCKER_DIR}}`), comprehensive path resolution, and performance-optimized template caching achieving **>80% speed improvement** on cached operations.
 
 ---
 
@@ -24,9 +24,9 @@ Successfully refactored the template processing engine to support per-project `.
 
 #### Implemented:
 - Added `{{PROJECT_ROOT}}` variable - absolute path to project root
-- Added `{{FIGMA_DOCKER_DIR}}` variable - absolute path to `.figma-docker` directory
+- Added `{{FIGMA_DOCKER_DIR}}` variable - absolute path to `.vibe-docker` directory
 - Added `{{PROJECT_ROOT_RELATIVE}}` variable - normalized relative path
-- Added `{{FIGMA_DOCKER_DIR_RELATIVE}}` variable - relative `.figma-docker` path
+- Added `{{FIGMA_DOCKER_DIR_RELATIVE}}` variable - relative `.vibe-docker` path
 - All path operations use path-resolver utility
 - Backward compatible with existing variables
 
@@ -38,9 +38,9 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
   const enhancedVariables = {
     ...variables,
     PROJECT_ROOT: projectRoot || process.cwd(),
-    FIGMA_DOCKER_DIR: figmaDockerDir,
+    FIGMA_DOCKER_DIR: vibeDockerDir,
     PROJECT_ROOT_RELATIVE: projectRoot ? normalizePath(projectRoot) : '.',
-    FIGMA_DOCKER_DIR_RELATIVE: getRelativeFromRoot(figmaDockerDir, projectRoot)
+    FIGMA_DOCKER_DIR_RELATIVE: getRelativeFromRoot(vibeDockerDir, projectRoot)
   };
 
   // ... process with caching support
@@ -51,30 +51,30 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
 
 ---
 
-### ✅ Task 1.4.2: Update copyTemplate() to Write to .figma-docker/
+### ✅ Task 1.4.2: Update copyTemplate() to Write to .vibe-docker/
 
 **Status**: Complete
 **Acceptance Criteria Met**: Template selection works per-project ✅
 
 #### Implemented:
-- Modified `copyTemplate()` to write files to `.figma-docker/` directory
-- Template discovery checks `.figma-docker/templates` first
+- Modified `copyTemplate()` to write files to `.vibe-docker/` directory
+- Template discovery checks `.vibe-docker/templates` first
 - Falls back to package templates for backward compatibility
-- Automatic `.figma-docker` structure creation
+- Automatic `.vibe-docker` structure creation
 
 #### Code Changes:
 ```javascript
 async function copyTemplate(templateName, targetDir = '.') {
   // 1. Ensure directory structure
   const projectRoot = findProjectRoot(targetDir) || targetDir;
-  const directories = ensureFigmaDockerStructure(projectRoot);
+  const directories = ensureVibeDockerStructure(projectRoot);
 
-  // 2. Resolve template path (checks .figma-docker first)
+  // 2. Resolve template path (checks .vibe-docker first)
   const templatePath = resolveTemplatePath(templateName, projectRoot);
 
-  // 3. Write to .figma-docker/
-  const figmaDockerDir = getFigmaDockerDir(projectRoot);
-  const targetPath = path.join(figmaDockerDir, file);
+  // 3. Write to .vibe-docker/
+  const vibeDockerDir = getVibeDockerDir(projectRoot);
+  const targetPath = path.join(vibeDockerDir, file);
   fs.writeFileSync(targetPath, processedContent);
 }
 ```
@@ -83,7 +83,7 @@ async function copyTemplate(templateName, targetDir = '.') {
 
 ---
 
-### ✅ Task 1.4.3: Modify Template Discovery to Look in .figma-docker/
+### ✅ Task 1.4.3: Modify Template Discovery to Look in .vibe-docker/
 
 **Status**: Complete
 **Acceptance Criteria Met**: Path resolution works on all platforms ✅
@@ -92,11 +92,11 @@ async function copyTemplate(templateName, targetDir = '.') {
 
 **Functions Exported:**
 1. `findProjectRoot(startDir)` - Finds package.json to locate project root
-2. `getFigmaDockerDir(projectRoot)` - Returns `.figma-docker` directory path
+2. `getVibeDockerDir(projectRoot)` - Returns `.vibe-docker` directory path
 3. `getTemplatesDir(projectRoot)` - Gets templates directory with fallback
 4. `resolveTemplatePath(templateName, projectRoot)` - Resolves full template path
 5. `resolveConfigPath(configFile, projectRoot)` - Resolves config file paths
-6. `ensureFigmaDockerStructure(projectRoot)` - Creates directory structure
+6. `ensureVibeDockerStructure(projectRoot)` - Creates directory structure
 7. `normalizePath(path)` - Cross-platform path normalization
 8. `getRelativeFromRoot(absolutePath, projectRoot)` - Converts to relative paths
 
@@ -224,11 +224,11 @@ if (templatePath) {
 
 ### Modified Files
 
-1. **figma-docker-init.js**
+1. **vibe-to-docker.js**
    - Imported path-resolver and template-cache modules
    - Updated `replaceTemplateVariables()` function (added caching, new variables)
-   - Modified `copyTemplate()` function (write to `.figma-docker/`)
-   - Updated `listTemplates()` function (check `.figma-docker/templates`)
+   - Modified `copyTemplate()` function (write to `.vibe-docker/`)
+   - Updated `listTemplates()` function (check `.vibe-docker/templates`)
    - Enhanced `validateTemplate()` function (document new variables)
 
 ---
@@ -248,7 +248,7 @@ project-root/
 ### After (Per-Project Installation)
 ```
 project-root/
-├── .figma-docker/          # ✨ NEW: Per-project directory
+├── .vibe-docker/          # ✨ NEW: Per-project directory
 │   ├── config/             # Configuration storage
 │   ├── cache/              # Template cache
 │   ├── Dockerfile          # Generated template
@@ -266,7 +266,7 @@ project-root/
 
 - Existing templates work without modification
 - Old variables (`{{PROJECT_NAME}}`, `{{DEV_PORT}}`, etc.) still work
-- Falls back to package templates if `.figma-docker/templates` doesn't exist
+- Falls back to package templates if `.vibe-docker/templates` doesn't exist
 - Optional `templatePath` parameter for caching (backward compatible)
 - No breaking changes to public API
 
@@ -305,7 +305,7 @@ project-root/
 ### Post-Edit Hooks
 ```bash
 ✅ npx claude-flow@alpha hooks post-edit \
-  --file "figma-docker-init.js" \
+  --file "vibe-to-docker.js" \
   --memory-key "swarm/template-engine/refactor"
 
 ✅ npx claude-flow@alpha hooks post-edit \
@@ -336,8 +336,8 @@ project-root/
 | Criteria | Status | Evidence |
 |----------|--------|----------|
 | Templates render with correct paths | ✅ Complete | 6/6 tests passing, new variables working |
-| Template selection works per-project | ✅ Complete | 5/5 tests passing, `.figma-docker` integration |
-| All templates use new path structure | ✅ Complete | copyTemplate() writes to `.figma-docker/` |
+| Template selection works per-project | ✅ Complete | 5/5 tests passing, `.vibe-docker` integration |
+| All templates use new path structure | ✅ Complete | copyTemplate() writes to `.vibe-docker/` |
 | 50%+ faster template processing | ✅ Exceeded | >80% improvement on cached operations |
 | Cross-platform compatibility | ✅ Complete | Path normalization, platform-specific tests |
 | Backward compatibility | ✅ Complete | All existing tests passing, no breaking changes |
@@ -355,7 +355,7 @@ project-root/
 ### Immediate Next Task
 **Task 1.5**: Docker Compose Integration
 - Update docker-compose.yml template with new path variables
-- Adjust volume mounts for `.figma-docker/` structure
+- Adjust volume mounts for `.vibe-docker/` structure
 - Modify bind mount paths
 
 ### Remaining Phase 1 Tasks
@@ -370,14 +370,14 @@ project-root/
 ### Basic Usage
 ```bash
 cd my-project
-figma-docker-init basic
+vibe-to-docker basic
 
 # Output:
-# Created .figma-docker directory structure at: /Users/.../my-project/.figma-docker
+# Created .vibe-docker directory structure at: /Users/.../my-project/.vibe-docker
 # Setting up Docker configuration for "basic" template...
-#   Created Dockerfile in .figma-docker/
-#   Created docker-compose.yml in .figma-docker/
-#   Created nginx.conf in .figma-docker/
+#   Created Dockerfile in .vibe-docker/
+#   Created docker-compose.yml in .vibe-docker/
+#   Created nginx.conf in .vibe-docker/
 # Setup Complete!
 ```
 
@@ -393,8 +393,8 @@ WORKDIR {{PROJECT_ROOT}}
 COPY {{PROJECT_ROOT}}/package*.json ./
 RUN npm install
 
-# Mount config from .figma-docker
-VOLUME {{FIGMA_DOCKER_DIR}}:/app/.figma-docker
+# Mount config from .vibe-docker
+VOLUME {{FIGMA_DOCKER_DIR}}:/app/.vibe-docker
 
 # Traditional variables still work
 EXPOSE {{DEV_PORT}}
@@ -453,7 +453,7 @@ Task 1.4 successfully completed with **all acceptance criteria met or exceeded**
 ✅ New path variables (`PROJECT_ROOT`, `FIGMA_DOCKER_DIR`)
 ✅ Centralized path resolution utility
 ✅ High-performance template caching (>80% improvement)
-✅ Per-project `.figma-docker/` directory structure
+✅ Per-project `.vibe-docker/` directory structure
 ✅ 100% backward compatibility
 ✅ Comprehensive test coverage (64 tests passing)
 ✅ Cross-platform support

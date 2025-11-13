@@ -1,0 +1,2 @@
+# TypeScript Configuration
+RUN npm run build

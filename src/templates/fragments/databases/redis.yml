@@ -1,0 +1,45 @@
+# Redis Database Fragment
+# Composable docker-compose service for Redis cache
+# Insertion Point: DATABASE_SERVICES
+
+  redis:
+    image: redis:7-alpine
+    container_name: {{PROJECT_NAME}}-redis
+    restart: unless-stopped
+    ports:
+      - "{{REDIS_PORT:-6379}}:6379"
+    environment:
+      REDIS_PASSWORD: {{REDIS_PASSWORD:-}}
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - {{PROJECT_NAME}}-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      ${REDIS_PASSWORD:+--requirepass $REDIS_PASSWORD}
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: {{PROJECT_NAME}}-redis-commander
+    restart: unless-stopped
+    ports:
+      - "{{REDIS_COMMANDER_PORT:-8082}}:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379${REDIS_PASSWORD:+:$REDIS_PASSWORD}
+    depends_on:
+      - redis
+    networks:
+      - {{PROJECT_NAME}}-network
+
+volumes:
+  redis-data:
+    driver: local

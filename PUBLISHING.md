@@ -1,6 +1,6 @@
-# Publishing Instructions for figma-docker-init
+# Publishing Instructions for vibe-to-docker
 
-This document provides comprehensive instructions for publishing the `figma-docker-init` CLI tool to npm using automated semantic-release.
+This document provides comprehensive instructions for publishing the `vibe-to-docker` CLI tool to npm using automated semantic-release.
 
 ## 🔧 Prerequisites
 
@@ -84,9 +84,9 @@ npm version major  # 1.0.0 -> 2.0.0
 ### 2. Quality Assurance
 ```bash
 # Test CLI functionality
-node figma-docker-init.js --help
-node figma-docker-init.js --version
-node figma-docker-init.js --list
+node vibe-to-docker.js --help
+node vibe-to-docker.js --version
+node vibe-to-docker.js --list
 
 # Validate package contents
 npm pack --dry-run
@@ -98,7 +98,7 @@ npm audit
 ### 3. Repository Setup
 ```bash
 # Update repository URLs in package.json (replace with your actual repository)
-# "url": "https://github.com/your-username/figma-docker-init.git"
+# "url": "https://github.com/your-username/vibe-to-docker.git"
 
 # Commit all changes
 git add .
@@ -135,11 +135,11 @@ npm publish --access public
 ### Step 4: Verify Publication
 ```bash
 # Check if package is available
-npm view figma-docker-init
+npm view vibe-to-docker
 
 # Test global installation
-npm install -g figma-docker-init
-figma-docker-init --version
+npm install -g vibe-to-docker
+vibe-to-docker --version
 ```
 
 ## 🔄 Update Process
@@ -163,7 +163,7 @@ For subsequent updates:
 ### Current Package Metadata
 ```json
 {
-  "name": "figma-docker-init",
+  "name": "vibe-to-docker",
   "version": "1.0.0",
   "description": "Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects",
   "keywords": [
@@ -176,7 +176,7 @@ For subsequent updates:
 ```
 
 ### Files Included in Package
-- `figma-docker-init.js` - Main CLI script
+- `vibe-to-docker.js` - Main CLI script
 - `package.json` - Package configuration
 - `README.md` - Documentation
 - `LICENSE` - MIT license
@@ -194,13 +194,13 @@ For subsequent updates:
 ### Access Control
 ```bash
 # Check who has access to publish
-npm owner ls figma-docker-init
+npm owner ls vibe-to-docker
 
 # Add collaborator (if needed)
-npm owner add <username> figma-docker-init
+npm owner add <username> vibe-to-docker
 
 # Remove access (if needed)
-npm owner rm <username> figma-docker-init
+npm owner rm <username> vibe-to-docker
 ```
 
 ## 📊 Post-Publishing Tasks
@@ -214,7 +214,7 @@ npm owner rm <username> figma-docker-init
 ### 2. Monitor Package
 ```bash
 # Check download statistics
-npm view figma-docker-init
+npm view vibe-to-docker
 
 # Monitor for issues
 # Check GitHub issues and npm for user feedback
@@ -246,13 +246,13 @@ npm publish
 ```bash
 # Check availability
 npm view <package-name>
-# Consider scoped package: @your-username/figma-docker-init
+# Consider scoped package: @your-username/vibe-to-docker
 ```
 
 **Permission Denied:**
 ```bash
 # Check ownership
-npm owner ls figma-docker-init
+npm owner ls vibe-to-docker
 # Contact npm support if needed
 ```
 
@@ -274,8 +274,8 @@ With semantic-release, the following happens automatically on pushes to main:
 - [ ] GitHub release created with proper notes
 - [ ] CHANGELOG.md updated correctly
 - [ ] Version tags created in repository
-- [ ] Installation test successful: `npm install -g figma-docker-init`
-- [ ] CLI functionality verified: `figma-docker-init --version`
+- [ ] Installation test successful: `npm install -g vibe-to-docker`
+- [ ] CLI functionality verified: `vibe-to-docker --version`
 
 ### Troubleshooting Automated Releases
 
@@ -300,7 +300,7 @@ With semantic-release, the following happens automatically on pushes to main:
 
 For publishing support:
 - npm Support: [https://npmjs.com/support](https://npmjs.com/support)
-- GitHub Issues: [https://github.com/your-username/figma-docker-init/issues](https://github.com/your-username/figma-docker-init/issues)
+- GitHub Issues: [https://github.com/your-username/vibe-to-docker/issues](https://github.com/your-username/vibe-to-docker/issues)
 
 ---
 

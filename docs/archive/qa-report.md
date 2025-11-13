@@ -1,8 +1,8 @@
-# QA Validation Report: figma-docker-init v1.1 Refactor
+# QA Validation Report: vibe-to-docker v1.1 Refactor
 
 **Date:** October 23, 2025
 **Validator:** QA Validator Agent
-**Project:** figma-docker-init v1.1 refactor
+**Project:** vibe-to-docker v1.1 refactor
 **Status:** ❌ **REJECTED - Implementation Incomplete**
 
 ---
@@ -175,7 +175,7 @@ const parseViteConfig = (dir) => parseConfig(
 
 **Evidence**:
 ```bash
-$ grep -n "parseViteConfig\|parseRollupConfig\|parseWebpackConfig" figma-docker-init.js
+$ grep -n "parseViteConfig\|parseRollupConfig\|parseWebpackConfig" vibe-to-docker.js
 165:function parseViteConfig(projectDir) {
 192:function parseRollupConfig(projectDir) {
 219:function parseWebpackConfig(projectDir) {
@@ -196,7 +196,7 @@ $ grep -n "parseViteConfig\|parseRollupConfig\|parseWebpackConfig" figma-docker-
 
 **Evidence**:
 ```bash
-$ grep -n "ValidationError\|ConfigError" figma-docker-init.js
+$ grep -n "ValidationError\|ConfigError" vibe-to-docker.js
 # No results - classes do not exist
 ```
 
@@ -280,7 +280,7 @@ test('should export ValidationError', () => {
 ### Test Suite Status
 
 **Test Files**:
-1. ✅ `/test/figma-docker-init.test.js` - Main integration tests
+1. ✅ `/test/vibe-to-docker.test.js` - Main integration tests
 2. ⚠️ `/test/unit/exports.test.js` - Tests fail (expects missing exports)
 3. ⚠️ `/test/unit/config-parser.test.js` - Tests fail (expects missing parseConfig)
 4. ⚠️ `/test/unit/errors.test.js` - Tests fail (expects missing error classes)

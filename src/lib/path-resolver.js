@@ -1,7 +1,7 @@
 /**
  * Path Resolver Module
  *
- * Provides cross-platform path resolution and validation for figma-docker-init.
+ * Provides cross-platform path resolution and validation for vibe-to-docker.
  * Handles project root detection, template paths, and security validation.
  *
  * @module lib/path-resolver
@@ -24,8 +24,8 @@ const MAX_TRAVERSAL_DEPTH = 10;
 const PROJECT_ROOT_MARKERS = [
   'package.json',
   '.git',
-  '.figma-docker',
-  'figma-docker-init.config.js'
+  '.vibe-docker',
+  'vibe-to-docker.config.js'
 ];
 
 /**
@@ -90,12 +90,12 @@ function resolveProjectRoot(startPath = process.cwd()) {
  * @returns {string} Absolute path to .figma-docker directory
  *
  * @example
- * const figmaDockerPath = resolveFigmaDockerPath();
+ * const figmaDockerPath = resolveVibeDockerPath();
  * console.log(figmaDockerPath); // '/Users/user/my-project/.figma-docker'
  */
-function resolveFigmaDockerPath(projectRoot) {
+function resolveVibeDockerPath(projectRoot) {
   const root = projectRoot || resolveProjectRoot();
-  return path.join(root, '.figma-docker');
+  return path.join(root, '.vibe-docker');
 }
 
 /**
@@ -282,14 +282,14 @@ function ensureDirectory(dirPath, projectRoot) {
  * Gets the templates directory path
  *
  * Returns the absolute path to the templates directory within
- * the figma-docker-init package installation.
+ * the vibe-to-docker package installation.
  *
- * @param {string} [packageRoot] - Package root path (where figma-docker-init is installed)
+ * @param {string} [packageRoot] - Package root path (where vibe-to-docker is installed)
  * @returns {string} Absolute path to templates directory
  *
  * @example
  * const templatesPath = getTemplatesDir();
- * console.log(templatesPath); // '/path/to/node_modules/figma-docker-init/templates'
+ * console.log(templatesPath); // '/path/to/node_modules/vibe-to-docker/templates'
  */
 function getTemplatesDir(packageRoot) {
   // If packageRoot is provided, use it; otherwise find the package root
@@ -313,7 +313,7 @@ function getTemplatesDir(packageRoot) {
 // Export functions with both original and alias names for compatibility
 export {
   resolveProjectRoot,
-  resolveFigmaDockerPath,
+  resolveVibeDockerPath,
   resolveTemplatePath,
   validatePath,
   normalizePath,
@@ -324,5 +324,5 @@ export {
   getTemplatesDir,
   // Aliases for backward compatibility with main file imports
   resolveProjectRoot as findProjectRoot,
-  resolveFigmaDockerPath as getFigmaDockerDir
+  resolveVibeDockerPath as getVibeDockerDir
 };

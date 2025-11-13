@@ -12,14 +12,14 @@
 
 ## Executive Summary
 
-This document defines the complete architecture for Phase 1 of the Per-Project Installation refactor. The goal is to transition from a global installation model to a per-project `.figma-docker/` directory structure while maintaining backward compatibility.
+This document defines the complete architecture for Phase 1 of the Per-Project Installation refactor. The goal is to transition from a global installation model to a per-project `.vibe-docker/` directory structure while maintaining backward compatibility.
 
 ### Key Changes
 
 - **From**: Global installation in user home directory or system paths
-- **To**: Per-project `.figma-docker/` directory containing all templates and configurations
+- **To**: Per-project `.vibe-docker/` directory containing all templates and configurations
 - **Timeline**: 2 weeks (Weeks 1-2)
-- **Success Criteria**: 90%+ test coverage, zero breaking changes, all templates in `.figma-docker/`
+- **Success Criteria**: 90%+ test coverage, zero breaking changes, all templates in `.vibe-docker/`
 
 ---
 
@@ -52,13 +52,13 @@ This document defines the complete architecture for Phase 1 of the Per-Project I
 │         │ executes                                               │
 │         ▼                                                        │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │        npx figma-docker-init                              │  │
+│  │        npx vibe-to-docker                              │  │
 │  │                                                            │  │
 │  │  ┌──────────────────────────────────────────────────┐    │  │
 │  │  │   Project Root                                    │    │  │
 │  │  │   ├── src/                                        │    │  │
 │  │  │   ├── package.json                                │    │  │
-│  │  │   └── .figma-docker/  ◄── NEW STRUCTURE           │    │  │
+│  │  │   └── .vibe-docker/  ◄── NEW STRUCTURE           │    │  │
 │  │  │       ├── config.json                             │    │  │
 │  │  │       ├── templates/                              │    │  │
 │  │  │       │   ├── basic/                              │    │  │
@@ -76,7 +76,7 @@ This document defines the complete architecture for Phase 1 of the Per-Project I
 │                                                                   │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │   Docker Engine                                          │  │
-│  │   - Reads configs from .figma-docker/templates/         │  │
+│  │   - Reads configs from .vibe-docker/templates/         │  │
 │  │   - Manages containers                                   │  │
 │  └──────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
@@ -86,11 +86,11 @@ This document defines the complete architecture for Phase 1 of the Per-Project I
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    figma-docker-init Application                     │
+│                    vibe-to-docker Application                     │
 │                                                                       │
 │  ┌────────────────────────────────────────────────────────────────┐ │
 │  │                       CLI Entry Point                           │ │
-│  │                  figma-docker-init.js                           │ │
+│  │                  vibe-to-docker.js                           │ │
 │  └─────────────────────┬──────────────────────────────────────────┘ │
 │                        │                                             │
 │         ┌──────────────┼──────────────┐                             │
@@ -103,7 +103,7 @@ This document defines the complete architecture for Phase 1 of the Per-Project I
 │       │ creates       │ resolves        │ orchestrates              │
 │       ▼               ▼                 ▼                           │
 │  ┌─────────────────────────────────────────────────────────────┐  │
-│  │              .figma-docker/ Directory                         │  │
+│  │              .vibe-docker/ Directory                         │  │
 │  │                                                               │  │
 │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │  │
 │  │  │  config.json │  │  templates/  │  │    cache/    │       │  │
@@ -123,14 +123,14 @@ This document defines the complete architecture for Phase 1 of the Per-Project I
 
 ## Directory Structure Design
 
-### `.figma-docker/` Directory Layout
+### `.vibe-docker/` Directory Layout
 
 ```
 project-root/
 ├── src/                           # User's application code
 ├── package.json                   # User's package.json
 ├── README.md                      # User's README
-└── .figma-docker/                 # NEW: Per-project Docker config
+└── .vibe-docker/                 # NEW: Per-project Docker config
     ├── config.json                # Tool configuration
     ├── templates/                 # Docker templates
     │   ├── basic/                 # Basic template
@@ -165,7 +165,7 @@ project-root/
 
 ```json
 {
-  "$schema": "https://figma-docker-init.dev/schemas/config.v1.json",
+  "$schema": "https://vibe-to-docker.dev/schemas/config.v1.json",
   "version": "2.0.0",
   "projectType": "react|vue|angular|static",
   "selectedTemplate": "basic|ui-heavy|custom",
@@ -186,7 +186,7 @@ project-root/
     },
     "build": {
       "context": "./",
-      "dockerfile": ".figma-docker/templates/basic/Dockerfile",
+      "dockerfile": ".vibe-docker/templates/basic/Dockerfile",
       "target": "production"
     },
     "volumes": {
@@ -217,7 +217,7 @@ project-root/
 
 ### Design Rationale
 
-**Why `.figma-docker/` directory?**
+**Why `.vibe-docker/` directory?**
 
 1. **Isolation**: Keeps all Docker-related files in one location
 2. **Portability**: Project is self-contained, can be moved/cloned
@@ -240,18 +240,18 @@ project-root/
 
 **Location**: `lib/directory-manager.js`
 
-**Purpose**: Manages creation, validation, and lifecycle of `.figma-docker/` directory structure.
+**Purpose**: Manages creation, validation, and lifecycle of `.vibe-docker/` directory structure.
 
 #### Interface Definition
 
 ```javascript
 /**
  * Directory Manager Module
- * Handles creation and management of .figma-docker/ directory structure
+ * Handles creation and management of .vibe-docker/ directory structure
  */
 class DirectoryManager {
   /**
-   * Create .figma-docker directory structure
+   * Create .vibe-docker directory structure
    * @param {string} projectRoot - Absolute path to project root
    * @param {Object} options - Configuration options
    * @param {boolean} options.force - Overwrite existing installation
@@ -261,7 +261,7 @@ class DirectoryManager {
   async createDirectory(projectRoot, options = {}) {}
 
   /**
-   * Validate existing .figma-docker directory
+   * Validate existing .vibe-docker directory
    * @param {string} projectRoot - Absolute path to project root
    * @returns {Promise<DirectoryValidationResult>}
    */
@@ -360,7 +360,7 @@ const result = await manager.createDirectory('/path/to/project', {
 });
 
 if (result.success) {
-  console.log(`Created .figma-docker/ at ${result.path}`);
+  console.log(`Created .vibe-docker/ at ${result.path}`);
   console.log(`Files created: ${result.filesCreated.length}`);
 }
 
@@ -403,10 +403,10 @@ class PathResolver {
   constructor(projectRoot) {}
 
   /**
-   * Resolve path to .figma-docker directory
-   * @returns {string} Absolute path to .figma-docker/
+   * Resolve path to .vibe-docker directory
+   * @returns {string} Absolute path to .vibe-docker/
    */
-  getFigmaDockerDir() {}
+  getVibeDockerDir() {}
 
   /**
    * Resolve path to templates directory
@@ -503,13 +503,13 @@ import { PathResolver } from './lib/path-resolver.js';
 
 const resolver = new PathResolver('/path/to/project');
 
-// Get .figma-docker directory path
-const figmaDir = resolver.getFigmaDockerDir();
-// Returns: /path/to/project/.figma-docker
+// Get .vibe-docker directory path
+const figmaDir = resolver.getVibeDockerDir();
+// Returns: /path/to/project/.vibe-docker
 
 // Get template file path
 const dockerfile = resolver.getTemplateFile('basic', 'Dockerfile');
-// Returns: /path/to/project/.figma-docker/templates/basic/Dockerfile
+// Returns: /path/to/project/.vibe-docker/templates/basic/Dockerfile
 
 // Validate path
 const validation = resolver.validatePath('/path/to/project/src/App.jsx');
@@ -611,7 +611,7 @@ interface BootstrapResult {
   success: boolean;
   steps: StepResult[];
   projectRoot: string;
-  figmaDockerDir: string;
+  vibeDockerDir: string;
   selectedTemplate: string;
   configFile: string;
   duration: number;
@@ -689,7 +689,7 @@ interface FailureHandlingResult {
 │  User   │
 └────┬────┘
      │
-     │ npx figma-docker-init
+     │ npx vibe-to-docker
      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                  Bootstrap Workflow                          │
@@ -703,7 +703,7 @@ interface FailureHandlingResult {
 │         ✓ All checks passed                                  │
 │                                                               │
 │  Step 3: Create Directory Structure                          │
-│    └─► Create .figma-docker/ and subdirectories              │
+│    └─► Create .vibe-docker/ and subdirectories              │
 │         ✓ Created 8 directories                              │
 │                                                               │
 │  Step 4: Copy Templates                                      │
@@ -712,7 +712,7 @@ interface FailureHandlingResult {
 │                                                               │
 │  Step 5: Generate Configuration                              │
 │    └─► Create config.json with detected settings             │
-│         ✓ Config saved to .figma-docker/config.json          │
+│         ✓ Config saved to .vibe-docker/config.json          │
 │                                                               │
 │  Step 6: Initialize Cache                                    │
 │    └─► Create cache directory and cache manifest             │
@@ -732,7 +732,7 @@ interface FailureHandlingResult {
 │  ✅ Installation complete!                                    │
 │                                                               │
 │  Next steps:                                                 │
-│  1. Review configuration in .figma-docker/config.json        │
+│  1. Review configuration in .vibe-docker/config.json        │
 │  2. Select template: npm run docker:init --template=basic    │
 │  3. Build containers: docker-compose build                   │
 │  4. Start application: docker-compose up                     │
@@ -845,7 +845,7 @@ interface MigrationCheckResult {
 | Feature | Legacy (v1.x) | Current (v2.0) | Migration Path |
 |---------|---------------|----------------|----------------|
 | Template Location | Global | Per-project | Auto-copy on init |
-| Config File | ~/.figma-docker/config.json | .figma-docker/config.json | Manual review |
+| Config File | ~/.vibe-docker/config.json | .vibe-docker/config.json | Manual review |
 | Path Resolution | Absolute paths | Project-relative | Path resolver handles |
 | Cache | Global cache | Per-project cache | Cache rebuild |
 | Logs | Global logs | Per-project logs | Copy relevant logs |
@@ -859,12 +859,12 @@ interface MigrationCheckResult {
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │  1. User Invocation                                             │
-│     npx figma-docker-init                                       │
+│     npx vibe-to-docker                                       │
 └──────────────────┬─────────────────────────────────────────────┘
                    │
                    ▼
 ┌────────────────────────────────────────────────────────────────┐
-│  2. CLI Entry Point (figma-docker-init.js)                     │
+│  2. CLI Entry Point (vibe-to-docker.js)                     │
 │     - Parse command-line arguments                             │
 │     - Initialize logging                                       │
 │     - Load configuration                                       │
@@ -884,19 +884,19 @@ interface MigrationCheckResult {
 │     │   → Returns: validation results                     │   │
 │     └─────────────────────────────────────────────────────┘   │
 │     ┌─────────────────────────────────────────────────────┐   │
-│     │ Step 3: Create .figma-docker/                       │   │
+│     │ Step 3: Create .vibe-docker/                       │   │
 │     │   DirectoryManager.createDirectory()                │   │
 │     │   → Creates directory structure                     │   │
 │     └─────────────────────────────────────────────────────┘   │
 │     ┌─────────────────────────────────────────────────────┐   │
 │     │ Step 4: Copy Templates                              │   │
 │     │   TemplateManager.copyTemplates()                   │   │
-│     │   → Copies templates to .figma-docker/templates/   │   │
+│     │   → Copies templates to .vibe-docker/templates/   │   │
 │     └─────────────────────────────────────────────────────┘   │
 │     ┌─────────────────────────────────────────────────────┐   │
 │     │ Step 5: Generate Config                             │   │
 │     │   ConfigManager.generateConfig()                    │   │
-│     │   → Writes .figma-docker/config.json                │   │
+│     │   → Writes .vibe-docker/config.json                │   │
 │     └─────────────────────────────────────────────────────┘   │
 └──────────────────┬─────────────────────────────────────────────┘
                    │
@@ -1109,13 +1109,13 @@ describe('DirectoryManager', () => {
       const result = await manager.createDirectory('/test/project');
 
       expect(result.success).toBe(true);
-      expect(result.directoriesCreated).toContain('.figma-docker');
-      expect(result.directoriesCreated).toContain('.figma-docker/templates');
+      expect(result.directoriesCreated).toContain('.vibe-docker');
+      expect(result.directoriesCreated).toContain('.vibe-docker/templates');
     });
 
-    test('handles existing .figma-docker directory', async () => {
+    test('handles existing .vibe-docker directory', async () => {
       // Create existing directory
-      await fs.mkdir('/test/project/.figma-docker');
+      await fs.mkdir('/test/project/.vibe-docker');
 
       const manager = new DirectoryManager();
       const result = await manager.createDirectory('/test/project');
@@ -1125,7 +1125,7 @@ describe('DirectoryManager', () => {
     });
 
     test('uses force flag to overwrite existing', async () => {
-      await fs.mkdir('/test/project/.figma-docker');
+      await fs.mkdir('/test/project/.vibe-docker');
 
       const manager = new DirectoryManager();
       const result = await manager.createDirectory('/test/project', {
@@ -1153,9 +1153,9 @@ describe('Phase 1 Installation', () => {
 
     // Verify
     expect(result.success).toBe(true);
-    expect(await fs.access(`${projectDir}/.figma-docker`)).resolves.toBeUndefined();
-    expect(await fs.access(`${projectDir}/.figma-docker/config.json`)).resolves.toBeUndefined();
-    expect(await fs.access(`${projectDir}/.figma-docker/templates/basic`)).resolves.toBeUndefined();
+    expect(await fs.access(`${projectDir}/.vibe-docker`)).resolves.toBeUndefined();
+    expect(await fs.access(`${projectDir}/.vibe-docker/config.json`)).resolves.toBeUndefined();
+    expect(await fs.access(`${projectDir}/.vibe-docker/templates/basic`)).resolves.toBeUndefined();
   });
 
   test('migration from legacy installation', async () => {
@@ -1169,7 +1169,7 @@ describe('Phase 1 Installation', () => {
     // Verify
     expect(result.success).toBe(true);
     expect(result.backupCreated).toBe(true);
-    expect(await fs.access(`${projectDir}/.figma-docker`)).resolves.toBeUndefined();
+    expect(await fs.access(`${projectDir}/.vibe-docker`)).resolves.toBeUndefined();
   });
 });
 ```
@@ -1205,9 +1205,9 @@ describe('Real-World Scenarios', () => {
     // Install in second project
     await runCLI(['--project-dir', `${monorepoDir}/project2`]);
 
-    // Verify both have independent .figma-docker/
-    expect(await fs.access(`${monorepoDir}/project1/.figma-docker`)).resolves.toBeUndefined();
-    expect(await fs.access(`${monorepoDir}/project2/.figma-docker`)).resolves.toBeUndefined();
+    // Verify both have independent .vibe-docker/
+    expect(await fs.access(`${monorepoDir}/project1/.vibe-docker`)).resolves.toBeUndefined();
+    expect(await fs.access(`${monorepoDir}/project2/.vibe-docker`)).resolves.toBeUndefined();
   });
 });
 ```
@@ -1222,45 +1222,45 @@ describe('Real-World Scenarios', () => {
 
 ```bash
 # Detect and migrate legacy installation
-npx figma-docker-init --migrate
+npx vibe-to-docker --migrate
 
 # Output:
-# ✓ Detected legacy installation at ~/.figma-docker
+# ✓ Detected legacy installation at ~/.vibe-docker
 # ✓ Creating backup...
 # ✓ Migrating to per-project installation...
 # ✓ Migration complete!
 #
 # Your legacy installation has been backed up to:
-# ~/.figma-docker.backup.2025-01-26
+# ~/.vibe-docker.backup.2025-01-26
 ```
 
 **Manual Migration Steps**
 
 1. **Backup existing installation**
    ```bash
-   cp -r ~/.figma-docker ~/.figma-docker.backup
+   cp -r ~/.vibe-docker ~/.vibe-docker.backup
    ```
 
 2. **Run new installation**
    ```bash
    cd /path/to/project
-   npx figma-docker-init
+   npx vibe-to-docker
    ```
 
 3. **Review and customize**
    ```bash
-   # Edit .figma-docker/config.json if needed
-   vim .figma-docker/config.json
+   # Edit .vibe-docker/config.json if needed
+   vim .vibe-docker/config.json
    ```
 
 4. **Test new installation**
    ```bash
-   docker-compose -f .figma-docker/templates/basic/docker-compose.yml up
+   docker-compose -f .vibe-docker/templates/basic/docker-compose.yml up
    ```
 
 5. **Remove legacy (optional)**
    ```bash
-   rm -rf ~/.figma-docker
+   rm -rf ~/.vibe-docker
    ```
 
 ### For Developers/Contributors
@@ -1281,10 +1281,10 @@ const templatePath = resolver.getTemplateFile('basic', 'Dockerfile');
 
 ```bash
 # OLD: Add to global templates/
-cp new-template/* ~/figma-docker-init/templates/new-template/
+cp new-template/* ~/vibe-to-docker/templates/new-template/
 
-# NEW: Add to project .figma-docker/templates/
-cp new-template/* .figma-docker/templates/custom/new-template/
+# NEW: Add to project .vibe-docker/templates/
+cp new-template/* .vibe-docker/templates/custom/new-template/
 ```
 
 ---
@@ -1295,9 +1295,9 @@ cp new-template/* .figma-docker/templates/custom/new-template/
 
 **Status**: Accepted
 
-**Context**: Need to decide between per-project `.figma-docker/` directories or global installation in user home directory.
+**Context**: Need to decide between per-project `.vibe-docker/` directories or global installation in user home directory.
 
-**Decision**: Per-project installation in `.figma-docker/` directory.
+**Decision**: Per-project installation in `.vibe-docker/` directory.
 
 **Rationale**:
 - **Portability**: Projects are self-contained and can be moved/cloned
@@ -1319,13 +1319,13 @@ cp new-template/* .figma-docker/templates/custom/new-template/
 
 ---
 
-### ADR-002: Directory Name `.figma-docker/`
+### ADR-002: Directory Name `.vibe-docker/`
 
 **Status**: Accepted
 
 **Context**: Need to choose directory name for per-project installation.
 
-**Decision**: Use `.figma-docker/` (with leading dot).
+**Decision**: Use `.vibe-docker/` (with leading dot).
 
 **Rationale**:
 - **Convention**: Follows established patterns (`.github/`, `.vscode/`, `.docker/`)
@@ -1412,8 +1412,8 @@ cp new-template/* .figma-docker/templates/custom/new-template/
 
 ### References
 
-- [PER_PROJECT_INSTALLATION_PLAN.md](/Users/williamsmith/Documents/GitHub/figma-docker-init/docs/PER_PROJECT_INSTALLATION_PLAN.md)
-- [PHASE_1_CHECKLIST.md](/Users/williamsmith/Documents/GitHub/figma-docker-init/docs/PHASE_1_CHECKLIST.md)
+- [PER_PROJECT_INSTALLATION_PLAN.md](/Users/williamsmith/Documents/GitHub/vibe-to-docker/docs/PER_PROJECT_INSTALLATION_PLAN.md)
+- [PHASE_1_CHECKLIST.md](/Users/williamsmith/Documents/GitHub/vibe-to-docker/docs/PHASE_1_CHECKLIST.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Node.js Path Module](https://nodejs.org/api/path.html)
 

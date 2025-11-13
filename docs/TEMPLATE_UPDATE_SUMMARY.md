@@ -6,12 +6,12 @@
 
 ## Overview
 
-All Docker templates have been updated to use the new `.figma-docker/` directory structure with proper variable placeholders for per-project installation.
+All Docker templates have been updated to use the new `.vibe-docker/` directory structure with proper variable placeholders for per-project installation.
 
 ## Variables Used
 
 - **{{PROJECT_ROOT}}**: Path to the project root directory (where package.json lives)
-- **{{FIGMA_DOCKER_DIR}}**: Path to the .figma-docker configuration directory
+- **{{FIGMA_DOCKER_DIR}}**: Path to the .vibe-docker configuration directory
 - **{{BUILD_OUTPUT_DIR}}**: Build output directory (e.g., dist, build)
 - **{{PROJECT_NAME}}**: Project name for container naming
 
@@ -76,7 +76,7 @@ All template variables follow this pattern:
 
 When the template engine processes these files:
 1. `{{PROJECT_ROOT}}` will be replaced with actual project path (e.g., `/path/to/user/project`)
-2. `{{FIGMA_DOCKER_DIR}}` will be replaced with `.figma-docker` relative to project root
+2. `{{FIGMA_DOCKER_DIR}}` will be replaced with `.vibe-docker` relative to project root
 3. All other variables ({{PROJECT_NAME}}, {{BUILD_OUTPUT_DIR}}, etc.) remain functional
 
 ## Volume Mount Structure (After Rendering)
@@ -87,21 +87,21 @@ volumes:
   - /path/to/user/project:/app                          # Source code
   - node_modules:/app/node_modules                       # Named volume
   - /app/node_modules                                    # Anonymous volume
-  - /path/to/user/project/.figma-docker:/path/to/user/project/.figma-docker:ro  # Config (read-only)
+  - /path/to/user/project/.vibe-docker:/path/to/user/project/.vibe-docker:ro  # Config (read-only)
 ```
 
 **Nginx Container:**
 ```yaml
 volumes:
-  - /path/to/user/project/.figma-docker/nginx.conf:/etc/nginx/nginx.conf:ro
-  - /path/to/user/project/.figma-docker/ssl:/etc/ssl/certs:ro
+  - /path/to/user/project/.vibe-docker/nginx.conf:/etc/nginx/nginx.conf:ro
+  - /path/to/user/project/.vibe-docker/ssl:/etc/ssl/certs:ro
 ```
 
 **Monitoring Containers:**
 ```yaml
 volumes:
-  - /path/to/user/project/.figma-docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  - /path/to/user/project/.figma-docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+  - /path/to/user/project/.vibe-docker/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  - /path/to/user/project/.vibe-docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
 ```
 
 ## Verification Commands
@@ -119,7 +119,7 @@ grep -r "^\s*-\s*\./" templates/*/docker-compose.yml
 
 ## Benefits
 
-1. **Separation of Concerns**: Docker configs live in `.figma-docker/`, source code in project root
+1. **Separation of Concerns**: Docker configs live in `.vibe-docker/`, source code in project root
 2. **Per-Project Installation**: Each project gets its own isolated Docker configuration
 3. **Clear Structure**: Variables make it obvious what paths refer to what
 4. **Maintainability**: Easy to update template generation logic

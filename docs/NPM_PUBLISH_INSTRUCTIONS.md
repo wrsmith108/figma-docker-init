@@ -40,15 +40,15 @@ npm pack --dry-run
 # Expected output:
 # - package size: ~32 kB
 # - total files: 29
-# - includes: figma-docker-init.js, src/lib/*, templates/*
+# - includes: vibe-to-docker.js, src/lib/*, templates/*
 ```
 
 ### Step 2: Run Final Tests
 ```bash
 # Quick verification
-npm test -- --testPathPattern="figma-docker-init.test.js"
+npm test -- --testPathPattern="vibe-to-docker.test.js"
 
-# Should show: PASS test/figma-docker-init.test.js
+# Should show: PASS test/vibe-to-docker.test.js
 ```
 
 ### Step 3: Commit All Changes
@@ -101,7 +101,7 @@ npm login
 npm publish --tag beta
 
 # Verify publish
-npm view figma-docker-init@beta
+npm view vibe-to-docker@beta
 ```
 
 ### Step 6: Test Installation
@@ -111,16 +111,16 @@ mkdir /tmp/test-beta-install
 cd /tmp/test-beta-install
 
 # Test npm install
-npm install figma-docker-init@beta
+npm install vibe-to-docker@beta
 
 # Test npx
-npx figma-docker-init@beta --version
-# Should show: figma-docker-init v2.0.0-beta.1
+npx vibe-to-docker@beta --version
+# Should show: vibe-to-docker v2.0.0-beta.1
 
 # Test basic template generation
 npx create-vite test-app --template react
 cd test-app
-npx figma-docker-init@beta basic
+npx vibe-to-docker@beta basic
 
 # Verify files created
 ls -la docker-compose.yml Dockerfile nginx.conf
@@ -132,7 +132,7 @@ ls -la docker-compose.yml Dockerfile nginx.conf
 
 ### Included (29 files, 32.2 kB)
 ```
-✅ figma-docker-init.js (main CLI)
+✅ vibe-to-docker.js (main CLI)
 ✅ src/lib/*.js (3 modules)
 ✅ templates/basic/* (6 files)
 ✅ templates/ui-heavy/* (6 files)
@@ -149,7 +149,7 @@ ls -la docker-compose.yml Dockerfile nginx.conf
 ❌ docs/architecture/
 ❌ docs/archive/
 ❌ .swarm/
-❌ .figma-docker/
+❌ .vibe-docker/
 ❌ coverage/
 ❌ All development files
 ```
@@ -161,12 +161,12 @@ ls -la docker-compose.yml Dockerfile nginx.conf
 ### 1. NPM Registry Check
 ```bash
 # Check version on npm
-npm view figma-docker-init versions
+npm view vibe-to-docker versions
 
 # Should include: '2.0.0-beta.1'
 
 # Check beta dist-tag
-npm dist-tag ls figma-docker-init
+npm dist-tag ls vibe-to-docker
 
 # Should show: beta: 2.0.0-beta.1
 ```
@@ -174,10 +174,10 @@ npm dist-tag ls figma-docker-init
 ### 2. Installation Test
 ```bash
 # Install in fresh project
-npm install figma-docker-init@beta
+npm install vibe-to-docker@beta
 
 # Verify module exists
-ls node_modules/figma-docker-init/src/lib/
+ls node_modules/vibe-to-docker/src/lib/
 
 # Should see:
 # - directory-manager.js
@@ -188,7 +188,7 @@ ls node_modules/figma-docker-init/src/lib/
 ### 3. Functional Test
 ```bash
 # Run CLI
-npx figma-docker-init@beta --list
+npx vibe-to-docker@beta --list
 
 # Should list templates without errors
 ```
@@ -201,7 +201,7 @@ If issues are discovered after publishing:
 
 ### Option 1: Deprecate Beta
 ```bash
-npm deprecate figma-docker-init@2.0.0-beta.1 "Known issues - use v1.0.0 or wait for beta.2"
+npm deprecate vibe-to-docker@2.0.0-beta.1 "Known issues - use v1.0.0 or wait for beta.2"
 ```
 
 ### Option 2: Publish Beta.2
@@ -215,7 +215,7 @@ npm publish --tag beta
 ### Option 3: Unpublish (within 72 hours)
 ```bash
 # LAST RESORT - only if critical security issue
-npm unpublish figma-docker-init@2.0.0-beta.1
+npm unpublish vibe-to-docker@2.0.0-beta.1
 ```
 
 ---
@@ -225,9 +225,9 @@ npm unpublish figma-docker-init@2.0.0-beta.1
 After publishing, verify:
 
 - ✅ Package appears on npm registry
-- ✅ `npm install figma-docker-init@beta` works
-- ✅ `npx figma-docker-init@beta --version` shows correct version
-- ✅ `npx figma-docker-init@beta basic` generates files
+- ✅ `npm install vibe-to-docker@beta` works
+- ✅ `npx vibe-to-docker@beta --version` shows correct version
+- ✅ `npx vibe-to-docker@beta basic` generates files
 - ✅ Generated docker-compose.yml is valid YAML
 - ✅ src/lib/ modules are included and importable
 
@@ -246,7 +246,7 @@ After publishing, verify:
 
 ## 📞 Support
 
-**GitHub Issues**: https://github.com/wrsmith108/figma-docker-init/issues
+**GitHub Issues**: https://github.com/wrsmith108/vibe-to-docker/issues
 **Tag**: `beta-testing`
 
 Encourage users to report:

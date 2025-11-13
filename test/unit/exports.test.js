@@ -1,18 +1,21 @@
 /**
- * Test: Module Exports Validation - Phase 1 Implementation
- * Purpose: Verify all Phase 1 functions and error classes are properly exported
+ * Test: Module Exports Validation - Phase 1-3 Implementation
+ * Purpose: Verify all Phase 1-3 functions and error classes are properly exported
  *
- * Phase 1 Scope (v1.1.0):
- * - 23 functions across 6 categories
+ * Phase 1 Scope (v1.1.0): 23 functions + 2 error classes = 25 exports
+ * Phase 3 Additions (v2.0.0): 4 new CLI functions
+ *   - initializeWithTool
+ *   - autoDetectToolType
+ *   - generateWithComposer
+ *   - showProgress
+ *
+ * Current Scope (Phase 3):
+ * - 27 functions across 7 categories (23 Phase 1 + 4 Phase 3)
  * - 2 custom error classes
- * - Total: 25 exports
- *
- * Note: This tests the ACTUAL Phase 1 implementation, not the planned v2.0 API.
- * Functions like buildImage, runContainer, generateDockerCompose, etc. are planned
- * for Phase 2 and Phase 3 of the refactoring.
+ * - Total: 29 exports
  */
 
-import * as indexExports from '../../figma-docker-init.js';
+import * as indexExports from '../../vibe-to-docker.js';
 
 describe('Module Exports - Phase 1 Implementation', () => {
   const exports = indexExports;
@@ -197,7 +200,8 @@ describe('Module Exports - Phase 1 Implementation', () => {
                key !== 'ValidationError' &&
                key !== 'ConfigError'
       );
-      expect(exportedFunctions).toHaveLength(23);
+      // Phase 3 adds 4 new functions: initializeWithTool, autoDetectToolType, generateWithComposer, showProgress
+      expect(exportedFunctions).toHaveLength(27);
     });
 
     it('should export exactly 2 error classes', () => {
@@ -210,7 +214,8 @@ describe('Module Exports - Phase 1 Implementation', () => {
 
     it('should have exactly 25 total exports (23 functions + 2 classes)', () => {
       const allExports = Object.keys(exports);
-      expect(allExports).toHaveLength(25);
+      // Phase 3: 27 functions + 2 classes = 29 total
+      expect(allExports).toHaveLength(29);
     });
 
     it('should not have any undefined exports', () => {
@@ -244,7 +249,10 @@ describe('Module Exports - Phase 1 Implementation', () => {
         'showHelp', 'showVersion', 'listTemplates',
 
         // Main logic functions (1)
-        'copyTemplate'
+        'copyTemplate',
+
+        // Phase 3 CLI functions (4)
+        'initializeWithTool', 'autoDetectToolType', 'generateWithComposer', 'showProgress'
       ];
 
       expectedExports.forEach(exportName => {

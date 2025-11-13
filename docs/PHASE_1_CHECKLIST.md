@@ -4,7 +4,7 @@
 
 **Duration**: Weeks 1-2  
 **Status**: 🔴 Not Started  
-**Goal**: Refactor architecture to support per-project `.figma-docker/` directory structure
+**Goal**: Refactor architecture to support per-project `.vibe-docker/` directory structure
 
 ---
 
@@ -16,7 +16,7 @@
 **Priority**: 🔴 Critical
 
 #### Subtasks
-- [ ] **1.1.1** Design `.figma-docker/` directory structure
+- [ ] **1.1.1** Design `.vibe-docker/` directory structure
   - Define directory layout for configurations
   - Plan file organization (configs, templates, cache)
   - Document directory structure in ARCHITECTURE.md
@@ -24,13 +24,13 @@
 
 - [ ] **1.1.2** Create directory structure utility
   - Implement `lib/directory-manager.js`
-  - Add function to create `.figma-docker/` hierarchy
+  - Add function to create `.vibe-docker/` hierarchy
   - Include error handling for permission issues
   - Add cleanup function for failed installations
   - **Acceptance Criteria**: Utility creates all required directories
 
 - [ ] **1.1.3** Implement directory validation
-  - Add validation for existing `.figma-docker/` directory
+  - Add validation for existing `.vibe-docker/` directory
   - Check for conflicting files
   - Verify write permissions
   - Create backup mechanism for existing configs
@@ -46,7 +46,7 @@
 ```javascript
 // test/unit/directory-manager.test.js
 - Directory creation in clean project
-- Directory creation with existing .figma-docker/
+- Directory creation with existing .vibe-docker/
 - Permission denied scenarios
 - Cleanup on failure
 - Backward compatibility detection
@@ -61,7 +61,7 @@
 
 #### Subtasks
 - [ ] **1.2.1** Update main CLI entry point
-  - Modify `figma-docker-init.js` to detect project root
+  - Modify `vibe-to-docker.js` to detect project root
   - Implement project directory detection logic
   - Add validation for valid project directory
   - **Acceptance Criteria**: CLI correctly identifies project root
@@ -80,7 +80,7 @@
   - **Acceptance Criteria**: All flags work as documented
 
 - [ ] **1.2.4** Create project config file
-  - Design `.figma-docker/config.json` structure
+  - Design `.vibe-docker/config.json` structure
   - Implement config file creation
   - Add validation for config file
   - Document config file schema
@@ -158,7 +158,7 @@
 
 - [ ] **1.4.2** Refactor template selection
   - Update template selection based on project location
-  - Modify template discovery to look in `.figma-docker/`
+  - Modify template discovery to look in `.vibe-docker/`
   - Add support for custom template directories
   - **Acceptance Criteria**: Template selection works per-project
 
@@ -193,7 +193,7 @@
 
 #### Subtasks
 - [ ] **1.5.1** Update docker-compose.yml template
-  - Modify paths to use `.figma-docker/` directory
+  - Modify paths to use `.vibe-docker/` directory
   - Update volume mounts for new structure
   - Change bind mount paths
   - **Acceptance Criteria**: Docker Compose uses correct paths
@@ -235,7 +235,7 @@
 #### Subtasks
 - [ ] **1.6.1** Update README.md
   - Document new per-project installation
-  - Add examples of `.figma-docker/` structure
+  - Add examples of `.vibe-docker/` structure
   - Update installation instructions
   - **Acceptance Criteria**: README reflects new architecture
 
@@ -295,7 +295,7 @@
 // test/e2e/phase1-integration.test.js
 - Full installation on fresh project
 - Migration from global installation
-- Multi-project setup (multiple .figma-docker/)
+- Multi-project setup (multiple .vibe-docker/)
 - Cleanup and uninstallation
 ```
 
@@ -304,7 +304,7 @@
 ## Success Metrics
 
 ### Functional Requirements
-- [ ] ✅ All templates install to `.figma-docker/` directory
+- [ ] ✅ All templates install to `.vibe-docker/` directory
 - [ ] ✅ CLI correctly detects and uses project root
 - [ ] ✅ Path resolution works on all platforms
 - [ ] ✅ No breaking changes for existing users

@@ -1,14 +1,14 @@
-# Code Review Report: figma-docker-init
+# Code Review Report: vibe-to-docker
 
 **Date:** October 23, 2025
 **Reviewer:** Claude Code
-**Project:** figma-docker-init v1.0.2
+**Project:** vibe-to-docker v1.0.2
 
 ---
 
 ## Executive Summary
 
-This code review analyzes the `figma-docker-init` project with a focus on code organization, maintainability, and performance. The primary concern is a **monolithic 854-line main file** (`figma-docker-init.js`) that consolidates all functionality into a single module, making it difficult for both human developers and AI agents to read, understand, and maintain.
+This code review analyzes the `vibe-to-docker` project with a focus on code organization, maintainability, and performance. The primary concern is a **monolithic 854-line main file** (`vibe-to-docker.js`) that consolidates all functionality into a single module, making it difficult for both human developers and AI agents to read, understand, and maintain.
 
 ### Key Findings
 
@@ -27,10 +27,10 @@ This code review analyzes the `figma-docker-init` project with a focus on code o
 ### 1.1 File Structure
 
 ```
-figma-docker-init/
-├── figma-docker-init.js          # 854 lines - MONOLITHIC ⚠️
+vibe-to-docker/
+├── vibe-to-docker.js          # 854 lines - MONOLITHIC ⚠️
 ├── test/
-│   └── figma-docker-init.test.js # 234 lines
+│   └── vibe-to-docker.test.js # 234 lines
 ├── templates/
 │   ├── basic/
 │   └── ui-heavy/
@@ -41,7 +41,7 @@ figma-docker-init/
 
 ### 1.2 Code Organization in Main File
 
-The `figma-docker-init.js` file contains **7 distinct functional areas**:
+The `vibe-to-docker.js` file contains **7 distinct functional areas**:
 
 | Section | Lines | Purpose | Status |
 |---------|-------|---------|--------|
@@ -367,7 +367,7 @@ try {
 
 **Current Code** (No exports):
 ```javascript
-// figma-docker-init.js
+// vibe-to-docker.js
 function sanitizeString(input, maxLength = 255) {
   // ... implementation
 }
@@ -491,11 +491,11 @@ Project Detection:          ~50ms
 
 ```javascript
 // Ensure these still work after refactoring:
-figma-docker-init basic
-figma-docker-init ui-heavy
-figma-docker-init --list
-figma-docker-init --help
-figma-docker-init --version
+vibe-to-docker basic
+vibe-to-docker ui-heavy
+vibe-to-docker --list
+vibe-to-docker --help
+vibe-to-docker --version
 ```
 
 ### 9.2 Deprecation Strategy
@@ -506,7 +506,7 @@ figma-docker-init --version
 
 2. **Version 1.2.0**: Optional module imports
    - Allow users to import specific modules
-   - Example: `import { validateTemplate } from 'figma-docker-init/validation'`
+   - Example: `import { validateTemplate } from 'vibe-to-docker/validation'`
 
 3. **Version 2.0.0**: Complete migration
    - Remove deprecated internal APIs
@@ -625,7 +625,7 @@ v1.0.2 (Current) → v1.1.0 → v1.2.0 → v2.0.0
 
 ### 13.1 Summary
 
-The `figma-docker-init` project is functionally solid but suffers from a **monolithic architecture** that hinders maintainability, testing, and AI agent compatibility. The 854-line main file should be refactored into **12-15 focused modules** of 70-100 lines each.
+The `vibe-to-docker` project is functionally solid but suffers from a **monolithic architecture** that hinders maintainability, testing, and AI agent compatibility. The 854-line main file should be refactored into **12-15 focused modules** of 70-100 lines each.
 
 ### 13.2 Recommended Next Steps
 

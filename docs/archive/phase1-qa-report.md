@@ -240,7 +240,7 @@ class ConfigError extends Error {
 
 ### Integration Tests: ✅ 100% PASSING (75/75)
 
-**test/figma-docker-init.test.js**: 75/75 passing
+**test/vibe-to-docker.test.js**: 75/75 passing
 - detectProjectValues working correctly
 - Port management functions operational
 - Template validation functional
@@ -254,7 +254,7 @@ class ConfigError extends Error {
 **Error Analysis**:
 ```
 npm error ENOENT: no such file or directory, open
-'/Users/williamsmith/Documents/GitHub/figma-docker-init/figma-docker-init-1.0.2.tgz'
+'/Users/williamsmith/Documents/GitHub/vibe-to-docker/vibe-to-docker-1.0.2.tgz'
 ```
 
 **Issue**: E2E tests expect `npm pack` to have been run, but tarball doesn't exist in repo
@@ -313,15 +313,15 @@ Lines        : 11.74% ( 41/349 )
 
 **Test 1: --help flag**
 ```bash
-$ node figma-docker-init.js --help
+$ node vibe-to-docker.js --help
 ```
 ✅ **Result**: Displays help message correctly
 ```
-Figma Docker Init
+Vibe Docker Init
 Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects
 
 Usage:
-  figma-docker-init [template] [options]
+  vibe-to-docker [template] [options]
 
 Templates:
   basic      Basic Docker setup with minimal configuration
@@ -335,7 +335,7 @@ Options:
 
 **Test 2: --list flag**
 ```bash
-$ node figma-docker-init.js --list
+$ node vibe-to-docker.js --list
 ```
 ✅ **Result**: Lists templates correctly
 ```
@@ -348,11 +348,11 @@ Available Templates:
 
 **Test 3: --version flag**
 ```bash
-$ node figma-docker-init.js --version
+$ node vibe-to-docker.js --version
 ```
 ✅ **Result**: Shows version correctly
 ```
-figma-docker-init v1.0.2
+vibe-to-docker v1.0.2
 ```
 
 **Conclusion**: CLI interface works perfectly - no regression from v1.0.2
@@ -397,7 +397,7 @@ $ npm pack --dry-run
 **Contents**:
 - LICENSE (1.1kB)
 - README.md (8.3kB)
-- figma-docker-init.js (34.0kB)
+- vibe-to-docker.js (34.0kB)
 - package.json (3.1kB)
 - templates/basic/* (all files)
 - templates/ui-heavy/* (all files)
@@ -665,8 +665,8 @@ PASS test/unit/exports.test.js
 ### Integration Tests (75/75 passing)
 
 ```
-PASS test/figma-docker-init.test.js
-  Figma Docker Init
+PASS test/vibe-to-docker.test.js
+  Vibe Docker Init
     detectProjectValues
       ✓ should detect project values from real package.json and config files
       ✓ should handle missing package.json gracefully
@@ -681,9 +681,9 @@ PASS test/figma-docker-init.test.js
 ### CLI Verification (3/3 manual tests passing)
 
 ```bash
-✓ node figma-docker-init.js --help
-✓ node figma-docker-init.js --list
-✓ node figma-docker-init.js --version
+✓ node vibe-to-docker.js --help
+✓ node vibe-to-docker.js --list
+✓ node vibe-to-docker.js --version
 ```
 
 ---

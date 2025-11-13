@@ -13,7 +13,7 @@ import {
   validatePort,
   validateProjectName,
   validateFilePath
-} from '../../figma-docker-init.js';
+} from '../../vibe-to-docker.js';
 
 describe('Error Classes - Comprehensive Usage', () => {
   describe('ValidationError Construction', () => {

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  figma-make-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{PROJECT_NAME}}-figma-make
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    environment:
+      - NODE_ENV=production
+      - PORT={{PORT}}
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - figma-make-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:{{PORT}}/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Optional: Mount for development
+    # volumes:
+    #   - ./dist:/app/dist:ro
+
+networks:
+  figma-make-network:
+    driver: bridge

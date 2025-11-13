@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  lovable-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{PROJECT_NAME}}-lovable
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    environment:
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - PORT={{PORT}}
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - lovable-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:{{PORT}}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Local Supabase instance for development
+  # Uncomment if not using Supabase Cloud
+  # supabase-db:
+  #   image: supabase/postgres:14.1.0
+  #   container_name: {{PROJECT_NAME}}-supabase-db
+  #   environment:
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your-super-secret-password}
+  #     POSTGRES_DB: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - supabase-db-data:/var/lib/postgresql/data
+  #   networks:
+  #     - lovable-network
+
+networks:
+  lovable-network:
+    driver: bridge
+
+# volumes:
+#   supabase-db-data:

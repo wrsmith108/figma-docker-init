@@ -1,14 +1,14 @@
 {
-  "name": "figma-docker-init",
+  "name": "vibe-to-docker",
   "version": "2.1.0",
-  "description": "Quick-start Docker setup for Figma-exported React/Vite/TypeScript projects",
-  "main": "figma-docker-init.js",
+  "description": "Universal Docker containerization tool for AI-generated projects from Figma, Lovable, V0, and Bolt",
+  "main": "vibe-to-docker.js",
   "type": "module",
   "bin": {
-    "figma-docker-init": "figma-docker-init.js"
+    "vibe-to-docker": "vibe-to-docker.js"
   },
   "scripts": {
-    "start": "node figma-docker-init.js",
+    "start": "node vibe-to-docker.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
     "test:coverage:watch": "node --experimental-vm-modules node_modules/.bin/jest --coverage --watch",
@@ -17,7 +17,11 @@
     "semantic-release": "semantic-release"
   },
   "keywords": [
+    "vibe-coding",
     "figma",
+    "lovable",
+    "bolt",
+    "v0",
     "docker",
     "react",
     "vite",
@@ -28,22 +32,24 @@
     "containerization",
     "devops",
     "frontend",
-    "development"
+    "fullstack",
+    "development",
+    "ai-generated"
   ],
   "author": {
-    "name": "Figma Docker Init Team",
-    "email": "support@figma-docker-init.dev",
+    "name": "Vibe to Docker Team",
+    "email": "support@vibe-to-docker.dev",
     "url": "https://github.com/wrsmith108"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wrsmith108/figma-docker-init.git"
+    "url": "https://github.com/wrsmith108/vibe-to-docker.git"
   },
   "bugs": {
-    "url": "https://github.com/wrsmith108/figma-docker-init/issues"
+    "url": "https://github.com/wrsmith108/vibe-to-docker/issues"
   },
-  "homepage": "https://github.com/wrsmith108/figma-docker-init",
+  "homepage": "https://github.com/wrsmith108/vibe-to-docker",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/wrsmith108"
@@ -53,8 +59,10 @@
     "npm": ">=10.0.0"
   },
   "files": [
-    "figma-docker-init.js",
+    "vibe-to-docker.js",
     "src/lib/",
+    "src/detectors/",
+    "src/templates/",
     "templates/",
     "README.md",
     "LICENSE",
@@ -67,7 +75,10 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
     "@semantic-release/npm": "^12.0.2",
+    "agentdb": "^1.6.1",
+    "agentic-flow": "^1.10.2",
     "babel-jest": "^29.7.0",
+    "claude-flow": "^2.7.33",
     "fs-extra": "^11.3.2",
     "jest": "^29.7.0",
     "js-yaml": "^4.1.0",

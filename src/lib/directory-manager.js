@@ -5,10 +5,10 @@ import os from 'os';
 
 /**
  * Directory Manager Module
- * Manages the .figma-docker/ directory structure for per-project installations
+ * Manages the .vibe-docker/ directory structure for per-project installations
  *
  * Directory Structure:
- * .figma-docker/
+ * .vibe-docker/
  * ├── config.json           # Project-specific configuration
  * ├── templates/            # Custom templates
  * ├── cache/                # Template processing cache
@@ -25,32 +25,32 @@ class DirectoryManager {
    */
   constructor(projectRoot = process.cwd()) {
     this.projectRoot = projectRoot;
-    this.figmaDockerDir = path.join(projectRoot, '.figma-docker');
-    this.backupDir = path.join(this.figmaDockerDir, '.backup');
+    this.vibeDockerDir = path.join(projectRoot, '.vibe-docker');
+    this.backupDir = path.join(this.vibeDockerDir, '.backup');
 
     // Define directory structure
     this.directories = {
-      root: this.figmaDockerDir,
-      templates: path.join(this.figmaDockerDir, 'templates'),
-      cache: path.join(this.figmaDockerDir, 'cache'),
-      docker: path.join(this.figmaDockerDir, 'docker'),
-      logs: path.join(this.figmaDockerDir, 'logs'),
+      root: this.vibeDockerDir,
+      templates: path.join(this.vibeDockerDir, 'templates'),
+      cache: path.join(this.vibeDockerDir, 'cache'),
+      docker: path.join(this.vibeDockerDir, 'docker'),
+      logs: path.join(this.vibeDockerDir, 'logs'),
       backup: this.backupDir
     };
 
     // Define required files
     this.requiredFiles = {
-      config: path.join(this.figmaDockerDir, 'config.json'),
-      gitignore: path.join(this.figmaDockerDir, '.gitignore')
+      config: path.join(this.vibeDockerDir, 'config.json'),
+      gitignore: path.join(this.vibeDockerDir, '.gitignore')
     };
   }
 
   /**
-   * Create the complete .figma-docker/ directory hierarchy
+   * Create the complete .vibe-docker/ directory hierarchy
    * @returns {Promise<Object>} Creation results with status and created paths
    * @throws {Error} If directory creation fails
    */
-  async createFigmaDockerDirectory() {
+  async createVibeDockerDirectory() {
     const results = {
       success: false,
       created: [],
@@ -60,13 +60,13 @@ class DirectoryManager {
 
     try {
       // Check if .figma-docker already exists
-      const exists = await this.exists(this.figmaDockerDir);
+      const exists = await this.exists(this.vibeDockerDir);
 
       if (exists) {
         const validation = await this.validateDirectory();
 
         if (validation.isValid) {
-          results.skipped.push(this.figmaDockerDir);
+          results.skipped.push(this.vibeDockerDir);
           results.success = true;
           return results;
         } else {
@@ -101,7 +101,7 @@ class DirectoryManager {
 
       // Create README for the directory
       await this.createReadme();
-      results.created.push(path.join(this.figmaDockerDir, 'README.md'));
+      results.created.push(path.join(this.vibeDockerDir, 'README.md'));
 
       results.success = true;
       return results;
@@ -114,7 +114,7 @@ class DirectoryManager {
   }
 
   /**
-   * Validate existing .figma-docker/ directory structure
+   * Validate existing .vibe-docker/ directory structure
    * @returns {Promise<Object>} Validation results
    */
   async validateDirectory() {
@@ -130,7 +130,7 @@ class DirectoryManager {
 
     try {
       // Check if directory exists
-      validation.exists = await this.exists(this.figmaDockerDir);
+      validation.exists = await this.exists(this.vibeDockerDir);
 
       if (!validation.exists) {
         validation.isValid = false;
@@ -139,11 +139,11 @@ class DirectoryManager {
 
       // Check write permissions
       try {
-        await this.verifyWritePermission(this.figmaDockerDir);
+        await this.verifyWritePermission(this.vibeDockerDir);
         validation.writable = true;
       } catch (error) {
         validation.writable = false;
-        validation.permissionIssues.push(this.figmaDockerDir);
+        validation.permissionIssues.push(this.vibeDockerDir);
         validation.isValid = false;
       }
 
@@ -223,11 +223,11 @@ class DirectoryManager {
 
       // Remove main .figma-docker directory if it's now empty
       try {
-        const files = await fs.readdir(this.figmaDockerDir);
+        const files = await fs.readdir(this.vibeDockerDir);
 
         if (files.length === 0) {
-          await fs.rmdir(this.figmaDockerDir);
-          results.removed.push(this.figmaDockerDir);
+          await fs.rmdir(this.vibeDockerDir);
+          results.removed.push(this.vibeDockerDir);
         }
       } catch (error) {
         // Directory might not exist, which is fine
@@ -263,10 +263,10 @@ class DirectoryManager {
     try {
       // Check common legacy installation locations
       const legacyPaths = [
-        path.join(os.homedir(), '.figma-docker'),
+        path.join(os.homedir(), '.vibe-docker'),
         path.join(os.homedir(), '.config', 'figma-docker'),
-        '/usr/local/lib/figma-docker',
-        '/opt/figma-docker'
+        '/usr/local/lib/vibe-docker',
+        '/opt/vibe-docker'
       ];
 
       for (const legacyPath of legacyPaths) {
@@ -275,7 +275,7 @@ class DirectoryManager {
           detection.legacyPath = legacyPath;
           detection.legacyType = this.determineLegacyType(legacyPath);
           detection.migrationRequired = true;
-          detection.migrationPath = this.figmaDockerDir;
+          detection.migrationPath = this.vibeDockerDir;
           break;
         }
       }
@@ -293,7 +293,7 @@ class DirectoryManager {
           });
 
         const npmGlobalRoot = stdout.trim();
-        const npmLegacyPath = path.join(npmGlobalRoot, 'figma-docker-init');
+        const npmLegacyPath = path.join(npmGlobalRoot, 'vibe-to-docker');
 
         if (await this.exists(npmLegacyPath)) {
           detection.hasLegacyInstallation = true;
@@ -320,7 +320,7 @@ class DirectoryManager {
   async getDirectoryInfo() {
     const info = {
       projectRoot: this.projectRoot,
-      figmaDockerDir: this.figmaDockerDir,
+      vibeDockerDir: this.vibeDockerDir,
       exists: false,
       size: 0,
       directories: {},
@@ -328,14 +328,14 @@ class DirectoryManager {
     };
 
     try {
-      info.exists = await this.exists(this.figmaDockerDir);
+      info.exists = await this.exists(this.vibeDockerDir);
 
       if (!info.exists) {
         return info;
       }
 
       // Get size of .figma-docker directory
-      info.size = await this.getDirectorySize(this.figmaDockerDir);
+      info.size = await this.getDirectorySize(this.vibeDockerDir);
 
       // Get info for each subdirectory
       for (const [name, dirPath] of Object.entries(this.directories)) {
@@ -404,7 +404,7 @@ class DirectoryManager {
    * @private
    */
   async createGitignore() {
-    const gitignoreContent = `# Figma Docker Init - Generated files
+    const gitignoreContent = `# Vibe Docker Init - Generated files
 cache/
 logs/
 .backup/
@@ -427,9 +427,9 @@ logs/
    * @private
    */
   async createReadme() {
-    const readmeContent = `# Figma Docker Configuration
+    const readmeContent = `# Vibe Docker Configuration
 
-This directory contains the Docker configuration for this project, generated by \`figma-docker-init\`.
+This directory contains the Docker configuration for this project, generated by \`vibe-to-docker\`.
 
 ## Directory Structure
 
@@ -446,7 +446,7 @@ This directory contains the Docker configuration for this project, generated by 
 
 To rebuild the Docker configuration:
 \`\`\`bash
-npx figma-docker-init
+npx vibe-to-docker
 \`\`\`
 
 To start the Docker containers:
@@ -456,11 +456,11 @@ npm run docker:up
 
 ## Documentation
 
-For more information, see: https://github.com/wrsmith108/figma-docker-init
+For more information, see: https://github.com/wrsmith108/vibe-to-docker
 `;
 
     await fs.writeFile(
-      path.join(this.figmaDockerDir, 'README.md'),
+      path.join(this.vibeDockerDir, 'README.md'),
       readmeContent,
       'utf8'
     );
@@ -479,7 +479,7 @@ For more information, see: https://github.com/wrsmith108/figma-docker-init
       await fs.mkdir(backupPath, { recursive: true });
 
       // Copy all files except backup directory
-      await this.copyDirectory(this.figmaDockerDir, backupPath, ['.backup']);
+      await this.copyDirectory(this.vibeDockerDir, backupPath, ['.backup']);
 
       return backupPath;
     } catch (error) {
@@ -504,17 +504,17 @@ For more information, see: https://github.com/wrsmith108/figma-docker-init
       const backupPath = path.join(this.backupDir, latestBackup);
 
       // Remove current directory (except backup)
-      const files = await fs.readdir(this.figmaDockerDir);
+      const files = await fs.readdir(this.vibeDockerDir);
 
       for (const file of files) {
         if (file === '.backup') continue;
 
-        const filePath = path.join(this.figmaDockerDir, file);
+        const filePath = path.join(this.vibeDockerDir, file);
         await fs.rm(filePath, { recursive: true, force: true });
       }
 
       // Restore from backup
-      await this.copyDirectory(backupPath, this.figmaDockerDir);
+      await this.copyDirectory(backupPath, this.vibeDockerDir);
 
     } catch (error) {
       throw new Error(`Failed to restore from backup: ${error.message}`);
@@ -659,10 +659,10 @@ For more information, see: https://github.com/wrsmith108/figma-docker-init
  * @throws {Error} If directory creation fails
  *
  * @example
- * const dirs = ensureFigmaDockerStructure('/path/to/project');
+ * const dirs = ensureVibeDockerStructure('/path/to/project');
  * console.log(dirs.root); // '/path/to/project/.figma-docker'
  */
-export function ensureFigmaDockerStructure(projectRoot) {
+export function ensureVibeDockerStructure(projectRoot) {
   const manager = new DirectoryManager(projectRoot);
 
   // Create all required directories synchronously
