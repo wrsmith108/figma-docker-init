@@ -7,12 +7,16 @@
 [![Tests](https://img.shields.io/badge/tests-368%20passing-brightgreen.svg)](https://github.com/your-username/vibe-to-docker)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/your-username/vibe-to-docker)
 
-Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects. This CLI tool generates production-ready Docker configurations tailored for different project types and deployment scenarios.
+Universal Docker containerization tool for AI-generated projects. Automatically detects and configures Docker for projects created with Lovable, Bolt, V0, and Figma Make.
 
-## 📢 What's New in v2.0.0
+## Features
 
-### v2.0.0 - Stable Release (October 26, 2025)
-🎉 **STABLE RELEASE**: Production-ready Docker setup with zero warnings and optimal developer experience
+- **Automatic Tool Detection**: Intelligently identifies project type (Lovable, Bolt, V0, Figma Make)
+- **Tool-Specific Optimization**: Tailored Docker configurations for each AI development tool
+- **Production Ready**: Multi-stage builds, nginx proxy, security best practices
+- **Zero Config**: Works out of the box with sensible defaults
+- **Per-Project Setup**: Configurations install to `.vibe-docker/` directory
+- **Multi-Service Support**: Full-stack applications with databases and backends
 
 **Key Features:**
 - ✅ **Zero Warning Installation**: Clean output with no template or configuration warnings
@@ -22,7 +26,6 @@ Quick-start Docker setup for Figma Make-exported React/Vite/TypeScript projects.
 - ✅ **Automatic .env Creation**: No manual file copying required
 - ✅ **GitHub Codespaces Ready**: Validated and tested in cloud development environments
 
-**Installation:**
 ```bash
 npx vibe-to-docker basic
 ```
@@ -38,96 +41,35 @@ npx vibe-to-docker basic
 # Start containers in background
 cd .vibe-docker && docker-compose up -d --build
 
-# View logs if needed
-docker-compose logs -f
+# Start containers
+cd .vibe-docker && docker-compose up -d --build
 ```
 
-**What's Included:**
-- Modern Docker Compose configuration (no obsolete version field)
-- Optimized nginx proxy with WebSocket support for Vite HMR
-- Multi-stage Dockerfile with production builds
-- Comprehensive documentation in DOCKER.md
-- Environment variable template (.env.example)
-- Health checks and monitoring endpoints
+Your application will be available at `http://localhost:3000`.
 
----
+## Installation
 
-## 📋 Beta Testing History
+### One-Time Use (Recommended)
 
-### v2.0.0-beta.9 - Clean Output (October 26, 2025)
-🧹 **CLEANUP**: Removed all template warnings for cleaner installation
-
-### v2.0.0-beta.8 - Improved User Experience (October 26, 2025)
-📝 **UX IMPROVEMENT**: Docker containers now run in detached mode by default
-
-**Fixed Issues:**
-- ✅ **Terminal Returns to Prompt**: Added `-d` flag to run containers in background
-- ✅ **Clearer Instructions**: Users now get their terminal back after starting containers
-- ✅ **Log Viewing**: Added instructions for viewing logs with `docker-compose logs -f`
-
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
 
-**What Changed:**
-- Updated docker-compose command from `up --build` to `up -d --build`
-- Containers start in background (detached mode)
-- Terminal returns to prompt immediately
-- Added log viewing instructions for users who want to see output
+### Global Installation
 
----
-
-### v2.0.0-beta.7 - Nginx SSL Fix (October 26, 2025)
-🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates (complete fix)
-
-**Fixed Issues:**
-- ✅ **Removed SSL Configuration**: Eliminated SSL/HTTPS from basic template nginx.conf
-- ✅ **Nginx Stability**: nginx now starts successfully without SSL certificates
-- ✅ **Simplified Configuration**: Reduced nginx.conf from 182 lines to 100 lines for development
-- ✅ **HTTP-Only Mode**: Basic template now uses HTTP-only (perfect for local development)
-
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
 
-**What Changed:**
-- Completely rewrote nginx.conf removing all SSL/TLS configuration
-- Removed SSL server block requiring /etc/ssl/certs/server.crt
-- Removed HTTPS redirect logic from HTTP server block
-- Both app-dev and nginx services now start successfully
-- All users get working nginx out of the box
+### Local Development
 
-**For Production SSL:**
-- Use the `ui-heavy` template which includes SSL setup instructions
-- Or manually add SSL certificates and configuration as needed
-
----
-
-### v2.0.0-beta.6 - Nginx SSL Fix (October 26, 2025)
-🔧 **HOTFIX**: Fixed nginx crash loop caused by missing SSL certificates
-
-**Fixed Issues:**
-- ✅ **Removed SSL Configuration**: Eliminated SSL/HTTPS from basic template nginx.conf
-- ✅ **Nginx Stability**: nginx now starts successfully without SSL certificates
-- ✅ **Simplified Configuration**: Reduced nginx.conf from 182 lines to 98 lines for development
-- ✅ **HTTP-Only Mode**: Basic template now uses HTTP-only (perfect for local development)
-
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
 
-**What Changed:**
-- Removed SSL/TLS server block requiring /etc/ssl/certs/server.crt
-- Removed HTTPS redirect logic from HTTP server block
-- Simplified nginx.conf for HTTP-only development
-- Both app-dev and nginx services now start successfully
+## Supported Tools
 
-**For Production SSL:**
-- Use the `ui-heavy` template which includes SSL setup instructions
-- Or manually add SSL certificates and configuration as needed
+### Lovable (React + Vite + Supabase)
 
 ---
 
@@ -147,39 +89,24 @@ npx vibe-to-docker@beta basic
 - Updated "Next Steps" to show: `cd .vibe-docker && docker-compose up --build`
 - Clarified that Docker files are in the `.vibe-docker/` subdirectory
 
----
+cd .vibe-docker && docker-compose up -d --build
+```
 
-### v2.0.0-beta.4 - Critical Installation Fix (October 26, 2025)
-🔧 **HOTFIX**: Resolves npm installation loop caused by unnecessary dependency
+**Features**: Supabase integration, real-time features, authentication
 
-**Fixed Issues:**
-- ✅ **Removed AgentDB Dependency**: Eliminated unnecessary 100+ MB ML dependency causing installation hangs
-- ✅ **Faster Installation**: Reduced install time from minutes to seconds
-- ✅ **Node v16 Compatibility**: Now works on older Node versions (though >=20.8.1 still recommended)
-- ✅ **Smaller Package Size**: Reduced from 148KB to minimal size
+### Bolt (Remix + TypeScript)
 
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
 
-**What Changed:**
-- Removed `agentdb` dependency that was not used by the CLI tool
-- Eliminated onnxruntime-node and other ML package downloads
-- Fixed infinite loop during `npm install` on some systems
+cd .vibe-docker && docker-compose up -d --build
+```
 
----
+**Features**: Multi-service orchestration, WebContainer compatibility
 
-### v2.0.0-beta.3 - Enhanced Developer Experience (October 26, 2025)
-🎯 **IMPROVEMENTS**: Streamlined setup workflow and simplified Docker configuration
+### V0 (Next.js 14 + shadcn/ui)
 
-**New Features:**
-- ✅ **Automatic .env Creation**: No longer need to manually copy `.env.example` to `.env`
-- ✅ **Simplified Docker Compose**: Reduced from 267 lines to 78 lines for better maintainability
-- ✅ **Fixed YAML Syntax**: Resolved context path issues and removed problematic template variables
-- ✅ **Improved Volume Paths**: Changed build context to use parent directory correctly
-
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
@@ -190,10 +117,10 @@ npx vibe-to-docker@beta basic
 - Fixed build context paths to properly reference project files
 - Removed complex monitoring services for cleaner initial setup
 
----
+cd .vibe-docker && docker-compose up -d --build
+```
 
-### v2.0.0-beta.2 - Critical Bug Fixes (October 26, 2025)
-🔧 **HOTFIX**: Resolves execution errors in v2.0.0-beta.1
+**Features**: Server-side rendering, API routes, static optimization
 
 **Fixed Issues:**
 - ✅ **Module System Compatibility**: Converted CommonJS modules to ES modules for proper import/export
@@ -201,14 +128,13 @@ npx vibe-to-docker@beta basic
 - ✅ **Template Path Resolution**: Fixed template discovery to correctly locate package templates
 - ✅ **GitHub Codespaces Support**: Now works correctly in all npx environments
 
-**Installation:**
 ```bash
 npx vibe-to-docker@beta basic
 ```
 
-**Recommended for:** All users experiencing "SyntaxError" or "not defined" errors with beta.1
+**Features**: Design-to-code projects, TypeScript support
 
----
+## Usage
 
 ### v2.0.0 - Per-Project Installation Architecture (October 2025)
 - **Per-Project Installation**: Docker configurations now install to `.vibe-docker/` directory in each project
@@ -218,7 +144,9 @@ npx vibe-to-docker@beta basic
 - **100% Test Coverage**: All 368 tests passing across Ubuntu, Windows, and macOS
 - **Enhanced Error Handling**: Better validation and user feedback
 
-## 🚀 Features
+```bash
+# Initialize with auto-detection
+vibe-to-docker init
 
 ### v3.0.0 - Universal Tool Support (Coming Soon)
 
@@ -239,40 +167,46 @@ npx vibe-to-docker@beta basic
 - **TypeScript Support**: Full TypeScript support with optimized builds
 - **Development Friendly**: Hot reload support and development configurations
 
-## 📦 Installation
+# Preview without writing files
+vibe-to-docker init --dry-run
 
-### Global Installation (Recommended)
+# Overwrite existing configuration
+vibe-to-docker init --force
 
 ```bash
 npm install -g vibe-to-docker
 ```
 
-### One-time Use (npx)
+# Show version
+vibe-to-docker --version
 
 ```bash
 npx vibe-to-docker [template]
 ```
 
-### Local Installation
+### Legacy Templates (v2.x Compatible)
 
 ```bash
 npm install --save-dev vibe-to-docker
 ```
 
-## 🎯 Quick Start
+## Generated Files
 
-1. Navigate to your React/Vite/TypeScript project root
-2. Run the CLI tool:
+Running `vibe-to-docker init` creates a `.vibe-docker/` directory in your project:
 
 ```bash
 vibe-to-docker ui-heavy
 ```
-
-3. Customize the generated `.env.example` file and rename it to `.env`
-4. Build and run your containerized application:
-
-```bash
-docker-compose up --build
+your-project/
+├── .vibe-docker/
+│   ├── Dockerfile          # Multi-stage build configuration
+│   ├── docker-compose.yml  # Container orchestration
+│   ├── .dockerignore       # Build optimization
+│   ├── nginx.conf          # Production web server
+│   ├── .env                # Environment variables (auto-created)
+│   ├── .env.example        # Environment template
+│   └── DOCKER.md           # Usage documentation
+└── [your project files]
 ```
 
 ## 🛠️ Usage
@@ -296,7 +230,7 @@ vibe-to-docker init --tool=bolt
 vibe-to-docker [template] [options]
 ```
 
-### Available Templates
+## Docker Commands
 
 #### `basic`
 Minimal Docker setup for simple frontend projects:
@@ -363,7 +297,7 @@ Configured for Supabase integration:
 vibe-to-docker init --template=supabase
 ```
 
-### Command Options
+### Production
 
 ```bash
 # Show help information
@@ -408,124 +342,103 @@ your-project/
 └── [your project files]
 ```
 
-### Directory Structure Benefits
+### Maintenance
 
-- **Isolation**: Each project maintains its own Docker configuration
-- **Portability**: Easy to version control and share
-- **Organization**: Centralized configuration management
-- **Multi-Project**: Support for multiple projects with different configurations
+```bash
+# Rebuild without cache
+docker-compose build --no-cache
 
-### File Descriptions
+# Clean up Docker resources
+docker system prune -a
 
-- **Dockerfile**: Optimized multi-stage build with development and production targets
-- **docker-compose.yml**: Complete orchestration with service definitions, networks, and volumes
-- **.dockerignore**: Excludes unnecessary files from build context for faster builds
-- **nginx.conf**: Production-ready Nginx configuration with security headers and caching
-- **.env.example**: Template for environment variables with documentation
-- **DOCKER.md**: Comprehensive guide for Docker usage and customization
+# Remove volumes (caution: deletes data)
+docker-compose down -v
+```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and customize:
-
-```bash
-cp .env.example .env
-```
-
-Key variables to configure:
+The `.env` file is automatically created from `.env.example`. Key variables:
 
 ```env
 # Application
 NODE_ENV=production
-REACT_APP_API_URL=https://api.yourdomain.com
 
-# Container Configuration
-CONTAINER_PORT=3000
-HOST_PORT=80
+# Container Ports
+DEV_PORT=5173
+NGINX_PORT=3000
 
-# Build Configuration
-BUILD_TARGET=production
+# Tool-Specific (Lovable/Supabase)
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=your-key
+
+# Tool-Specific (Next.js)
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com
 ```
 
-### Customizing Templates
+### Customization
 
-The generated files serve as a starting point. Common customizations include:
+Generated files serve as a starting point. Common modifications:
 
-1. **Dockerfile**: Adjust Node.js version, add build steps, or install additional dependencies
-2. **nginx.conf**: Modify server configuration, add SSL, or configure reverse proxy
-3. **docker-compose.yml**: Add databases, Redis, or other services
+- **Dockerfile**: Adjust Node.js version, add dependencies
+- **nginx.conf**: Add SSL, configure reverse proxy
+- **docker-compose.yml**: Add databases, Redis, or other services
 
-## 🐳 Docker Commands
+## Troubleshooting
 
-### Development
+### Port Already in Use
 
 ```bash
-# Build and start development environment
-docker-compose up --build
+# Change port in .vibe-docker/.env
+NGINX_PORT=8080
+DEV_PORT=5174
 
-# Start with logs
-docker-compose up --build --logs
-
-# Background mode
+# Restart containers
 docker-compose up -d --build
 ```
 
-### Production
+### Build Failures
 
 ```bash
-# Build production image
-docker build --target production -t your-app:latest .
+# Rebuild without cache
+docker-compose build --no-cache
 
-# Run production container
-docker run -p 80:80 --env-file .env your-app:latest
-
-# Using docker-compose for production
-docker-compose -f docker-compose.yml up -d
+# Check Docker logs
+docker-compose logs app-dev
 ```
 
-### Maintenance
+### Supabase Connection Issues (Lovable)
 
 ```bash
-# View logs
-docker-compose logs -f
+# Verify credentials in .vibe-docker/.env
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# Stop all services
-docker-compose down
+# Environment variables must be prefixed with VITE_
+# Rebuild after changes
+docker-compose up -d --build
+```
 
-# Remove volumes (careful!)
-docker-compose down -v
+### Module Not Found Errors
 
-# Rebuild without cache
+```bash
+# Ensure node_modules is in .dockerignore
+# Rebuild container to reinstall dependencies
 docker-compose build --no-cache
 ```
 
-## 🔒 Security Features
-
-The generated configurations include security best practices:
-
-- **Non-root user**: Containers run as non-root user
-- **Security headers**: Nginx configured with security headers
-- **Minimal attack surface**: Multi-stage builds exclude development dependencies
-- **Environment isolation**: Proper environment variable handling
-- **Network security**: Internal networking with docker-compose
-
-## 🚀 Deployment
-
-### Cloud Platforms
+## Deployment
 
 The generated Docker configuration works with major cloud platforms:
 
-- **Vercel**: Use Dockerfile for containerized deployments
-- **Heroku**: Compatible with Heroku Container Registry
-- **AWS ECS/Fargate**: Production-ready for AWS container services
+- **AWS ECS/Fargate**: Production-ready for container services
 - **Google Cloud Run**: Optimized for serverless containers
 - **DigitalOcean App Platform**: Ready for platform deployment
+- **Heroku Container Registry**: Compatible with Heroku
+- **Vercel**: Use Dockerfile for containerized deployments
 
-### CI/CD Integration
-
-Example GitHub Actions workflow:
+### CI/CD Example (GitHub Actions)
 
 ```yaml
 name: Build and Deploy
@@ -540,13 +453,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Docker image
         run: docker build -t app:latest .
-      - name: Deploy to production
-        run: # Your deployment commands
+      - name: Push to registry
+        run: docker push your-registry/app:latest
 ```
 
-## 🛠️ Development
+## Documentation
 
-### Prerequisites
+### User Guides
 
 - Node.js >= 20.8.1
 - npm >= 10.0.0
@@ -628,21 +541,21 @@ cp .env.example .env
 docker-compose up -d --build
 ```
 
-### Production Deployment
+- **[Lovable Guide](docs/guides/LOVABLE_GUIDE.md)** - Fullstack apps with Supabase
+- **[Figma Make Guide](docs/guides/FIGMA_MAKE_GUIDE.md)** - Design-to-code projects
+- **[V0 Guide](docs/guides/V0_GUIDE.md)** - Next.js and Tailwind projects
+- **[Bolt Guide](docs/guides/BOLT_GUIDE.md)** - WebContainer fullstack apps
 
 ```bash
 # Build production image
 cd .vibe-docker
 docker build --target production -t myapp:v1.0.0 .
 
-# Tag for registry
-docker tag myapp:v1.0.0 registry.com/myapp:v1.0.0
+- **[API Reference](docs/API.md)** - Programmatic usage
+- **[Template Architecture](docs/TEMPLATE_ARCHITECTURE.md)** - System design
+- **[Contributing Guide](CONTRIBUTING.md)** - Development guide
 
-# Push to registry
-docker push registry.com/myapp:v1.0.0
-```
-
-## 🐛 Troubleshooting
+## Requirements
 
 ### Common Issues
 
@@ -735,7 +648,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - 🐛 [Issue Tracker](https://github.com/wrsmith108/vibe-to-docker/issues)
 - 💬 [Discussions](https://github.com/wrsmith108/vibe-to-docker/discussions)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by create-react-app and similar bootstrapping tools
 - Built for the AI-powered development community
