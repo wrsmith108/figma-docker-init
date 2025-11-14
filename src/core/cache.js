@@ -26,8 +26,13 @@ export class DetectionCache {
 
   async set(detectionResult) {
     await fs.mkdir(this.cacheDir, { recursive: true });
+
+    // Get package.json mtime and ensure cache timestamp is after it
+    const pkgStat = await fs.stat(path.join(this.projectRoot, 'package.json'));
+    const timestamp = Math.max(Date.now(), pkgStat.mtimeMs + 1);
+
     await fs.writeFile(this.cacheFile, JSON.stringify({
-      timestamp: Date.now(),
+      timestamp,
       result: detectionResult
     }, null, 2));
   }
