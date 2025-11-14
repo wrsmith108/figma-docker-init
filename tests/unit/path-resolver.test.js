@@ -160,9 +160,10 @@ describe('Path Resolver', () => {
       const relativePath = 'src/.vibe-docker';
       const resolved = path.resolve(baseDir, relativePath);
 
-      expect(resolved).toContain('/Users/test/project');
-      expect(resolved).toContain('src');
-      expect(resolved).toContain('.vibe-docker');
+      const normalized = resolved.replace(/\\/g, '/');
+      expect(normalized).toContain('Users/test/project');
+      expect(normalized).toContain('src');
+      expect(normalized).toContain('.vibe-docker');
     });
 
     test('should handle empty path components', () => {
@@ -209,7 +210,8 @@ describe('Path Resolver', () => {
       const relative = '.figma-docker/config';
       const joined = path.join(base, relative);
 
-      expect(joined).toBe('/Users/test/project/.figma-docker/config');
+      const normalized = joined.replace(/\\/g, '/');
+      expect(normalized).toBe('/Users/test/project/.figma-docker/config');
     });
   });
 
@@ -219,7 +221,9 @@ describe('Path Resolver', () => {
       const validPath = '/Users/test/project/.figma-docker';
       const resolvedValid = path.resolve(validPath);
 
-      expect(resolvedValid.startsWith(projectRoot)).toBe(true);
+      const normalizedResolved = resolvedValid.replace(/\\/g, '/');
+      const normalizedRoot = projectRoot.replace(/\\/g, '/');
+      expect(normalizedResolved.startsWith(normalizedRoot)).toBe(true);
     });
 
     test('should detect path traversal attempts', () => {
@@ -464,7 +468,8 @@ describe('Path Resolver', () => {
       const to = '/Users/test/project/.figma-docker/config';
       const relative = path.relative(from, to);
 
-      expect(relative).toBe('.figma-docker/config');
+      const normalized = relative.replace(/\\/g, '/');
+      expect(normalized).toBe('.figma-docker/config');
     });
   });
 });

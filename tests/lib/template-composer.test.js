@@ -63,7 +63,8 @@ describe('TemplateComposer', () => {
 
     it('should use default templates directory if not provided', () => {
       const defaultComposer = new TemplateComposer();
-      expect(defaultComposer.templatesDir).toContain('src/templates');
+      const normalizedPath = defaultComposer.templatesDir.replace(/\\/g, '/');
+      expect(normalizedPath).toContain('src/templates');
     });
 
     it('should initialize empty fragment cache', () => {
