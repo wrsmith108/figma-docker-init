@@ -153,10 +153,10 @@ describe('E2E Platform Tests', () => {
         stdio: 'pipe'
       });
 
-      expect(output).toContain('vibe-to-docker');
-
+      // Verify installation by checking node_modules (npm output format varies by platform)
       const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
+      expect(output).toBeTruthy(); // At least some output was generated
     });
 
     test('should handle Windows path separators', () => {
@@ -328,7 +328,10 @@ describe('E2E Platform Tests', () => {
         timeout: 60000 // 60 second timeout
       });
 
-      expect(output).toContain('vibe-to-docker');
+      // Verify installation succeeded (npm output format varies by platform)
+      expect(output).toBeTruthy();
+      const nodeModulesPath = path.join(testDir, 'node_modules', 'vibe-to-docker');
+      expect(fs.existsSync(nodeModulesPath)).toBe(true);
     });
 
     test('should run without TTY in CI', () => {

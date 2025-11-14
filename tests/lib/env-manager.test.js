@@ -165,7 +165,8 @@ describe('EnvManager', () => {
       await envManager.detectVariables();
 
       const varInfo = envManager.detectedVars.get('API_URL');
-      expect(varInfo.files).toContain('src/api.js');
+      const normalizedFiles = varInfo.files.map(f => f.replace(/\\/g, '/'));
+      expect(normalizedFiles).toContain('src/api.js');
     });
 
     it('should detect build-time variables', async () => {
@@ -339,7 +340,8 @@ API_KEY='secret123'
       const content = envManager.generateEnvExample({ includeComments: true });
 
       expect(content).toContain('# Used in:');
-      expect(content).toContain('src/app.js');
+      // Accept both forward and backward slashes for cross-platform compatibility
+      expect(content.replace(/\\/g, '/')).toContain('src/app.js');
     });
 
     it('should omit comments when disabled', () => {
