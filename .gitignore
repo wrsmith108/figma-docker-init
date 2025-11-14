@@ -137,6 +137,8 @@ dist/
 # Test artifacts
 test-results/
 coverage/
+temp-npm-test-*/
+.test-cache/
 
 # Deployment artifacts
 .vercel
