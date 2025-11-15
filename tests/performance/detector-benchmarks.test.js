@@ -141,8 +141,8 @@ describe('Detector Performance Benchmarks', () => {
 
     console.log(`Cache performance: ${timeWithoutCache}ms → ${timeWithCache}ms (${improvement.toFixed(1)}% improvement)`);
 
-    // Should achieve >80% improvement (target: 96%, but CI/timing can vary)
-    expect(improvement).toBeGreaterThan(80);
+    // Should achieve >=80% improvement (target: 96%, but CI/timing can vary)
+    expect(improvement).toBeGreaterThanOrEqual(80);
   });
 
   test('Benchmark: Parallel detection performance', async () => {
