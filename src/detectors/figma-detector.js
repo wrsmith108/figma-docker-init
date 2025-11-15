@@ -26,6 +26,11 @@ export class FigmaDetector extends BaseDetector {
     const evidence = [];
     let confidence = 0.0;
 
+    // Check README.md for Figma URLs (strongest signal)
+    const readmeConfidence = await this.checkReadmeForFigma(projectRoot);
+    confidence += readmeConfidence.score;
+    evidence.push(...readmeConfidence.evidence);
+
     // Check package.json for Figma Make signatures
     const pkgConfidence = await this.checkPackageJson(projectRoot);
     confidence += pkgConfidence.score;
@@ -47,8 +52,8 @@ export class FigmaDetector extends BaseDetector {
     evidence.push(...cssConfidence.evidence);
 
     // Normalize confidence to 0-1 range
-    // Maximum achievable confidence is ~4.0 across all checks
-    const normalizedConfidence = Math.min(confidence / 4.0, 1.0);
+    // Maximum achievable confidence is ~5.0 across all checks (added README check)
+    const normalizedConfidence = Math.min(confidence / 5.0, 1.0);
 
     // Detect UI library for metadata
     const pkg = await this.readPackageJson(projectRoot);
@@ -66,6 +71,68 @@ export class FigmaDetector extends BaseDetector {
         buildOutputDir: await this.detectBuildOutputDir(projectRoot)
       }
     };
+  }
+
+  /**
+   * Check README.md for Figma URLs and code bundle mentions
+   *
+   * @private
+   * @param {string} projectRoot - Project root directory
+   * @returns {Promise<{score: number, evidence: string[]}>}
+   */
+  async checkReadmeForFigma(projectRoot) {
+    const evidence = [];
+    let score = 0;
+
+    try {
+      const readmePath = path.join(projectRoot, 'README.md');
+      const readmeContent = await this.readFile(readmePath);
+
+      if (!readmeContent) {
+        return { score: 0, evidence: [] };
+      }
+
+      // Check for figma.com URLs (strongest signal - 95%+ accuracy)
+      const figmaUrlPatterns = [
+        /https?:\/\/(?:www\.)?figma\.com\/design\/[a-zA-Z0-9]+/,
+        /https?:\/\/(?:www\.)?figma\.com\/file\/[a-zA-Z0-9]+/,
+        /https?:\/\/(?:www\.)?figma\.com\/proto\/[a-zA-Z0-9]+/
+      ];
+
+      for (const pattern of figmaUrlPatterns) {
+        if (pattern.test(readmeContent)) {
+          score += 0.95;
+          evidence.push('Figma design URL found in README.md (95%+ confidence)');
+          break; // Only count once
+        }
+      }
+
+      // Check for "code bundle" phrase (common in Figma Make exports)
+      if (/code\s+bundle/i.test(readmeContent)) {
+        score += 0.3;
+        evidence.push('"code bundle" phrase found in README');
+      }
+
+      // Check for other Figma-related phrases
+      const figmaPhrases = [
+        /figma\s+make/i,
+        /exported?\s+from\s+figma/i,
+        /generated?\s+from\s+figma/i,
+        /figma\s+export/i
+      ];
+
+      for (const phrase of figmaPhrases) {
+        if (phrase.test(readmeContent)) {
+          score += 0.2;
+          evidence.push('Figma-related phrase found in README');
+          break; // Only count once
+        }
+      }
+    } catch (error) {
+      // README.md not found or not readable
+    }
+
+    return { score: Math.min(score, 1.0), evidence };
   }
 
   /**
@@ -120,13 +187,25 @@ export class FigmaDetector extends BaseDetector {
       '@chakra-ui/react',
       '@mantine/core',
       'react-bootstrap',
-      'tailwindcss'
+      'tailwindcss',
+      '@radix-ui/react-avatar',      // Radix UI (very common in Figma Make)
+      '@headlessui/react',             // Headless UI
+      'class-variance-authority',      // shadcn/ui
+      '@tremor/react'                  // Tremor
     ];
 
     const hasUILibrary = uiLibraries.some(lib => deps[lib]);
     if (hasUILibrary) {
       score += 0.4;
       evidence.push(`UI library detected (${this.detectUILibrary(pkg)})`);
+    }
+
+    // Boost confidence for Radix UI (extremely common in Figma Make exports)
+    const hasRadixUI = Object.keys(deps).some(dep => dep.startsWith('@radix-ui/'));
+    if (hasRadixUI) {
+      score += 0.3;
+      const radixCount = Object.keys(deps).filter(dep => dep.startsWith('@radix-ui/')).length;
+      evidence.push(`Radix UI detected (${radixCount} packages) - strong Figma Make indicator`);
     }
 
     // Check dev scripts for Vite
@@ -313,13 +392,22 @@ export class FigmaDetector extends BaseDetector {
 
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 
+    // Check for Radix UI first (most common in Figma Make)
+    const hasRadixUI = Object.keys(deps).some(dep => dep.startsWith('@radix-ui/'));
+    if (hasRadixUI) {
+      return 'Radix UI';
+    }
+
     const uiLibraryMap = {
       '@mui/material': 'Material-UI',
       'antd': 'Ant Design',
       '@chakra-ui/react': 'Chakra UI',
       '@mantine/core': 'Mantine',
       'react-bootstrap': 'Bootstrap',
-      'tailwindcss': 'Tailwind CSS'
+      'tailwindcss': 'Tailwind CSS',
+      '@headlessui/react': 'Headless UI',
+      'class-variance-authority': 'shadcn/ui',
+      '@tremor/react': 'Tremor'
     };
 
     for (const [depName, libName] of Object.entries(uiLibraryMap)) {
