@@ -1,3 +1,18 @@
+# [3.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.4...v3.1.0) (2025-11-15)
+
+
+### Bug Fixes
+
+* add PORT variable mapping to enable template replacement ([4923a68](https://github.com/wrsmith108/vibe-to-docker/commit/4923a680db83ef76031a53ebd784714be697bfd1))
+* **ci:** lower coverage thresholds and add uninstall command ([e35fbbd](https://github.com/wrsmith108/vibe-to-docker/commit/e35fbbd13854f859c322ce1d9fd664458f40125e))
+* **ci:** lower lines coverage threshold to 63% ([31eb91d](https://github.com/wrsmith108/vibe-to-docker/commit/31eb91d9c7d03a3ef5e8b037ddc3615f8ef3e916))
+
+
+### Features
+
+* add tool-specific benefits summary at end of successful install ([0c88903](https://github.com/wrsmith108/vibe-to-docker/commit/0c8890347c846e7dd7d8c053fb5ef497b391091a))
+* automatically start Docker containers after init ([deaed87](https://github.com/wrsmith108/vibe-to-docker/commit/deaed878147a47d8f1deb281e65e2608d4832aab))
+
 ## [3.0.4](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.3...v3.0.4) (2025-11-15)
 
 
