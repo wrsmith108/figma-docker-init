@@ -159,7 +159,7 @@ Update all test files to use new naming:
 ##### Documentation Files (14 files)
 - `docs/` - All documentation files
 - `CHANGELOG.md` - Document migration
-- `DEPLOYMENT_COMPLETE.md` - Update deployment instructions
+- `docs/releases/DEPLOYMENT_COMPLETE.md` - Update deployment instructions
 
 ### Phase 4: Testing & Validation (2-3 days)
 

@@ -261,7 +261,7 @@ const [buildOutput, frameworkResult, uiResult, portsResult] = await Promise.all(
 │   ├── PARALLEL_DETECTION_OPTIMIZATION.md (12K) - Complete guide
 │   └── PARALLEL_DETECTION_REFLEXION.json  (11K) - AgentDB entry
 ├── REFACTORING_SUMMARY.md           (9.9K) - Executive summary
-├── REFACTORING_REPORT.md            (this file)
+├── docs/reports/REFACTORING_REPORT.md            (this file)
 └── STORE_IN_AGENTDB.sh              (1.3K) - Storage script
 ```
 

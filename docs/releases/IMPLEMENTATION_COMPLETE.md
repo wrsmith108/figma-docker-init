@@ -46,7 +46,7 @@ Successfully refactored detection logic to use `Promise.all()` for parallel exec
   - Test results and usage examples
   - Integration notes and recommendations
 
-- [x] **REFACTORING_REPORT.md** (12K)
+- [x] **../reports/REFACTORING_REPORT.md** (12K)
   - Comprehensive implementation report
   - Detailed performance analysis
   - File organization overview
@@ -152,7 +152,7 @@ tests/unit/parallel-detection-simple.test.js  12K   412 lines
 docs/PARALLEL_DETECTION_OPTIMIZATION.md      12K   350+ lines
 docs/PARALLEL_DETECTION_REFLEXION.json       11K   structured data
 REFACTORING_SUMMARY.md                       10K   executive summary
-REFACTORING_REPORT.md                        12K   detailed report
+../reports/REFACTORING_REPORT.md                        12K   detailed report
 STORE_IN_AGENTDB.sh                         1.5K   storage script
 ─────────────────────────────────────────────────
 Total: ~66.5K, ~1,291 lines
@@ -206,7 +206,7 @@ console.log(`Speedup: ~66% faster than sequential execution`);
 ### Primary Resources
 1. **PARALLEL_DETECTION_OPTIMIZATION.md** - Start here for overview and examples
 2. **REFACTORING_SUMMARY.md** - Quick reference with metrics
-3. **REFACTORING_REPORT.md** - Comprehensive technical report
+3. **../reports/REFACTORING_REPORT.md** - Comprehensive technical report
 
 ### Reference Material
 - **src/lib/detection-optimizer.js** - Optimized functions with comments
@@ -308,7 +308,7 @@ docs/
 
 Project Root:
   ├── REFACTORING_SUMMARY.md               ← Executive summary
-  ├── REFACTORING_REPORT.md                ← Detailed report
+  ├── ../reports/REFACTORING_REPORT.md                ← Detailed report
   ├── STORE_IN_AGENTDB.sh                  ← Storage script
   └── IMPLEMENTATION_COMPLETE.md           ← This file
 ```
