@@ -6,7 +6,7 @@
 [![Tests](https://img.shields.io/badge/tests-1%2C231%20passing-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 [![Coverage](https://img.shields.io/badge/coverage-99.4%25-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 
-Universal Docker containerization tool for AI-generated projects. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
+Universal Docker containerization tool for AI-generated UX prototypes. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
 
 ## Why Not Just Use Docker Init?
 
