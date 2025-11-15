@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.1...v3.0.2) (2025-11-15)
+
+
+### Bug Fixes
+
+* normalize repository URL in package.json ([6380571](https://github.com/wrsmith108/vibe-to-docker/commit/638057110d7e2dc0e87e05182a406eb2dba287f2))
+
 # [3.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v2.0.1...v3.0.0) (2025-11-15)
 
 
