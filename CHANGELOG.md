@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.2...v3.0.3) (2025-11-15)
+
+
+### Bug Fixes
+
+* resolve init command crashes at 20% and 80% progress ([0aea97f](https://github.com/wrsmith108/vibe-to-docker/commit/0aea97ff57e67d71fc1f25743a39fd8d9540cb75))
+
 ## [3.0.2](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.1...v3.0.2) (2025-11-15)
 
 
