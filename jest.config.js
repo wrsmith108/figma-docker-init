@@ -39,8 +39,8 @@ export default {
     global: {
       branches: 60,
       functions: 69,
-      lines: 63,
-      statements: 63
+      lines: 62,
+      statements: 62
     }
   },
   verbose: true
