@@ -1,5 +1,5 @@
 # CI/CD Optimization - Implementation Checklist
-**Project:** vibe-to-docker | **Date:** January 14, 2025
+**Project:** vibe-to-docker | **Date:** November 14, 2025
 
 ---
 
@@ -13,7 +13,7 @@
 - [ ] Expected output: "found 0 vulnerabilities"
 
 ```bash
-cd /Users/williamsmith/Documents/GitHub/figma-docker-init
+cd /Users/williamsmith/Documents/GitHub/vibe-to-docker
 npm update @babel/core @babel/preset-env js-yaml
 npm audit
 ```
@@ -644,6 +644,6 @@ testTimeout: 30000  # 30 seconds per test
 
 ---
 
-**Last Updated:** January 14, 2025
+**Last Updated:** November 14, 2025
 **Next Review:** Weekly for first month, then monthly
 **Owner:** DevOps/Platform Team

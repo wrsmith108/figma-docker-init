@@ -1,6 +1,6 @@
 # Dependency Upgrade Summary - Deprecated Package Fixes
 
-**Date**: January 14, 2025
+**Date**: November 14, 2025
 **Project**: vibe-to-docker v2.1.0
 
 ## Executive Summary

@@ -1,6 +1,6 @@
 # CI/CD Optimization Research Report
-**Research Date:** January 14, 2025
-**Project:** figma-docker-init (vibe-to-docker)
+**Research Date:** November 14, 2025
+**Project:** vibe-to-docker
 **Researcher:** Research Agent
 **Namespace:** ci-cd-analysis
 
@@ -855,7 +855,7 @@ jobs:
 ```graphql
 # Query workflow run times
 query WorkflowPerformance {
-  repository(owner: "wrsmith108", name: "figma-docker-init") {
+  repository(owner: "wrsmith108", name: "vibe-to-docker") {
     workflowRuns(first: 50) {
       nodes {
         name
