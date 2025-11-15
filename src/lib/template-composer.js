@@ -455,6 +455,22 @@ export class TemplateComposer {
       defaultBuildCommand = 'vite build'; // Use vite directly for Figma projects
     }
 
+    // Determine build type based on tool and framework
+    const isStaticBuild = (
+      tool === 'figma' ||
+      tool === 'figma-make' ||
+      tool === 'lovable' ||
+      tool === 'bolt' ||
+      (framework && (framework.includes('vite') || framework.includes('react') && !framework.includes('next')))
+    );
+
+    const isServerBuild = (
+      tool === 'v0' ||
+      framework === 'next' ||
+      framework === 'nextjs' ||
+      (metadata.framework && (metadata.framework === 'next' || metadata.framework === 'nextjs'))
+    );
+
     // Build variables object
     const allVariables = {
       TOOL: tool,
@@ -464,12 +480,12 @@ export class TemplateComposer {
       BUILD_COMMAND: metadata.buildCommand || defaultBuildCommand,
       START_COMMAND: metadata.startCommand || defaultStartCommand,
       INSTALL_COMMAND: metadata.installCommand || 'npm ci',
-      // Set conditional flags to false by default (will be removed from template)
-      YARN: false,
-      PNPM: false,
-      STATIC_BUILD: false,
-      SERVER_BUILD: false,
-      BUILD_ENV_VARS: false,
+      // Set conditional flags based on detected tool and framework
+      YARN: metadata.packageManager === 'yarn',
+      PNPM: metadata.packageManager === 'pnpm',
+      STATIC_BUILD: isStaticBuild,
+      SERVER_BUILD: isServerBuild,
+      BUILD_ENV_VARS: metadata.buildEnvVars || false,
       ...variables
     };
 
