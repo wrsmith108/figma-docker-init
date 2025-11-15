@@ -1,6 +1,6 @@
 {
   "name": "vibe-to-docker",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Docker containerization for AI-generated projects with failure pattern mitigation. 24 features addressing 82% dependency conflicts, 60-70% environment mismatches, 48% hardcoded secrets in Lovable/Bolt/V0/Figma code.",
   "main": "vibe-to-docker.js",
   "type": "module",

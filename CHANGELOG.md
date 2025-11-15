@@ -1,3 +1,16 @@
+# [3.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.1.1...v3.2.0) (2025-11-15)
+
+
+### Bug Fixes
+
+* **tests:** adjust confidence thresholds for /5.0 normalization ([e97f6e9](https://github.com/wrsmith108/vibe-to-docker/commit/e97f6e9be7e0f6b8c86ed9173624ebabbf128cd3))
+
+
+### Features
+
+* **ai:** add intelligent DevOps with AI learning system ([34005ab](https://github.com/wrsmith108/vibe-to-docker/commit/34005ab5c25b6a3d59039a336d3569dccc6ecd36)), closes [#7](https://github.com/wrsmith108/vibe-to-docker/issues/7)
+* **detector:** improve Figma Make detection accuracy (31.9% → 78.0%) ([5d8453c](https://github.com/wrsmith108/vibe-to-docker/commit/5d8453c71f389ff048a807272eab68aae49136db))
+
 ## [3.1.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.1.0...v3.1.1) (2025-11-15)
 
 
