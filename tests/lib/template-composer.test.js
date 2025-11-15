@@ -199,6 +199,23 @@ describe('TemplateComposer', () => {
       expect(merged.match(/# Comment/g)?.length).toBeGreaterThan(1);
     });
 
+    it('should preserve template syntax when deduplicating', () => {
+      const fragments = [
+        'ENV PORT={{PORT:-3000}}\nRUN npm install',
+        'ENV HOST={{HOST:-localhost}}\nENV PORT={{PORT:-3000}}'
+      ];
+
+      const merged = composer.mergeFragments(fragments, { deduplicate: true });
+
+      // Template syntax should appear twice (once from each fragment)
+      const portMatches = merged.match(/ENV PORT=\{\{PORT:-3000\}\}/g);
+      expect(portMatches?.length).toBe(2);
+
+      // Other content should be deduplicated
+      const installMatches = merged.match(/RUN npm install/g);
+      expect(installMatches?.length).toBe(1);
+    });
+
     it('should throw error if fragments is not an array', () => {
       expect(() => composer.mergeFragments('not an array')).toThrow(/must be an array/);
     });

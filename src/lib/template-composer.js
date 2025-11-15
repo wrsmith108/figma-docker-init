@@ -151,6 +151,11 @@ export class TemplateComposer {
         if (!trimmed || trimmed.startsWith('#')) {
           return true;
         }
+        // NEVER deduplicate template syntax (variables, conditionals)
+        // These must be preserved even if they appear identical
+        if (trimmed.includes('{{') && trimmed.includes('}}')) {
+          return true;
+        }
         if (seen.has(trimmed)) {
           return false;
         }
