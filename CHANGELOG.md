@@ -1,3 +1,12 @@
+## [3.1.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.1.0...v3.1.1) (2025-11-15)
+
+
+### Bug Fixes
+
+* add Docker daemon detection and conditional template variable support ([7ffc916](https://github.com/wrsmith108/vibe-to-docker/commit/7ffc9160b199470d14a2d04a01c58d7f11a6fdd9)), closes [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if)
+* **ci:** lower coverage threshold to 62% after template fix ([cc3bf3d](https://github.com/wrsmith108/vibe-to-docker/commit/cc3bf3d116ec4a007269eee69b41bd72cf2a884a))
+* replace while loop with callback in replaceTemplateVariables ([747a074](https://github.com/wrsmith108/vibe-to-docker/commit/747a07430f4c08b6f3a07f705a3b3424e4a68077)), closes [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if) [#3](https://github.com/wrsmith108/vibe-to-docker/issues/3)
+
 # [3.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.4...v3.1.0) (2025-11-15)
 
 
