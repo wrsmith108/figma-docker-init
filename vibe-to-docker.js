@@ -1204,10 +1204,37 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     log(`\n${colors.bold}Next Steps:${colors.reset}`);
     log(`1. Review and customize the generated Docker configuration files`);
     log(`2. Update environment variables in .vibe-docker/.env if needed`);
-    log(`3. Build and run your Docker container:`);
-    log(`   ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
-    log(`\n${colors.bold}To view logs:${colors.reset}`);
-    log(`   ${colors.blue}docker-compose logs -f${colors.reset}`);
+
+    // Automatically start docker-compose if Docker is available
+    log(`\n${colors.bold}Starting Docker containers...${colors.reset}`);
+    try {
+      // Check if Docker is available
+      const { execSync } = require('child_process');
+      execSync('docker --version', { stdio: 'ignore' });
+
+      // Start docker-compose
+      log(`${colors.blue}Running: cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
+      const dockerOutput = execSync('cd .vibe-docker && docker-compose up -d --build', {
+        cwd: process.cwd(),
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+
+      log(`${colors.green}✓${colors.reset} Docker containers started successfully!`);
+      log(`\n${colors.bold}Application is running:${colors.reset}`);
+      log(`  ${colors.blue}→${colors.reset} http://localhost:${variables.PORT}`);
+      log(`\n${colors.bold}To view logs:${colors.reset}`);
+      log(`   ${colors.blue}cd .vibe-docker && docker-compose logs -f${colors.reset}`);
+      log(`\n${colors.bold}To stop containers:${colors.reset}`);
+      log(`   ${colors.blue}cd .vibe-docker && docker-compose down${colors.reset}`);
+    } catch (dockerError) {
+      // Docker not available or start failed - show manual instructions
+      log(`${colors.yellow}Docker not available or failed to start automatically.${colors.reset}`);
+      log(`\n${colors.bold}To start manually:${colors.reset}`);
+      log(`   ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
+      log(`\n${colors.bold}To view logs:${colors.reset}`);
+      log(`   ${colors.blue}docker-compose logs -f${colors.reset}`);
+    }
 
   } catch (error) {
     log(`${colors.red}Error during template composition: ${error.message}${colors.reset}`);
