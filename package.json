@@ -1,6 +1,6 @@
 {
   "name": "vibe-to-docker",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Universal Docker containerization tool for AI-generated projects from Figma, Lovable, V0, and Bolt",
   "main": "vibe-to-docker.js",
   "type": "module",
