@@ -217,8 +217,8 @@ describe('Path Resolver', () => {
 
   describe('Path Validation', () => {
     test('should validate path within project boundary', () => {
-      const projectRoot = '/Users/test/project';
-      const validPath = '/Users/test/project/.figma-docker';
+      const projectRoot = process.cwd();
+      const validPath = path.join(projectRoot, '.figma-docker');
       const resolvedValid = path.resolve(validPath);
 
       const normalizedResolved = resolvedValid.replace(/\\/g, '/');
@@ -227,16 +227,18 @@ describe('Path Resolver', () => {
     });
 
     test('should detect path traversal attempts', () => {
-      const projectRoot = '/Users/test/project';
-      const maliciousPath = '/Users/test/project/../../../etc/passwd';
+      const projectRoot = process.cwd();
+      const maliciousPath = path.join(projectRoot, '../../../etc/passwd');
       const resolved = path.resolve(maliciousPath);
 
       expect(resolved.startsWith(projectRoot)).toBe(false);
     });
 
     test('should validate path exists within allowed directories', () => {
-      const allowedDirs = ['/Users/test', '/home/user', 'C:\\Users'];
-      const testPath = '/Users/test/project/.figma-docker';
+      const projectRoot = process.cwd();
+      const parentDir = path.dirname(projectRoot);
+      const allowedDirs = [parentDir, projectRoot];
+      const testPath = path.join(projectRoot, '.figma-docker');
       const resolved = path.resolve(testPath);
 
       const isAllowed = allowedDirs.some(dir =>
@@ -298,6 +300,7 @@ describe('Path Resolver', () => {
     });
 
     test('should validate against path injection attacks', () => {
+      const projectRoot = process.cwd();
       const suspiciousPaths = [
         '../../../etc/passwd',
         '..\\..\\..\\windows\\system32',
@@ -306,8 +309,8 @@ describe('Path Resolver', () => {
       ];
 
       suspiciousPaths.forEach(p => {
-        const resolved = path.resolve('/Users/test/project', p);
-        const isWithinProject = resolved.startsWith(path.resolve('/Users/test/project'));
+        const resolved = path.resolve(projectRoot, p);
+        const isWithinProject = resolved.startsWith(path.resolve(projectRoot));
 
         // Path resolution should normalize these, but validation should catch them
         expect(typeof resolved).toBe('string');

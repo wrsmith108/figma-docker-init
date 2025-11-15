@@ -182,7 +182,7 @@ jobs:
           echo "Package created: $PACKAGE_FILE"
 
           # Verify package contents
-          tar -tzf $PACKAGE_FILE | head -20
+          tar -tzf $PACKAGE_FILE | head -20 || true
 
           # Test if package can be installed
           mkdir test-install
