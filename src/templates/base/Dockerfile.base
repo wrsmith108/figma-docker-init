@@ -66,8 +66,13 @@ COPY --from=builder --chown=appuser:nodejs /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 {{/if}}
 
+{{#if STATIC_BUILD}}
+# Install serve for static file serving (as root before USER switch)
+RUN npm install -g serve
+{{/if}}
+
 # Switch to non-root user
-USER node
+USER appuser
 
 # Expose port
 EXPOSE {{PORT}}
@@ -76,5 +81,11 @@ EXPOSE {{PORT}}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:{{PORT}}/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start application
+{{#if STATIC_BUILD}}
+# Start static file server
+CMD ["serve", "-s", "dist", "-l", "{{PORT}}"]
+{{/if}}
+{{#if SERVER_BUILD}}
+# Start application server
 CMD ["{{START_COMMAND}}"]
+{{/if}}

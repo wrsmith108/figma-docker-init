@@ -156,6 +156,13 @@ export class TemplateComposer {
         if (trimmed.includes('{{') && trimmed.includes('}}')) {
           return true;
         }
+        // NEVER deduplicate stage-critical Docker instructions that can appear multiple times
+        // Each stage in multi-stage builds needs its own WORKDIR, FROM, etc.
+        if (trimmed.startsWith('WORKDIR ') ||
+            trimmed.startsWith('FROM ') ||
+            trimmed.startsWith('USER ')) {
+          return true;
+        }
         if (seen.has(trimmed)) {
           return false;
         }

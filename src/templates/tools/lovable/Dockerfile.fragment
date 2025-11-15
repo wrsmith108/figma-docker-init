@@ -1,14 +1,3 @@
 # Lovable-specific configuration
-# Lovable projects use Vite + React + Supabase
-
-# Vite build creates static dist folder
-ENV STATIC_BUILD=true
-
-# Default Lovable port
-ENV PORT=8080
-
-# Lovable uses npm or yarn
-RUN npm install -g serve
-
-# Serve static files
-CMD ["serve", "-s", "dist", "-l", "8080"]
+# All lovable specifics now handled in base template via STATIC_BUILD flag
+# This fragment is intentionally minimal to avoid duplication
