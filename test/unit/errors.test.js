@@ -64,9 +64,11 @@ describe('Custom Error Classes', () => {
       }).toThrow(module.ValidationError);
     });
 
-    test('validateProjectName should throw ValidationError for invalid names', () => {
+    test('validateProjectName should throw ValidationError only for completely invalid names', () => {
+      // Now normalizes special characters instead of throwing
+      // Only throws if result is empty after sanitization
       expect(() => {
-        module.validateProjectName('invalid!@#$%');
+        module.validateProjectName('!@#$%^&*()');
       }).toThrow(module.ValidationError);
     });
   });

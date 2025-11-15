@@ -356,6 +356,102 @@ API_KEY='secret123'
       expect(content).toContain('# Secret variables');
       expect(content).toContain('DO NOT commit');
     });
+
+    describe('Defensive checks - Regression tests for issue #2', () => {
+      it('should handle variables with missing files property', () => {
+        // Simulate malformed variable data (missing files array)
+        const malformedVars = new Map([
+          ['VAR1', { name: 'VAR1', isBuildTime: false, isSecret: false }], // Missing files
+          ['VAR2', { name: 'VAR2', files: null, isBuildTime: true, isSecret: false }], // null files
+          ['VAR3', { name: 'VAR3', files: undefined, isBuildTime: false, isSecret: true }] // undefined files
+        ]);
+
+        // Should not throw error
+        const content = envManager.generateEnvExample({
+          variables: malformedVars,
+          includeComments: true,
+          groupByType: true
+        });
+
+        expect(content).toContain('VAR1=');
+        expect(content).toContain('VAR2=');
+        expect(content).toContain('VAR3=');
+        expect(content).not.toContain('undefined');
+        expect(content).not.toContain('null');
+      });
+
+      it('should handle variables with non-array files property', () => {
+        const badVars = new Map([
+          ['VAR1', { name: 'VAR1', files: 'not-an-array', isBuildTime: false, isSecret: false }],
+          ['VAR2', { name: 'VAR2', files: { path: 'object' }, isBuildTime: true, isSecret: false }],
+          ['VAR3', { name: 'VAR3', files: 123, isBuildTime: false, isSecret: true }]
+        ]);
+
+        const content = envManager.generateEnvExample({
+          variables: badVars,
+          includeComments: true,
+          groupByType: true
+        });
+
+        expect(content).toContain('VAR1=');
+        expect(content).toContain('VAR2=');
+        expect(content).toContain('VAR3=');
+      });
+
+      it('should handle null or undefined info objects', () => {
+        const badVars = new Map([
+          ['VAR1', null],
+          ['VAR2', undefined],
+          ['VAR3', { name: 'VAR3', files: ['test.js'], isBuildTime: false, isSecret: false }]
+        ]);
+
+        const content = envManager.generateEnvExample({
+          variables: badVars,
+          includeComments: true,
+          groupByType: false
+        });
+
+        // Should skip null/undefined entries and only include VAR3
+        expect(content).toContain('VAR3=');
+        expect(content).not.toContain('VAR1=');
+        expect(content).not.toContain('VAR2=');
+      });
+
+      it('should not crash on empty files array', () => {
+        const varsWithEmptyFiles = new Map([
+          ['VAR1', { name: 'VAR1', files: [], isBuildTime: false, isSecret: false }]
+        ]);
+
+        const content = envManager.generateEnvExample({
+          variables: varsWithEmptyFiles,
+          includeComments: true,
+          groupByType: true
+        });
+
+        expect(content).toContain('VAR1=');
+        expect(content).not.toContain('# Used in:');
+      });
+
+      it('should handle mixed valid and invalid variable entries', () => {
+        const mixedVars = new Map([
+          ['VALID_VAR', { name: 'VALID_VAR', files: ['src/app.js'], isBuildTime: false, isSecret: false }],
+          ['MISSING_FILES', { name: 'MISSING_FILES', isBuildTime: true, isSecret: false }], // No files property
+          ['NULL_INFO', null], // Completely invalid
+          ['ANOTHER_VALID', { name: 'ANOTHER_VALID', files: ['test.js'], isBuildTime: false, isSecret: true }]
+        ]);
+
+        const content = envManager.generateEnvExample({
+          variables: mixedVars,
+          includeComments: true,
+          groupByType: true
+        });
+
+        expect(content).toContain('VALID_VAR=');
+        expect(content).toContain('MISSING_FILES=');
+        expect(content).toContain('ANOTHER_VALID=');
+        expect(content).not.toContain('NULL_INFO=');
+      });
+    });
   });
 
   describe('generateEnvFile()', () => {

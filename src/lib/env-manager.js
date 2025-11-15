@@ -296,12 +296,21 @@ export class EnvManager {
     const secretVars = [];
 
     for (const [name, info] of variables) {
+      // Defensive check: Ensure info has required properties
+      if (!info || typeof info !== 'object') {
+        continue;
+      }
+
+      // Ensure files is always an array
+      const files = Array.isArray(info.files) ? info.files : [];
+      const safeInfo = { ...info, files };
+
       if (info.isSecret) {
-        secretVars.push({ name, info });
+        secretVars.push({ name, info: safeInfo });
       } else if (info.isBuildTime) {
-        buildVars.push({ name, info });
+        buildVars.push({ name, info: safeInfo });
       } else {
-        runtimeVars.push({ name, info });
+        runtimeVars.push({ name, info: safeInfo });
       }
     }
 
@@ -309,7 +318,7 @@ export class EnvManager {
     if (groupByType && buildVars.length > 0) {
       content += '# Build-time variables (bundled into application)\n';
       for (const { name, info } of buildVars) {
-        if (includeComments && info.files.length > 0) {
+        if (includeComments && info.files && info.files.length > 0) {
           content += `# Used in: ${info.files.slice(0, 3).join(', ')}\n`;
         }
         content += `${name}=\n`;
@@ -321,7 +330,7 @@ export class EnvManager {
     if (groupByType && runtimeVars.length > 0) {
       content += '# Runtime variables\n';
       for (const { name, info } of runtimeVars) {
-        if (includeComments && info.files.length > 0) {
+        if (includeComments && info.files && info.files.length > 0) {
           content += `# Used in: ${info.files.slice(0, 3).join(', ')}\n`;
         }
         content += `${name}=\n`;
@@ -333,7 +342,7 @@ export class EnvManager {
     if (secretVars.length > 0) {
       content += '# Secret variables (DO NOT commit real values to git!)\n';
       for (const { name, info } of secretVars) {
-        if (includeComments && info.files.length > 0) {
+        if (includeComments && info.files && info.files.length > 0) {
           content += `# Used in: ${info.files.slice(0, 3).join(', ')}\n`;
         }
         content += `${name}=\n`;
@@ -343,8 +352,15 @@ export class EnvManager {
     // If not grouping, just list all variables
     if (!groupByType) {
       for (const [name, info] of variables) {
-        if (includeComments && info.files.length > 0) {
-          content += `# Used in: ${info.files.slice(0, 3).join(', ')}\n`;
+        // Defensive check: Skip null/undefined entries
+        if (!info || typeof info !== 'object') {
+          continue;
+        }
+
+        // Defensive check for non-grouped mode
+        const files = Array.isArray(info.files) ? info.files : [];
+        if (includeComments && files.length > 0) {
+          content += `# Used in: ${files.slice(0, 3).join(', ')}\n`;
         }
         if (info.isSecret) {
           content += `# WARNING: Secret variable - keep secure!\n`;

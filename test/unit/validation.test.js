@@ -279,7 +279,7 @@ describe('Validation Functions', () => {
     describe('Happy paths', () => {
       it('should validate npm-compatible names', () => {
         expect(validateProjectName('my-app')).toBe('my-app');
-        expect(validateProjectName('my_app')).toBe('my_app');
+        expect(validateProjectName('my_app')).toBe('my-app'); // Now normalized
       });
 
       it('should allow dots', () => {
@@ -296,19 +296,25 @@ describe('Validation Functions', () => {
     });
 
     describe('Error handling', () => {
-      it('should throw ValidationError for spaces', () => {
-        expect(() => validateProjectName('my app')).toThrow(ValidationError);
-        expect(() => validateProjectName('my app')).toThrow('invalid characters');
+      it('should normalize spaces to hyphens instead of throwing', () => {
+        // New behavior: normalize instead of error
+        expect(validateProjectName('my app')).toBe('my-app');
       });
 
-      it('should throw ValidationError for special characters', () => {
-        expect(() => validateProjectName('my@app')).toThrow(ValidationError);
-        expect(() => validateProjectName('my#app')).toThrow(ValidationError);
+      it('should remove special characters', () => {
+        // New behavior: remove invalid chars instead of throwing
+        expect(validateProjectName('my@app')).toBe('myapp');
+        expect(validateProjectName('my#app')).toBe('myapp');
       });
 
       it('should throw ValidationError for exceeding max length', () => {
         const longName = 'a'.repeat(101);
         expect(() => validateProjectName(longName)).toThrow(ValidationError);
+      });
+
+      it('should throw ValidationError if result is empty after sanitization', () => {
+        expect(() => validateProjectName('!@#$%^')).toThrow(ValidationError);
+        expect(() => validateProjectName('!@#$%^')).toThrow('invalid characters');
       });
     });
 
@@ -318,7 +324,40 @@ describe('Validation Functions', () => {
       });
 
       it('should handle names with mixed separators', () => {
-        expect(validateProjectName('my-app_v1.0')).toBe('my-app_v1.0');
+        expect(validateProjectName('my-app_v1.0')).toBe('my-app-v1.0'); // Underscores normalized
+      });
+    });
+
+    describe('Normalization - Regression tests for issue #1', () => {
+      it('should normalize uppercase to lowercase', () => {
+        expect(validateProjectName('MyApp')).toBe('myapp');
+        expect(validateProjectName('MYAPP')).toBe('myapp');
+        expect(validateProjectName('Crossvideoux')).toBe('crossvideoux');
+      });
+
+      it('should replace underscores with hyphens', () => {
+        expect(validateProjectName('my_app')).toBe('my-app');
+        expect(validateProjectName('my_app_name')).toBe('my-app-name');
+      });
+
+      it('should replace multiple spaces with single hyphen', () => {
+        expect(validateProjectName('my   app')).toBe('my-app');
+        expect(validateProjectName('my app name')).toBe('my-app-name');
+      });
+
+      it('should handle mixed uppercase, spaces, and underscores', () => {
+        expect(validateProjectName('My_Test App')).toBe('my-test-app');
+        expect(validateProjectName('REACT_APP_NAME')).toBe('react-app-name');
+      });
+
+      it('should remove special characters while preserving valid ones', () => {
+        expect(validateProjectName('my@app#123')).toBe('myapp123');
+        expect(validateProjectName('app-v1.0.0')).toBe('app-v1.0.0');
+      });
+
+      it('should handle complex real-world package names', () => {
+        expect(validateProjectName('My Project (v2.1)')).toBe('my-project-v2.1');
+        expect(validateProjectName('@company/my-package')).toBe('companymy-package');
       });
     });
   });

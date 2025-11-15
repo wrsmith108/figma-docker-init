@@ -149,10 +149,10 @@ describe('Error Classes - Comprehensive Usage', () => {
   });
 
   describe('ValidationError in validateProjectName', () => {
-    it('should throw for invalid project names', () => {
-      expect(() => validateProjectName('name with spaces')).toThrow(ValidationError);
-      expect(() => validateProjectName('name@special')).toThrow(ValidationError);
-      expect(() => validateProjectName('name#tag')).toThrow(ValidationError);
+    it('should throw only for completely invalid project names', () => {
+      // Now normalizes special characters, spaces, etc. Only throws if nothing remains
+      expect(() => validateProjectName('!@#$%^&*()')).toThrow(ValidationError);
+      expect(() => validateProjectName('   ')).toThrow(ValidationError);
     });
 
     it('should throw with specific message', () => {

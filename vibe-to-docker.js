@@ -145,11 +145,18 @@ function validatePort(port) {
  */
 function validateProjectName(name) {
   const sanitized = sanitizeString(name, 100);
-  // Allow alphanumeric, hyphens, underscores, and dots
-  if (!/^[a-zA-Z0-9._-]+$/.test(sanitized)) {
+
+  // Normalize: lowercase, replace spaces/underscores with hyphens
+  let normalized = sanitized.toLowerCase().trim();
+  normalized = normalized.replace(/[\s_]+/g, '-');
+
+  // Remove any remaining invalid characters
+  normalized = normalized.replace(/[^a-z0-9._-]/g, '');
+
+  if (!normalized) {
     throw new ValidationError('Project name contains invalid characters');
   }
-  return sanitized;
+  return normalized;
 }
 
 /**
@@ -1101,7 +1108,7 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     const validator = new TemplateValidator();
 
     // Validate Dockerfile
-    const dockerfileValidation = validator.validateDockerfile(dockerfile);
+    const dockerfileValidation = validator.validateDockerfileContent(dockerfile);
 
     if (dockerfileValidation.errors.length > 0) {
       log(`${colors.red}Dockerfile validation errors:${colors.reset}`);
