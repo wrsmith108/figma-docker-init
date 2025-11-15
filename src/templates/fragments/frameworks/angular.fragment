@@ -1,4 +1,3 @@
 # Angular Framework Configuration
-RUN npm run build
-EXPOSE 4200
-CMD ["npm", "start"]
+# Angular build creates static files (handled by STATIC_BUILD flag in base template)
+# This fragment is intentionally minimal to avoid duplication

@@ -1,7 +1,3 @@
-# Next.js-specific configuration
-
-# Next.js uses server-side rendering
-ENV SERVER_BUILD=true
-
-# Next.js start command
-CMD ["npm", "start"]
+# Next.js Framework Configuration
+# Next.js uses server-side rendering (handled by SERVER_BUILD flag in base template)
+# This fragment is intentionally minimal to avoid duplication

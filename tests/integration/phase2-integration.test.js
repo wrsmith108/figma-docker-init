@@ -514,7 +514,7 @@ describe('Phase 2 Integration Tests', () => {
       expect(dockerfile).toMatch(/FROM .+ AS production/);
 
       // Security: non-root user
-      expect(dockerfile).toContain('USER node');
+      expect(dockerfile).toContain('USER appuser');
 
       // Health check
       expect(dockerfile).toMatch(/HEALTHCHECK/);

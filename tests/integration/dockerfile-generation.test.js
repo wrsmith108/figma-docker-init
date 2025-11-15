@@ -15,7 +15,7 @@ describe('Dockerfile Generation Integration Tests', () => {
   let composer;
   // Use the actual templates directory (not fragments subdirectory)
   const projectRoot = path.join(__dirname, '../..');
-  const templatesDir = path.join(projectRoot, 'templates');
+  const templatesDir = path.join(projectRoot, 'src/templates');
 
   beforeEach(() => {
     composer = new TemplateComposer(templatesDir);
@@ -315,7 +315,7 @@ describe('Dockerfile Generation Integration Tests', () => {
       });
 
       expect(dockerfile).toContain('USER appuser');
-      expect(dockerfile).toContain('adduser --system --uid 1001 appuser');
+      expect(dockerfile).toContain('RUN adduser --system --uid 1001 appuser');
     });
   });
 });
