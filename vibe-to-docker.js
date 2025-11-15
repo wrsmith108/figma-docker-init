@@ -816,6 +816,7 @@ ${colors.bold}Usage:${colors.reset}
 
 ${colors.bold}Commands:${colors.reset}
   init           Initialize Docker setup with tool detection
+  uninstall      Remove .vibe-docker directory and clean up Docker configuration
 
 ${colors.bold}Tool Options (Phase 3):${colors.reset}
   --tool=<name>  Specify AI tool type:
@@ -842,6 +843,9 @@ ${colors.bold}Examples:${colors.reset}
   vibe-to-docker init --tool=lovable
   vibe-to-docker init --tool=bolt
 
+  ${colors.dim}# Uninstall (remove .vibe-docker directory)${colors.reset}
+  vibe-to-docker uninstall
+
   ${colors.dim}# Legacy mode (backward compatible)${colors.reset}
   vibe-to-docker basic
   vibe-to-docker ui-heavy
@@ -865,6 +869,44 @@ function showVersion() {
     log(`vibe-to-docker v${pkg.version}`, colors.blue);
   } else {
     log('vibe-to-docker v1.0.0', colors.blue);
+  }
+}
+
+/**
+ * Uninstalls vibe-to-docker by removing the .vibe-docker directory.
+ */
+function uninstall() {
+  const projectRoot = process.cwd();
+  const vibeDockerDir = path.join(projectRoot, '.vibe-docker');
+
+  log(`${colors.bold}${colors.yellow}Uninstalling vibe-to-docker...${colors.reset}\n`);
+
+  if (!fs.existsSync(vibeDockerDir)) {
+    log(`${colors.yellow}No .vibe-docker directory found.${colors.reset}`);
+    log(`Nothing to uninstall.\n`);
+    return;
+  }
+
+  try {
+    // Show what will be removed
+    log(`${colors.dim}Removing: ${vibeDockerDir}${colors.reset}`);
+
+    // Remove the directory recursively
+    fs.rmSync(vibeDockerDir, { recursive: true, force: true });
+
+    log(`\n${colors.green}✓ Successfully removed .vibe-docker directory${colors.reset}`);
+    log(`${colors.dim}Your project files remain untouched.${colors.reset}\n`);
+
+    log(`${colors.bold}What was removed:${colors.reset}`);
+    log(`  - Dockerfile and docker-compose.yml`);
+    log(`  - .dockerignore and .env files`);
+    log(`  - Docker configuration directory\n`);
+
+    log(`${colors.dim}To reinstall, run: ${colors.reset}${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}\n`);
+  } catch (error) {
+    log(`${colors.red}Error removing .vibe-docker directory: ${error.message}${colors.reset}`);
+    log(`${colors.yellow}You may need to remove it manually.${colors.reset}\n`);
+    process.exit(1);
   }
 }
 
@@ -1564,6 +1606,11 @@ async function main() {
 
   if (args.includes('--list')) {
     listTemplates();
+    return;
+  }
+
+  if (args.includes('uninstall') || args[0] === 'uninstall') {
+    uninstall();
     return;
   }
 
