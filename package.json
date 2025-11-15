@@ -14,7 +14,14 @@
     "test:coverage:watch": "node --experimental-vm-modules node_modules/.bin/jest --coverage --watch",
     "coverage:report": "node --experimental-vm-modules node_modules/.bin/jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html",
     "coverage:open": "node --experimental-vm-modules node_modules/.bin/jest --coverage && open coverage/lcov-report/index.html",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "ai:validate": "node scripts/ai-validate.js",
+    "ai:validate:verbose": "node scripts/ai-validate.js --verbose",
+    "ai:validate:strict": "node scripts/ai-validate.js --strict --verbose",
+    "ai:learn": "node scripts/ai-validate.js --learn-only",
+    "ai:setup": "chmod +x scripts/ai-validate.js .claude-flow/hooks/* && git config core.hooksPath .claude-flow/hooks && echo '✅ AI validation hooks installed'",
+    "ai:metrics": "npx agentdb@latest reflexion synthesize --filter 'ci-failure-*' --max-episodes 20 --format json | jq '{total: length, success_rate: ([.[] | select(.is_correct)] | length / length * 100)}'",
+    "ai:patterns": "npx agentdb@latest memory-search --namespace 'ci-cd/failures' --query 'all patterns' --top-k 10 --format json"
   },
   "keywords": [
     "vibe-coding",
