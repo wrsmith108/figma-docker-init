@@ -1,3 +1,11 @@
+## [3.0.4](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.3...v3.0.4) (2025-11-15)
+
+
+### Bug Fixes
+
+* **ci:** prevent Codecov upload failures from blocking CI pipeline ([16bef2c](https://github.com/wrsmith108/vibe-to-docker/commit/16bef2c8d8507654756b6d1cd8d833ab2281e067))
+* skip template variable placeholders in Dockerfile validation ([70f1ab6](https://github.com/wrsmith108/vibe-to-docker/commit/70f1ab6f1c3fdaac903e7e28f71f693552ad84e6))
+
 ## [3.0.3](https://github.com/wrsmith108/vibe-to-docker/compare/v3.0.2...v3.0.3) (2025-11-15)
 
 
