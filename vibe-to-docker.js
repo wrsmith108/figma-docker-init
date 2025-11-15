@@ -1104,7 +1104,11 @@ function displayToolBenefits(tool, framework) {
   log(`  ${colors.dim}Setup time: 75 minutes → 2 minutes${colors.reset}`);
   log(`  ${colors.dim}Environment config: 30 minutes → automated${colors.reset}`);
   log(`  ${colors.dim}Security hardening: 20 minutes → included${colors.reset}`);
-  log(`  ${colors.dim}Port conflicts: 10 minutes → auto-resolved${colors.reset}\n`);
+  log(`  ${colors.dim}Port conflicts: 10 minutes → auto-resolved${colors.reset}`);
+
+  // Version info
+  const packageJson = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+  log(`\n  ${colors.dim}vibe-to-docker v${packageJson.version}${colors.reset}\n`);
 
   log(`${colors.bold}${colors.green}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`);
 }
