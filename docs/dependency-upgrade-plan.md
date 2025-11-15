@@ -1,6 +1,6 @@
 # Dependency Upgrade Plan - Fix Deprecated Packages
 
-## Analysis Date: January 14, 2025
+## Analysis Date: November 14, 2025
 
 ## Deprecated Packages Identified
 
