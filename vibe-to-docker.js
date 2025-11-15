@@ -604,10 +604,19 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
   };
 
   let result = content;
+
+  // Handle conditional blocks: {{#if VAR}}...{{/if}}
+  result = result.replace(/\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, varName, blockContent) => {
+    const value = enhancedVariables[varName];
+    // Include block if variable is truthy
+    return value ? blockContent : '';
+  });
+
+  // Handle simple variables: {{VAR}}
   const regex = /\{\{(\w+)\}\}/g;
   let match;
 
-  while ((match = regex.exec(content)) !== null) {
+  while ((match = regex.exec(result)) !== null) {
     const variableName = match[1];
     let replacement = enhancedVariables[variableName];
 
@@ -1317,12 +1326,39 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
 
     // Automatically start docker-compose if Docker is available
     log(`\n${colors.bold}Starting Docker containers...${colors.reset}`);
-    try {
-      // Check if Docker is available
-      const { execSync } = require('child_process');
-      execSync('docker --version', { stdio: 'ignore' });
+    const { execSync } = require('child_process');
 
-      // Start docker-compose
+    try {
+      // Step 1: Check if Docker is installed
+      try {
+        execSync('docker --version', { stdio: 'ignore' });
+      } catch (versionError) {
+        log(`${colors.red}✗ Docker is not installed${colors.reset}`);
+        log(`\n${colors.yellow}Docker needs to be installed to run containers.${colors.reset}`);
+        log(`${colors.bold}Install Docker Desktop:${colors.reset}`);
+        log(`  macOS: ${colors.blue}https://docs.docker.com/desktop/install/mac-install/${colors.reset}`);
+        log(`  Windows: ${colors.blue}https://docs.docker.com/desktop/install/windows-install/${colors.reset}`);
+        log(`  Linux: ${colors.blue}https://docs.docker.com/desktop/install/linux-install/${colors.reset}`);
+        log(`\n${colors.bold}After installing, run:${colors.reset}`);
+        log(`   ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
+        throw versionError;
+      }
+
+      // Step 2: Check if Docker daemon is running
+      try {
+        execSync('docker info', { stdio: 'ignore' });
+      } catch (daemonError) {
+        log(`${colors.red}✗ Docker daemon is not running${colors.reset}`);
+        log(`\n${colors.yellow}Docker Desktop needs to be started before running containers.${colors.reset}`);
+        log(`${colors.bold}Start Docker Desktop:${colors.reset}`);
+        log(`  1. Open Docker Desktop from your Applications folder`);
+        log(`  2. Wait for the whale icon in your menu bar to be steady (not animated)`);
+        log(`  3. Then run:`);
+        log(`     ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
+        throw daemonError;
+      }
+
+      // Step 3: Start docker-compose
       log(`${colors.blue}Running: cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
       const dockerOutput = execSync('cd .vibe-docker && docker-compose up -d --build', {
         cwd: process.cwd(),
@@ -1338,12 +1374,7 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
       log(`\n${colors.bold}To stop containers:${colors.reset}`);
       log(`   ${colors.blue}cd .vibe-docker && docker-compose down${colors.reset}`);
     } catch (dockerError) {
-      // Docker not available or start failed - show manual instructions
-      log(`${colors.yellow}Docker not available or failed to start automatically.${colors.reset}`);
-      log(`\n${colors.bold}To start manually:${colors.reset}`);
-      log(`   ${colors.blue}cd .vibe-docker && docker-compose up -d --build${colors.reset}`);
-      log(`\n${colors.bold}To view logs:${colors.reset}`);
-      log(`   ${colors.blue}docker-compose logs -f${colors.reset}`);
+      // Error already logged above - just continue
     }
 
     // Display tool-specific benefits summary
