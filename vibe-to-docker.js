@@ -1063,7 +1063,9 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     BUILD_TOOL: detection.metadata?.buildTool || 'vite',
     BACKEND: detection.metadata?.backend || 'none',
     LANGUAGE: detection.metadata?.language || 'javascript',
-    STYLING: detection.metadata?.styling || 'css'
+    STYLING: detection.metadata?.styling || 'css',
+    // Map PORT to DEV_PORT for template compatibility
+    PORT: projectValues.DEV_PORT || 3000
   };
 
   showProgress('COMPOSE', 30, 'Composing Dockerfile...');
