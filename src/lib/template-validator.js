@@ -105,6 +105,11 @@ export class TemplateValidator {
       // Extract instruction
       const instruction = line.split(/\s+/)[0];
 
+      // Skip template variable placeholders and non-instruction values
+      if (instruction === 'TEMPLATE_VAR' || instruction === 'true' || instruction === 'false' || /^\d+$/.test(instruction)) {
+        continue;
+      }
+
       if (!this.validInstructions.has(instruction)) {
         errors.push(`Line ${i + 1}: Invalid instruction '${instruction}'`);
       }
