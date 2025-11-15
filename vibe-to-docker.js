@@ -613,11 +613,7 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
   });
 
   // Handle simple variables: {{VAR}}
-  const regex = /\{\{(\w+)\}\}/g;
-  let match;
-
-  while ((match = regex.exec(result)) !== null) {
-    const variableName = match[1];
+  result = result.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
     let replacement = enhancedVariables[variableName];
 
     // Validate and sanitize template variables
@@ -626,14 +622,14 @@ function replaceTemplateVariables(content, variables, templatePath = null) {
         replacement = sanitizeTemplateVariable(replacement);
       } catch (error) {
         log(`Warning: Failed to sanitize template variable "${variableName}". Error: ${error.message}. This may be due to invalid variable value type or length. Keeping original placeholder.`, colors.yellow);
-        replacement = `{{${variableName}}}`; // Keep original placeholder on sanitization failure
+        return match; // Keep original placeholder on sanitization failure
       }
     } else {
-      replacement = `{{${variableName}}}`; // Keep original placeholder if variable not found
+      return match; // Keep original placeholder if variable not found
     }
 
-    result = result.replace(new RegExp(`\\{\\{${variableName}\\}\\}`, 'g'), replacement);
-  }
+    return replacement;
+  });
 
   // Cache the result if templatePath is provided
   if (templatePath) {
