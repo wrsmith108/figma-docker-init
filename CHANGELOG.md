@@ -1,3 +1,18 @@
+# [3.3.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.2.0...v3.3.0) (2025-11-15)
+
+
+### Bug Fixes
+
+* **template:** preserve template syntax during deduplication ([a221180](https://github.com/wrsmith108/vibe-to-docker/commit/a2211805999fa7a4779f36796c2ff9e9d156a7da))
+* **templates:** fix Docker multi-stage architecture and deduplication issues ([655a1ec](https://github.com/wrsmith108/vibe-to-docker/commit/655a1ecc28d3d540a38bde6de90badeac5d2220b)), closes [#9](https://github.com/wrsmith108/vibe-to-docker/issues/9)
+* **templates:** fix hardcoded STATIC_BUILD and SERVER_BUILD flags causing empty containers ([01f87d1](https://github.com/wrsmith108/vibe-to-docker/commit/01f87d1fa83945bd2fefc585ddd5f159e9249eee)), closes [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if) [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if) [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if) [#if](https://github.com/wrsmith108/vibe-to-docker/issues/if) [#8](https://github.com/wrsmith108/vibe-to-docker/issues/8)
+* **tests:** relax flaky cache performance test threshold for CI stability ([8f35c27](https://github.com/wrsmith108/vibe-to-docker/commit/8f35c2737c38fa018d4e197728023f7edac9aac1))
+
+
+### Features
+
+* **cli:** display version in installation completion message ([0601f35](https://github.com/wrsmith108/vibe-to-docker/commit/0601f354d09b248bb63b65db8a160cfa80e602c2))
+
 # [3.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.1.1...v3.2.0) (2025-11-15)
 
 
