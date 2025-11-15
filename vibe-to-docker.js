@@ -814,10 +814,17 @@ function showHelp() {
 ${colors.bold}${colors.blue}Vibe to Docker v2.0${colors.reset}
 Universal Docker containerization for AI-generated projects
 
+${colors.bold}${colors.yellow}⚡ Quick Start for New Users:${colors.reset}
+  This tool uses ${colors.bold}npx${colors.reset} (Node Package Execute) - no installation needed!
+  Just run: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
+
+  ${colors.dim}Note: If you see "command not found", use npx in front of every command.${colors.reset}
+  ${colors.dim}Global install (optional): npm install -g vibe-to-docker${colors.reset}
+
 ${colors.bold}Usage:${colors.reset}
-  vibe-to-docker [command] [options]
-  vibe-to-docker init --tool=<tool-name>
-  vibe-to-docker [template]  ${colors.dim}(legacy mode)${colors.reset}
+  ${colors.blue}npx vibe-to-docker${colors.reset} [command] [options]
+  ${colors.blue}npx vibe-to-docker${colors.reset} init --tool=<tool-name>
+  ${colors.blue}npx vibe-to-docker${colors.reset} [template]  ${colors.dim}(legacy mode)${colors.reset}
 
 ${colors.bold}Commands:${colors.reset}
   init           Initialize Docker setup with tool detection
@@ -841,19 +848,25 @@ ${colors.bold}Options:${colors.reset}
   --list         List available templates
 
 ${colors.bold}Examples:${colors.reset}
-  ${colors.dim}# Automatic detection${colors.reset}
-  vibe-to-docker init --tool=auto
+  ${colors.dim}# Automatic detection (recommended for first time)${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
 
   ${colors.dim}# Specific tool${colors.reset}
-  vibe-to-docker init --tool=lovable
-  vibe-to-docker init --tool=bolt
+  ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=bolt${colors.reset}
 
   ${colors.dim}# Uninstall (remove .vibe-docker directory)${colors.reset}
-  vibe-to-docker uninstall
+  ${colors.blue}npx vibe-to-docker uninstall${colors.reset}
 
   ${colors.dim}# Legacy mode (backward compatible)${colors.reset}
-  vibe-to-docker basic
-  vibe-to-docker ui-heavy
+  ${colors.blue}npx vibe-to-docker basic${colors.reset}
+  ${colors.blue}npx vibe-to-docker ui-heavy${colors.reset}
+
+${colors.bold}${colors.yellow}🔄 Upgrading from Previous Version?${colors.reset}
+  1. Delete old setup: ${colors.blue}npx vibe-to-docker uninstall${colors.reset}
+  2. Run fresh setup: ${colors.blue}npx vibe-to-docker@latest init --tool=auto${colors.reset}
+
+  ${colors.dim}(This ensures you get the latest fixes and template improvements)${colors.reset}
 
 ${colors.bold}Features:${colors.reset}
   ✓ Automatic tool detection (Lovable, Bolt, V0, Figma Make)
@@ -973,10 +986,10 @@ function listTemplates() {
 
   log(`\n${colors.bold}Usage:${colors.reset}`);
   log(`  ${colors.dim}# Use tool-specific template:${colors.reset}`);
-  log(`  vibe-to-docker init --tool=lovable`);
-  log(`  vibe-to-docker init --tool=auto\n`);
+  log(`  ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}`);
+  log(`  ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}\n`);
   log(`  ${colors.dim}# Use legacy template:${colors.reset}`);
-  log(`  vibe-to-docker basic`);
+  log(`  ${colors.blue}npx vibe-to-docker basic${colors.reset}`);
 }
 
 // =============================================================================
@@ -1369,6 +1382,7 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
       log(`   ${colors.blue}cd .vibe-docker && docker-compose logs -f${colors.reset}`);
       log(`\n${colors.bold}To stop containers:${colors.reset}`);
       log(`   ${colors.blue}cd .vibe-docker && docker-compose down${colors.reset}`);
+      log(`\n${colors.dim}💡 Tip: All vibe-to-docker commands use: ${colors.blue}npx vibe-to-docker${colors.reset}${colors.dim} [options]${colors.reset}`);
     } catch (dockerError) {
       // Error already logged above - just continue
     }
@@ -1649,9 +1663,9 @@ async function main() {
   if (command === 'init' || toolArg) {
     if (!toolArg) {
       log(`${colors.red}Error: --tool flag is required for init command${colors.reset}`);
-      log(`\nUsage: vibe-to-docker init --tool=<tool-name>`);
+      log(`\nUsage: ${colors.blue}npx vibe-to-docker init --tool=<tool-name>${colors.reset}`);
       log(`Available tools: lovable, bolt, v0, figma-make, auto\n`);
-      log(`Example: vibe-to-docker init --tool=auto`);
+      log(`Example: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}`);
       process.exit(1);
     }
 
@@ -1659,7 +1673,7 @@ async function main() {
 
     if (!toolName) {
       log(`${colors.red}Error: Please specify a tool name${colors.reset}`);
-      log(`\nExample: vibe-to-docker init --tool=lovable`);
+      log(`\nExample: ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}`);
       process.exit(1);
     }
 
@@ -1694,7 +1708,7 @@ async function main() {
     log(`${colors.yellow}Make sure you're in the root of your project.${colors.reset}\n`);
   }
 
-  log(`${colors.dim}Using legacy template mode (for new features, use: vibe-to-docker init --tool=auto)${colors.reset}\n`);
+  log(`${colors.dim}Using legacy template mode (for new features, use: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}${colors.dim})${colors.reset}\n`);
 
   try {
     await copyTemplate(templateName);
