@@ -1127,7 +1127,8 @@ function displayToolBenefits(tool, framework) {
   // Next Steps (moved from above to appear after Time Saved summary)
   log(`${colors.bold}Next Steps:${colors.reset}`);
   log(`1. Review and customize the generated Docker configuration files`);
-  log(`2. Update environment variables in .vibe-docker/.env if needed\n`);
+  log(`2. Update environment variables in .vibe-docker/.env if needed`);
+  log(`3. Use npm run dev to build the application locally\n`);
 }
 
 /**
