@@ -22,6 +22,10 @@ import { TemplateComposer } from './src/lib/template-composer.js';
 import { EnvManager } from './src/lib/env-manager.js';
 import { TemplateValidator } from './src/lib/template-validator.js';
 
+// Configuration generators and package fixers
+import { runAllConfigFixes } from './src/lib/config-generators.js';
+import { fixPackageJson } from './src/lib/package-fixer.js';
+
 // Phase 1: Tool Detection System
 import LovableDetector from './src/detectors/lovable-detector.js';
 import BoltDetector from './src/detectors/bolt-detector.js';
@@ -1309,6 +1313,50 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     if (!fs.existsSync(envPath)) {
       fs.copyFileSync(envExamplePath, envPath);
       log(`  ${colors.green}Created${colors.reset} .env from .env.example`);
+    }
+
+    // Run configuration fixes and generators
+    log(`\n${colors.bold}Running configuration fixes...${colors.reset}`);
+
+    try {
+      // Fix package.json for missing TypeScript types
+      const packageFixResult = await fixPackageJson(validatedProjectDir, { dryRun: false, backup: true });
+      if (packageFixResult.fixed) {
+        log(`  ${colors.green}✓${colors.reset} ${packageFixResult.message}`);
+        packageFixResult.applied.forEach(fix => {
+          log(`    ${colors.dim}→ Added ${fix.package}@${fix.version}${colors.reset}`);
+        });
+        if (packageFixResult.nextSteps && packageFixResult.nextSteps.length > 0) {
+          log(`    ${colors.yellow}⚠${colors.reset} ${packageFixResult.nextSteps[0]}`);
+        }
+      }
+    } catch (error) {
+      log(`  ${colors.yellow}⚠${colors.reset} Package fix skipped: ${error.message}`);
+    }
+
+    try {
+      // Run all config fixes (serve.json, tsconfig.json, build output, docker-compose)
+      const configFixes = await runAllConfigFixes(validatedProjectDir, {
+        framework: variables.FRAMEWORK
+      });
+
+      if (configFixes.serveJson?.created) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.serveJson.message}`);
+      }
+
+      if (configFixes.tsConfig?.created) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.tsConfig.message}`);
+      }
+
+      if (configFixes.buildOutput?.normalized) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.buildOutput.message}`);
+      }
+
+      if (configFixes.dockerCompose?.fixed) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.dockerCompose.message}`);
+      }
+    } catch (error) {
+      log(`  ${colors.yellow}⚠${colors.reset} Config fixes skipped: ${error.message}`);
     }
 
     showProgress('COMPOSE', 100, 'Setup complete!');
