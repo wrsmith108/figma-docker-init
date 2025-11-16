@@ -48,7 +48,7 @@
     "email": "support@vibe-to-docker.dev",
     "url": "https://github.com/wrsmith108"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wrsmith108/vibe-to-docker.git"

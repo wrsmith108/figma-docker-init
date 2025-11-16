@@ -1,3 +1,28 @@
+# [4.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.4.1...v4.0.0) (2025-11-16)
+
+
+### BREAKING CHANGES
+
+* **license:** migrate from MIT to Apache License 2.0
+
+This is a breaking change due to the license change. The project is now licensed under Apache License 2.0 instead of MIT.
+
+**Changes:**
+- LICENSE: Replaced MIT license with Apache 2.0 full text
+- NOTICE: Added copyright notice for Smith Horn Group Ltd.
+- package.json: Updated license field from "MIT" to "Apache-2.0"
+- README.md: Updated license badge and license section
+
+**Rationale:**
+Smith Horn Group Ltd. is the sole copyright holder and contributor. No external consent required. This license provides better patent protection and clearer attribution requirements for derivative works.
+
+**Migration:**
+Users must accept Apache 2.0 terms when upgrading to v4.0.0 or later. Review the LICENSE file for full terms.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+
 ## [3.4.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.4.0...v3.4.1) (2025-11-16)
 
 
