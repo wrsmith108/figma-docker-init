@@ -41,7 +41,7 @@ BREAKING CHANGE: CLI argument structure has changed"
 
 ### Release Branches
 
-- `main`: Production releases
+- `pack-master`: Production releases
 - `beta`: Pre-releases with `-beta.x` suffix
 - `alpha`: Pre-releases with `-alpha.x` suffix
 
@@ -259,7 +259,7 @@ npm owner ls vibe-to-docker
 ## 📋 Release Checklist
 
 ### Automated Release Process
-With semantic-release, the following happens automatically on pushes to main:
+With semantic-release, the following happens automatically on pushes to pack-master:
 
 1. **Analysis**: Commits are analyzed for release type
 2. **Version Bump**: Version is incremented based on commit types
