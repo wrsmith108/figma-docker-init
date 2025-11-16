@@ -121,6 +121,22 @@ Template system documentation
 - `RETROSPECTIVE_TEMPLATE.md` - Template for creating retrospectives
 - `TOKEN_ESTIMATION_TEMPLATE.md` - Template for token estimation
 
+## Security Features
+
+vibe-to-docker implements comprehensive security best practices for containerized applications:
+
+- 🔒 **Image Pinning**: Base images and packages pinned with SHA256 digests to prevent supply chain attacks
+- 🛡️ **Security Options**: Runtime hardening with `no-new-privileges`, read-only filesystem, and dropped capabilities
+- ⚡ **Resource Limits**: CPU and memory constraints prevent resource exhaustion attacks
+- 🏥 **Health Monitoring**: Aligned health checks between Dockerfile and docker-compose.yml for orchestrators
+- 📦 **Minimal Attack Surface**: Multi-stage builds and pinned packages reduce vulnerabilities
+- 👤 **Non-Root User**: Applications run as non-privileged user (UID 1001)
+- 🚫 **Build Security**: .dockerignore prevents sensitive file leakage
+
+**For complete security documentation, see:**
+- [Docker Security Best Practices](DOCKER_SECURITY.md) - Comprehensive security guide
+- [.env.example](../src/templates/base/.env.example) - Secure environment configuration
+
 ## Quick Links
 
 ### For Users
@@ -133,6 +149,7 @@ Template system documentation
 - [Architecture Summary](architecture/ARCHITECTURE_SUMMARY.md)
 - [Template Architecture](templates/TEMPLATE_ARCHITECTURE.md)
 - [Critical Bugs](development/CRITICAL_BUG_ANALYSIS.md)
+- [Docker Security](DOCKER_SECURITY.md) - Security best practices and implementation details
 
 ### For Contributors
 - [Implementation Roadmap](planning/IMPLEMENTATION_ROADMAP.md)

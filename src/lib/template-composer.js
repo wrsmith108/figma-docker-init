@@ -342,18 +342,54 @@ export class TemplateComposer {
     const dockerfile = await this.generateDockerfile({ tool, framework, metadata });
     const dockerignore = await this.generateDockerignore();
 
+    // Determine if this is a static build
+    const isStaticBuild = (
+      tool === 'figma' ||
+      tool === 'figma-make' ||
+      tool === 'lovable' ||
+      tool === 'bolt' ||
+      (framework && (framework.includes('vite') || framework.includes('react') && !framework.includes('next')))
+    );
+
     // If outputDir is configured, write files to disk
     if (this.outputDir) {
-      await fs.writeFile(path.join(this.outputDir, 'Dockerfile'), dockerfile, 'utf-8');
+      // Write Dockerfile to .vibe-docker/ directory
+      const vibeDockerDir = path.join(this.outputDir, '.vibe-docker');
+      await fs.mkdir(vibeDockerDir, { recursive: true });
+      await fs.writeFile(path.join(vibeDockerDir, 'Dockerfile'), dockerfile, 'utf-8');
+
+      // Copy .dockerignore to project root for Docker build context
       await fs.writeFile(path.join(this.outputDir, '.dockerignore'), dockerignore, 'utf-8');
 
-      // Generate tool-specific docker-compose.yml
+      // Generate tool-specific docker-compose.yml in .vibe-docker/ directory
       const compose = this._generateCompose(tool, metadata);
-      await fs.writeFile(path.join(this.outputDir, 'docker-compose.yml'), compose, 'utf-8');
+      await fs.writeFile(path.join(vibeDockerDir, 'docker-compose.yml'), compose, 'utf-8');
 
-      // Generate tool-specific .env.example
-      const envExample = this._generateEnvExample(tool, metadata);
-      await fs.writeFile(path.join(this.outputDir, '.env.example'), envExample, 'utf-8');
+      // Generate tool-specific .env.example with base template
+      // Load base .env.example and merge with tool-specific variables
+      try {
+        const baseEnvExample = await this.loadFragment('base/.env.example');
+        const toolEnvExample = this._generateEnvExample(tool, metadata);
+
+        // Merge: base template + tool-specific variables
+        const mergedEnvExample = baseEnvExample + '\n' + toolEnvExample;
+        await fs.writeFile(path.join(this.outputDir, '.env.example'), mergedEnvExample, 'utf-8');
+      } catch (error) {
+        // Fallback to tool-specific only if base template doesn't exist
+        const envExample = this._generateEnvExample(tool, metadata);
+        await fs.writeFile(path.join(this.outputDir, '.env.example'), envExample, 'utf-8');
+      }
+
+      // Copy serve.json for static builds (compression and caching config)
+      if (isStaticBuild) {
+        try {
+          const serveConfig = await this.loadFragment('base/serve.json');
+          await fs.writeFile(path.join(this.outputDir, 'serve.json'), serveConfig, 'utf-8');
+        } catch (error) {
+          // serve.json is optional, but warn if missing
+          console.warn('Warning: serve.json template not found for static build');
+        }
+      }
     }
 
     const result = {
@@ -478,7 +514,7 @@ export class TemplateComposer {
       (metadata.framework && (metadata.framework === 'next' || metadata.framework === 'nextjs'))
     );
 
-    // Build variables object
+    // Build variables object with OCI metadata
     const allVariables = {
       TOOL: tool,
       FRAMEWORK: framework,
@@ -487,6 +523,10 @@ export class TemplateComposer {
       BUILD_COMMAND: metadata.buildCommand || defaultBuildCommand,
       START_COMMAND: metadata.startCommand || defaultStartCommand,
       INSTALL_COMMAND: metadata.installCommand || 'npm ci',
+      // OCI metadata
+      VERSION: metadata.version || '3.3.0',
+      BUILD_DATE: metadata.buildDate || new Date().toISOString(),
+      PROJECT_NAME: metadata.projectName || tool,
       // Set conditional flags based on detected tool and framework
       YARN: metadata.packageManager === 'yarn',
       PNPM: metadata.packageManager === 'pnpm',

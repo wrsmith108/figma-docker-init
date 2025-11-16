@@ -3,8 +3,8 @@ version: '3.8'
 services:
   lovable-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: .vibe-docker/Dockerfile
     container_name: {{PROJECT_NAME}}-lovable
     ports:
       - "{{PORT}}:{{PORT}}"
@@ -18,8 +18,28 @@ services:
     restart: unless-stopped
     networks:
       - lovable-network
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.cache
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:{{PORT}}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:{{PORT}}/"]
       interval: 30s
       timeout: 10s
       retries: 3

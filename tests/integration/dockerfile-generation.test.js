@@ -269,7 +269,10 @@ describe('Dockerfile Generation Integration Tests', () => {
 
       // Paths should be relative to project root (not .vibe-docker/)
       expect(dockerfile).toContain('COPY package*.json ./');
-      expect(dockerfile).toContain('COPY . .');
+      // Improved layer caching: specific COPY commands instead of COPY . .
+      expect(dockerfile).toContain('COPY src ./src');
+      expect(dockerfile).toContain('COPY public ./public');
+      expect(dockerfile).toContain('COPY index.html ./');
 
       // Should NOT have absolute paths
       expect(dockerfile).not.toContain('COPY /.vibe-docker');

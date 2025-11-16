@@ -96,14 +96,14 @@ describe('Phase 2 Integration Tests', () => {
       const result = await composer.generate(detection);
 
       // Verify Dockerfile created
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       expect(dockerfile).toContain('FROM node:20-alpine');
       expect(dockerfile).toContain('WORKDIR /app');
       expect(dockerfile).toContain('EXPOSE 8080');
       expect(dockerfile).toMatch(/CMD.*serve|CMD.*npm.*run/); // Lovable uses serve for static files or npm run
 
       // Verify docker-compose.yml created
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
       expect(compose).toContain('version: "3.8"');
       expect(compose).toContain('services:');
       expect(compose).toContain('lovable-app:');
@@ -153,12 +153,12 @@ describe('Phase 2 Integration Tests', () => {
       const result = await composer.generate(detection);
 
       // Verify Dockerfile
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       expect(dockerfile).toContain('FROM node:20-alpine');
       expect(dockerfile).toContain('bolt');
 
       // Verify compose file
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
       expect(compose).toContain('bolt-app:');
     }, 15000);
 
@@ -209,14 +209,14 @@ describe('Phase 2 Integration Tests', () => {
       const result = await composer.generate(detection);
 
       // Verify Dockerfile
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       expect(dockerfile).toContain('FROM node:20-alpine');
       expect(dockerfile).toMatch(/next build|npm run build/); // Next.js build (can be direct or via npm)
       expect(dockerfile).toContain('EXPOSE 3000');
       expect(dockerfile).toMatch(/npm.*run.*start|next.*start/); // Next.js start command
 
       // Verify compose
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
       expect(compose).toContain('3000:3000');
     }, 15000);
 
@@ -274,7 +274,7 @@ describe('Phase 2 Integration Tests', () => {
       const result = await composer.generate(detection);
 
       // Verify files created
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       expect(dockerfile).toContain('FROM node:20-alpine');
       expect(dockerfile).toContain('vite');
     }, 15000);
@@ -294,12 +294,12 @@ describe('Phase 2 Integration Tests', () => {
 
       const result = await composer.generate(detection);
 
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
 
       // Should include Supabase-specific configuration
       expect(dockerfile).toContain('# Supabase configuration');
 
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
       expect(compose).toContain('SUPABASE_URL');
     });
 
@@ -314,7 +314,7 @@ describe('Phase 2 Integration Tests', () => {
 
       const result = await composer.generate(detection);
 
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
 
       // Should include PostgreSQL service
       expect(compose).toContain('postgres:');
@@ -334,7 +334,7 @@ describe('Phase 2 Integration Tests', () => {
 
       const result = await composer.generate(detection);
 
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
 
       // Next.js specific build steps
       expect(dockerfile).toMatch(/next build|npm run build/); // Build command
@@ -429,7 +429,7 @@ describe('Phase 2 Integration Tests', () => {
       const result = await composer.generate(detection);
 
       // Should use Next.js template (higher specificity)
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       expect(dockerfile).toMatch(/next build|npm run build/); // Next.js build command (can be direct or via npm)
     });
 
@@ -447,8 +447,8 @@ describe('Phase 2 Integration Tests', () => {
 
       const result = await composer.generate(detection);
 
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
 
       // Should include all technology fragments
       expect(dockerfile).toContain('typescript');
@@ -507,7 +507,7 @@ describe('Phase 2 Integration Tests', () => {
 
       await composer.generate(detection);
 
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
 
       // Multi-stage build
       expect(dockerfile).toMatch(/FROM .+ AS builder/);
@@ -532,7 +532,7 @@ describe('Phase 2 Integration Tests', () => {
 
       await composer.generate(detection);
 
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
 
       // Should use Alpine for smaller, more secure image
       expect(dockerfile).toMatch(/FROM node:\d+-alpine/);
@@ -555,7 +555,7 @@ describe('Phase 2 Integration Tests', () => {
 
       await composer.generate(detection);
 
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
 
       // Version
       expect(compose).toMatch(/version: ["']3\.8["']/);
@@ -580,7 +580,7 @@ describe('Phase 2 Integration Tests', () => {
 
       await composer.generate(detection);
 
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
 
       // Source code mount for development
       expect(compose).toContain('./src:/app/src');
@@ -600,7 +600,7 @@ describe('Phase 2 Integration Tests', () => {
 
       await composer.generate(detection);
 
-      const compose = await fs.readFile(path.join(tempDir, 'docker-compose.yml'), 'utf-8');
+      const compose = await fs.readFile(path.join(tempDir, '.vibe-docker', 'docker-compose.yml'), 'utf-8');
 
       // Environment from file
       expect(compose).toContain('env_file:');
@@ -640,7 +640,7 @@ describe('Phase 2 Integration Tests', () => {
       const time1 = Date.now() - start1;
 
       // Clean output
-      await fs.rm(path.join(tempDir, 'Dockerfile'));
+      await fs.rm(path.join(tempDir, '.vibe-docker', 'Dockerfile'));
 
       // Second generation (cached)
       const start2 = Date.now();
@@ -682,13 +682,18 @@ describe('Phase 2 Integration Tests', () => {
 
       // Verify complete stack
       const files = await fs.readdir(tempDir);
-      expect(files).toContain('Dockerfile');
-      expect(files).toContain('docker-compose.yml');
+      expect(files).toContain('.vibe-docker'); // Dockerfile in subdirectory
       expect(files).toContain('.env.example');
       expect(files).toContain('.dockerignore');
+      expect(files).toContain('serve.json'); // Performance optimization: compression config
+
+      // Check .vibe-docker directory
+      const vibeDockerFiles = await fs.readdir(path.join(tempDir, '.vibe-docker'));
+      expect(vibeDockerFiles).toContain('Dockerfile');
+      expect(vibeDockerFiles).toContain('docker-compose.yml');
 
       // Verify production optimizations
-      const dockerfile = await fs.readFile(path.join(tempDir, 'Dockerfile'), 'utf-8');
+      const dockerfile = await fs.readFile(path.join(tempDir, '.vibe-docker', 'Dockerfile'), 'utf-8');
       // Check for production-related content (npm ci, NODE_ENV, or serve command)
       expect(dockerfile).toMatch(/npm ci|NODE_ENV=production|serve/);
       expect(dockerfile).toContain('NODE_ENV=production');

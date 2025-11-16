@@ -3,8 +3,8 @@ version: '3.8'
 services:
   v0-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: .vibe-docker/Dockerfile
     container_name: {{PROJECT_NAME}}-v0
     ports:
       - "{{PORT}}:{{PORT}}"

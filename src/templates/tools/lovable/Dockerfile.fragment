@@ -1,3 +1,2 @@
 # Lovable-specific configuration
-# All lovable specifics now handled in base template via STATIC_BUILD flag
-# This fragment is intentionally minimal to avoid duplication
+# All lovable specifics handled in base template via STATIC_BUILD flag

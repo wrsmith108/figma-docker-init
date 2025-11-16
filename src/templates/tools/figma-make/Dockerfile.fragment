@@ -1,3 +1,2 @@
 # Figma Make-specific configuration
-# All figma-make specifics now handled in base template via STATIC_BUILD flag
-# This fragment is intentionally minimal to avoid duplication
+# All figma-make specifics handled in base template via STATIC_BUILD flag
