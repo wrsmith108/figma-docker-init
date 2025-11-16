@@ -1483,6 +1483,11 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
       log(`   ${colors.blue}cd .vibe-docker && docker-compose logs -f${colors.reset}`);
       log(`\n${colors.bold}To stop containers:${colors.reset}`);
       log(`   ${colors.blue}cd .vibe-docker && docker-compose down${colors.reset}`);
+
+      log(`\n${colors.bold}${colors.yellow}📝 Local Development:${colors.reset}`);
+      log(`   ${colors.blue}npm run build${colors.reset}  ${colors.dim}# Build your project locally${colors.reset}`);
+      log(`   ${colors.blue}npm run dev${colors.reset}    ${colors.dim}# Run development server locally${colors.reset}`);
+
       log(`\n${colors.dim}💡 Tip: All vibe-to-docker commands use: ${colors.blue}npx vibe-to-docker${colors.reset}${colors.dim} [options]${colors.reset}`);
     } catch (dockerError) {
       // Error already logged above - just continue
