@@ -1,6 +1,6 @@
 {
   "name": "vibe-to-docker",
-  "version": "3.3.1",
+  "version": "4.0.0",
   "description": "Docker containerization for AI-generated projects with failure pattern mitigation. 24 features addressing 82% dependency conflicts, 60-70% environment mismatches, 48% hardcoded secrets in Lovable/Bolt/V0/Figma code.",
   "main": "vibe-to-docker.js",
   "type": "module",
@@ -44,11 +44,11 @@
     "ai-generated"
   ],
   "author": {
-    "name": "Vibe to Docker Team",
+    "name": "Smith Horn Group Ltd.",
     "email": "support@vibe-to-docker.dev",
     "url": "https://github.com/wrsmith108"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wrsmith108/vibe-to-docker.git"
@@ -73,6 +73,7 @@
     "templates/",
     "README.md",
     "LICENSE",
+    "NOTICE",
     "package-lock.json"
   ],
   "devDependencies": {

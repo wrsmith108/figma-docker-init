@@ -1,0 +1,29 @@
+vibe-to-docker
+Copyright 2025 Smith Horn Group Ltd.
+
+This product includes software developed by Smith Horn Group Ltd.
+(https://github.com/wrsmith108/vibe-to-docker).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+---
+
+This software includes AI detection algorithms and template composition
+systems specifically designed to protect against patent claims on novel
+approaches to:
+- Parallel AI tool detection with confidence scoring
+- Fragment-based Docker template composition
+- Cross-platform project isolation architecture
+
+All contributors grant an irrevocable patent license as specified in
+Section 3 of the Apache License 2.0.

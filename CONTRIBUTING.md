@@ -568,7 +568,14 @@ We're currently refactoring the monolithic structure into modular components. Se
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the project's MIT License.
+By contributing to vibe-to-docker, you agree that your contributions will be licensed under the Apache License 2.0.
+
+You confirm that:
+- You have the right to submit the contribution under the Apache License 2.0
+- You grant the project a perpetual, worldwide, non-exclusive, royalty-free, irrevocable copyright license and patent license as specified in the Apache License 2.0
+- Your contribution is provided on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
+
+This includes the explicit patent grant in Section 3 of the Apache License 2.0, which protects the project's AI detection algorithms and template composition systems from patent claims.
 
 ---
 

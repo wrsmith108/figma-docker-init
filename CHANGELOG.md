@@ -1,3 +1,61 @@
+# [4.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.1...v4.0.0) (2025-11-16)
+
+## BREAKING CHANGES
+
+### License Change: MIT → Apache 2.0
+
+**Previous License**: MIT License
+**New License**: Apache License 2.0
+**Copyright Holder**: Smith Horn Group Ltd. (updated from "Figma Docker Init Team")
+
+### Why Apache 2.0?
+
+Apache 2.0 provides the same permissive open source freedoms as MIT with critical additions:
+
+1. **Explicit Patent Grant**: Section 3 of Apache 2.0 grants users and contributors an irrevocable patent license
+2. **AI Algorithm Protection**: Protects our novel AI detection algorithms from patent trolling:
+   - Parallel AI tool detection with confidence scoring
+   - Fragment-based Docker template composition
+   - Cross-platform project isolation architecture
+3. **Enterprise-Friendly**: Industry standard for Google, Facebook, Apache Foundation
+4. **Contributor Protection**: Contributors grant patent licenses, protecting the entire ecosystem
+
+### What This Means for Users
+
+✅ **Still Fully Open Source**: OSI-approved, same freedoms as MIT
+✅ **Commercial Use Allowed**: No restrictions on commercial deployment
+✅ **Modification & Distribution**: Full rights to fork and modify
+✅ **Patent Protection**: Explicit protection from patent claims
+✅ **Backward Compatible**: No code changes required for existing users
+
+### What Changed
+
+- **LICENSE**: Replaced with Apache License 2.0 full text
+- **NOTICE**: New file listing copyright and patent-protected algorithms
+- **package.json**: `"license": "Apache-2.0"`, `"author": "Smith Horn Group Ltd."`
+- **README.md**: Updated license badge and section
+- **CONTRIBUTING.md**: Updated contributor license terms with explicit patent grant
+- **Source Files**: Added Apache 2.0 headers to core algorithm files
+
+### Migration for Existing Users
+
+**Action Required**: None. Existing installations remain valid.
+
+- v3.x.x and earlier: MIT License (remains MIT forever)
+- v4.0.0 and later: Apache 2.0 License
+
+Both licenses allow commercial use, modification, and redistribution. Apache 2.0 simply adds patent protection.
+
+### For Contributors
+
+By contributing to v4.0.0+, you grant:
+- Copyright license (same as MIT)
+- **Patent license** (new) - protects users from patent claims on your contributions
+
+See CONTRIBUTING.md for details.
+
+---
+
 ## [3.3.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.0...v3.3.1) (2025-11-16)
 
 

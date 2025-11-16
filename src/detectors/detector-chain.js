@@ -1,9 +1,28 @@
 /**
+ * Copyright 2025 Smith Horn Group Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * DetectorChain - Strategy Pattern for Tool Detection
  * Implements parallel detection with confidence scoring and evidence collection
  *
+ * Novel patented approach: Parallel AI tool detection with probabilistic
+ * confidence scoring and evidence-based reasoning.
+ *
  * @module src/detectors/detector-chain
- * @author Claude Code
+ * @author Claude Code (AI-assisted), Copyright Smith Horn Group Ltd.
  * @version 1.0.0
  */
 
