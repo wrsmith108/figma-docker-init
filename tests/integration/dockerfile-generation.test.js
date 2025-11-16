@@ -271,7 +271,8 @@ describe('Dockerfile Generation Integration Tests', () => {
       expect(dockerfile).toContain('COPY package*.json ./');
       // Improved layer caching: specific COPY commands instead of COPY . .
       expect(dockerfile).toContain('COPY src ./src');
-      expect(dockerfile).toContain('COPY public ./public');
+      // Create public/ directory (fixed in v4.0.0 - was causing Docker build failures)
+      expect(dockerfile).toContain('RUN mkdir -p ./public');
       expect(dockerfile).toContain('COPY index.html ./');
 
       // Should NOT have absolute paths
