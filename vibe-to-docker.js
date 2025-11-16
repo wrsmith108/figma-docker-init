@@ -924,7 +924,8 @@ function uninstall() {
     log(`  - .dockerignore and .env files`);
     log(`  - Docker configuration directory\n`);
 
-    log(`${colors.dim}To reinstall, run: ${colors.reset}${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}\n`);
+    log(`${colors.dim}To reinstall, please specify a tool explicitly using --tool=<tool-name>${colors.reset}`);
+    log(`${colors.dim}  Available tools: lovable, bolt, v0, figma-make${colors.reset}\n`);
   } catch (error) {
     log(`${colors.red}Error removing .vibe-docker directory: ${error.message}${colors.reset}`);
     log(`${colors.yellow}You may need to remove it manually.${colors.reset}\n`);
@@ -1122,6 +1123,11 @@ function displayToolBenefits(tool, framework) {
   log(`\n  ${colors.dim}vibe-to-docker v${packageJson.version}${colors.reset}\n`);
 
   log(`${colors.bold}${colors.green}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`);
+
+  // Next Steps (moved from above to appear after Time Saved summary)
+  log(`${colors.bold}Next Steps:${colors.reset}`);
+  log(`1. Review and customize the generated Docker configuration files`);
+  log(`2. Update environment variables in .vibe-docker/.env if needed\n`);
 }
 
 /**
@@ -1406,10 +1412,6 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     log(`  ${colors.blue}Development server:${colors.reset} http://localhost:${variables.DEV_PORT}`);
     log(`  ${colors.blue}Production server:${colors.reset} http://localhost:${variables.PROD_PORT}`);
     log(`  ${colors.blue}Nginx proxy:${colors.reset} http://localhost:${variables.NGINX_PORT}`);
-
-    log(`\n${colors.bold}Next Steps:${colors.reset}`);
-    log(`1. Review and customize the generated Docker configuration files`);
-    log(`2. Update environment variables in .vibe-docker/.env if needed`);
 
     // Automatically start docker-compose if Docker is available
     log(`\n${colors.bold}Starting Docker containers...${colors.reset}`);
