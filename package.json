@@ -85,7 +85,7 @@
     "agentdb": "^1.6.1",
     "agentic-flow": "^1.10.2",
     "babel-jest": "^30.2.0",
-    "claude-flow": "^2.7.33",
+    "claude-flow": "^2.7.35",
     "fs-extra": "^11.3.2",
     "jest": "^30.2.0",
     "js-yaml": "^4.1.1",
