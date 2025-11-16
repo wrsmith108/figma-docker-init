@@ -1337,8 +1337,14 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     try {
       // Run all config fixes (serve.json, tsconfig.json, build output, docker-compose)
       const configFixes = await runAllConfigFixes(validatedProjectDir, {
-        framework: variables.FRAMEWORK
+        framework: variables.FRAMEWORK,
+        tool
       });
+
+      // Display package manager detection result
+      if (configFixes.packageManager?.detected) {
+        log(`  ${colors.green}✓${colors.reset} Detected package manager: ${configFixes.packageManager.manager}`);
+      }
 
       if (configFixes.serveJson?.created) {
         log(`  ${colors.green}✓${colors.reset} ${configFixes.serveJson.message}`);
@@ -1354,6 +1360,19 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
 
       if (configFixes.dockerCompose?.fixed) {
         log(`  ${colors.green}✓${colors.reset} ${configFixes.dockerCompose.message}`);
+      }
+
+      // Display Next.js config result (V0)
+      if (configFixes.nextConfig?.created) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.nextConfig.message}`);
+      } else if (configFixes.nextConfig?.modified) {
+        log(`  ${colors.green}✓${colors.reset} ${configFixes.nextConfig.message}`);
+      }
+
+      // Display Remix build result (Bolt)
+      if (configFixes.remixBuild?.needsServe) {
+        log(`  ${colors.yellow}⚠${colors.reset} ${configFixes.remixBuild.message}`);
+        log(`    ${colors.dim}→ Add @remix-run/serve: npm install @remix-run/serve${colors.reset}`);
       }
     } catch (error) {
       log(`  ${colors.yellow}⚠${colors.reset} Config fixes skipped: ${error.message}`);

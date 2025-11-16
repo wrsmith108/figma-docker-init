@@ -295,42 +295,259 @@ export async function fixDockerComposeContext(projectDir) {
 }
 
 /**
+ * Detect package manager from lockfiles
+ *
+ * @param {string} projectDir - Project directory path
+ * @returns {Promise<Object>} Package manager info
+ */
+export async function detectPackageManager(projectDir) {
+  const lockfiles = {
+    'pnpm-lock.yaml': 'pnpm',
+    'yarn.lock': 'yarn',
+    'package-lock.json': 'npm',
+    'bun.lockb': 'bun'
+  };
+
+  for (const [lockfile, manager] of Object.entries(lockfiles)) {
+    try {
+      await fs.access(path.join(projectDir, lockfile));
+      return {
+        detected: true,
+        manager,
+        lockfile,
+        installCommand: manager === 'npm' ? 'npm install' :
+                       manager === 'yarn' ? 'yarn install' :
+                       manager === 'pnpm' ? 'pnpm install' :
+                       'bun install'
+      };
+    } catch (error) {
+      continue;
+    }
+  }
+
+  return {
+    detected: false,
+    manager: 'npm',
+    lockfile: null,
+    installCommand: 'npm install'
+  };
+}
+
+/**
+ * Generate next.config.js for V0/Next.js projects
+ *
+ * @param {string} projectDir - Project directory path
+ * @param {Object} options - Generation options
+ * @returns {Promise<Object>} Generation result
+ */
+export async function generateNextConfig(projectDir, options = {}) {
+  const nextConfigFiles = ['next.config.js', 'next.config.mjs', 'next.config.ts'];
+
+  // Check if any next.config already exists
+  for (const filename of nextConfigFiles) {
+    try {
+      const configPath = path.join(projectDir, filename);
+      await fs.access(configPath);
+
+      // File exists - check if it has output: 'standalone'
+      let content = await fs.readFile(configPath, 'utf8');
+
+      if (!content.includes("output:") && !content.includes("output =")) {
+        // Add output: 'standalone' to existing config
+        if (content.includes('module.exports')) {
+          content = content.replace(
+            /const\s+nextConfig\s*=\s*{/,
+            "const nextConfig = {\n  output: 'standalone',"
+          );
+        } else if (content.includes('export default')) {
+          content = content.replace(
+            /export\s+default\s+{/,
+            "export default {\n  output: 'standalone',"
+          );
+        }
+
+        await fs.writeFile(configPath, content, 'utf8');
+
+        return {
+          created: false,
+          modified: true,
+          path: configPath,
+          message: `Added output: 'standalone' to ${filename} for Docker optimization`
+        };
+      }
+
+      return {
+        created: false,
+        modified: false,
+        path: configPath,
+        message: `${filename} already has standalone output configured`
+      };
+    } catch (error) {
+      continue;
+    }
+  }
+
+  // No next.config exists - create one
+  const nextConfig = `/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  reactStrictMode: true,
+}
+
+module.exports = nextConfig
+`;
+
+  const configPath = path.join(projectDir, 'next.config.js');
+  await fs.writeFile(configPath, nextConfig, 'utf8');
+
+  return {
+    created: true,
+    modified: false,
+    path: configPath,
+    message: 'Created next.config.js with standalone output for Docker'
+  };
+}
+
+/**
+ * Fix Remix/Bolt build output structure
+ * Remix outputs to build/server and build/client by default
+ *
+ * @param {string} projectDir - Project directory path
+ * @returns {Promise<Object>} Fix result
+ */
+export async function fixRemixBuildOutput(projectDir) {
+  const remixConfigFiles = ['remix.config.js', 'remix.config.ts'];
+
+  for (const filename of remixConfigFiles) {
+    try {
+      const configPath = path.join(projectDir, filename);
+      await fs.access(configPath);
+
+      return {
+        fixed: false,
+        path: configPath,
+        message: `${filename} exists - Remix build output already configured`
+      };
+    } catch (error) {
+      continue;
+    }
+  }
+
+  // Check if this is actually a Remix project
+  try {
+    const packageJsonPath = path.join(projectDir, 'package.json');
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
+
+    const isRemix = packageJson.dependencies?.['@remix-run/react'] ||
+                   packageJson.devDependencies?.['@remix-run/dev'];
+
+    if (!isRemix) {
+      return {
+        fixed: false,
+        message: 'Not a Remix project - skipping Remix config'
+      };
+    }
+
+    // Check if @remix-run/serve is in dependencies
+    const hasServe = packageJson.dependencies?.['@remix-run/serve'];
+
+    if (hasServe) {
+      return {
+        fixed: false,
+        message: 'Remix detected - @remix-run/serve already installed'
+      };
+    }
+
+    return {
+      fixed: false,
+      needsServe: true,
+      message: 'Remix detected - consider adding @remix-run/serve for production'
+    };
+  } catch (error) {
+    return {
+      fixed: false,
+      error: error.message,
+      message: 'Could not analyze Remix configuration'
+    };
+  }
+}
+
+/**
  * Run all configuration fixes and generators
  *
  * @param {string} projectDir - Project directory path
  * @param {Object} options - Options for generators
+ * @param {string} options.tool - Tool name (figma-make, lovable, bolt, v0)
  * @returns {Promise<Object>} Combined results
  */
 export async function runAllConfigFixes(projectDir, options = {}) {
+  const { tool = 'unknown' } = options;
+
   const results = {
+    packageManager: null,
     serveJson: null,
     tsConfig: null,
     buildOutput: null,
-    dockerCompose: null
+    dockerCompose: null,
+    nextConfig: null,
+    remixBuild: null
   };
 
+  // Detect package manager (all tools)
   try {
-    results.serveJson = await generateServeJson(projectDir, options);
+    results.packageManager = await detectPackageManager(projectDir);
   } catch (error) {
-    results.serveJson = { error: error.message };
+    results.packageManager = { error: error.message };
   }
 
+  // Generate serve.json (figma-make, lovable only - not SSR tools)
+  if (tool === 'figma-make' || tool === 'lovable') {
+    try {
+      results.serveJson = await generateServeJson(projectDir, options);
+    } catch (error) {
+      results.serveJson = { error: error.message };
+    }
+  }
+
+  // Generate tsconfig.json (all tools)
   try {
     results.tsConfig = await generateTsConfig(projectDir, options);
   } catch (error) {
     results.tsConfig = { error: error.message };
   }
 
-  try {
-    results.buildOutput = await normalizeBuildOutput(projectDir);
-  } catch (error) {
-    results.buildOutput = { error: error.message };
+  // Normalize build output (figma-make, lovable, bolt - not v0)
+  if (tool !== 'v0') {
+    try {
+      results.buildOutput = await normalizeBuildOutput(projectDir);
+    } catch (error) {
+      results.buildOutput = { error: error.message };
+    }
   }
 
+  // Fix docker-compose context (all tools)
   try {
     results.dockerCompose = await fixDockerComposeContext(projectDir);
   } catch (error) {
     results.dockerCompose = { error: error.message };
+  }
+
+  // Generate/fix next.config.js (v0 only)
+  if (tool === 'v0') {
+    try {
+      results.nextConfig = await generateNextConfig(projectDir, options);
+    } catch (error) {
+      results.nextConfig = { error: error.message };
+    }
+  }
+
+  // Fix Remix build output (bolt only)
+  if (tool === 'bolt') {
+    try {
+      results.remixBuild = await fixRemixBuildOutput(projectDir);
+    } catch (error) {
+      results.remixBuild = { error: error.message };
+    }
   }
 
   return results;
