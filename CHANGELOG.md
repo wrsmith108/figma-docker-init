@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/wrsmith108/vibe-to-docker/compare/v4.0.0...v4.0.1) (2025-11-16)
+
+
+### Bug Fixes
+
+* **docker:** resolve build failure and add automated npm install ([e718357](https://github.com/wrsmith108/vibe-to-docker/commit/e71835724e5b95842951f0de97ff42753adc8b84))
+
 # [4.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.4.1...v4.0.0) (2025-11-16)
 
 
