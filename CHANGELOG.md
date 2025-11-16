@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.1.0...v4.2.0) (2025-11-16)
+
+
+### Features
+
+* **cli:** add npm run dev to Next Steps ([c1a9b69](https://github.com/wrsmith108/vibe-to-docker/commit/c1a9b69a16cee1b4d5b41c10a63a41965f3a7251))
+
 # [4.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.0.1...v4.1.0) (2025-11-16)
 
 
