@@ -6,7 +6,9 @@
 [![Tests](https://img.shields.io/badge/tests-1%2C231%20passing-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 [![Coverage](https://img.shields.io/badge/coverage-99.4%25-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 
-Universal Docker containerization tool for AI-generated UX prototypes. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
+Universal Docker containerization tool for AI-generated UX prototypes with **fully automated setup**. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
+
+**One-command setup** automatically handles Docker containers, dependency installation, and security fixes.
 
 ## Why Not Just Use Docker Init?
 
@@ -67,10 +69,12 @@ cd your-project
 
 # Initialize Docker configuration (auto-detects project type)
 npx vibe-to-docker init
-
-# Start containers
-cd .vibe-docker && docker-compose up -d --build
 ```
+
+**Automated setup includes:**
+- Docker container build and start (`docker-compose up -d --build`)
+- Dependency installation (`npm install`)
+- Security vulnerability fixes (`npm audit fix --force`)
 
 Your application will be available at `http://localhost:3000`.
 

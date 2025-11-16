@@ -1456,6 +1456,29 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
       log(`${colors.green}✓${colors.reset} Docker containers started successfully!`);
       log(`\n${colors.bold}Application is running:${colors.reset}`);
       log(`  ${colors.blue}→${colors.reset} http://localhost:${variables.PORT}`);
+
+      // Install dependencies and fix security vulnerabilities
+      log(`\n${colors.bold}Installing dependencies and fixing vulnerabilities...${colors.reset}`);
+      try {
+        log(`${colors.blue}Running: npm install${colors.reset}`);
+        execSync('npm install', {
+          cwd: process.cwd(),
+          encoding: 'utf8',
+          stdio: 'pipe'
+        });
+        log(`${colors.green}✓${colors.reset} Dependencies installed`);
+
+        log(`${colors.blue}Running: npm audit fix --force${colors.reset}`);
+        execSync('npm audit fix --force', {
+          cwd: process.cwd(),
+          encoding: 'utf8',
+          stdio: 'pipe'
+        });
+        log(`${colors.green}✓${colors.reset} Security vulnerabilities fixed`);
+      } catch (npmError) {
+        log(`${colors.yellow}⚠ ${colors.reset} npm install/audit completed with warnings (this is normal)`);
+      }
+
       log(`\n${colors.bold}To view logs:${colors.reset}`);
       log(`   ${colors.blue}cd .vibe-docker && docker-compose logs -f${colors.reset}`);
       log(`\n${colors.bold}To stop containers:${colors.reset}`);

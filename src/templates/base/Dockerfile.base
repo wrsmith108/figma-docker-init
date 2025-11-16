@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/wrsmith108/vibe-to-doc
 LABEL org.opencontainers.image.version="{{VERSION}}"
 LABEL org.opencontainers.image.description="Docker container for {{PROJECT_NAME}}"
 LABEL org.opencontainers.image.created="{{BUILD_DATE}}"
-LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.vendor="vibe-to-docker"
 
 # Install system dependencies
@@ -33,7 +33,7 @@ LABEL org.opencontainers.image.source="https://github.com/wrsmith108/vibe-to-doc
 LABEL org.opencontainers.image.version="{{VERSION}}"
 LABEL org.opencontainers.image.description="Docker container for {{PROJECT_NAME}}"
 LABEL org.opencontainers.image.created="{{BUILD_DATE}}"
-LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.vendor="vibe-to-docker"
 
 WORKDIR /app
@@ -58,8 +58,8 @@ COPY *.config.ts ./
 
 # Copy source files
 COPY src ./src
-# Copy public/ if exists (optional for some frameworks)
-COPY public ./public 2>/dev/null || mkdir -p ./public
+# Create public/ directory (for frameworks that need it)
+RUN mkdir -p ./public
 COPY index.html ./
 
 # Build application
@@ -76,7 +76,7 @@ LABEL org.opencontainers.image.source="https://github.com/wrsmith108/vibe-to-doc
 LABEL org.opencontainers.image.version="{{VERSION}}"
 LABEL org.opencontainers.image.description="Docker container for {{PROJECT_NAME}}"
 LABEL org.opencontainers.image.created="{{BUILD_DATE}}"
-LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.vendor="vibe-to-docker"
 
 WORKDIR /app
