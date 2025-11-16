@@ -1092,12 +1092,19 @@ function displayToolBenefits(tool, framework) {
   }
 
   // Universal benefits (all tools)
-  log(`\n${colors.bold}Production-Ready Features (All Tools):${colors.reset}`);
-  log(`  ${colors.green}✓${colors.reset} Health check endpoint with auto-restart on failure`);
-  log(`  ${colors.green}✓${colors.reset} Security headers (X-Frame-Options, HSTS, CSP-ready)`);
-  log(`  ${colors.green}✓${colors.reset} Read-only filesystem for container security`);
-  log(`  ${colors.green}✓${colors.reset} Gzip compression for static assets`);
-  log(`  ${colors.green}✓${colors.reset} SSL/TLS configuration with modern ciphers`);
+  log(`\n${colors.bold}${colors.cyan}🔒 Production-Grade Security (v3.3.1):${colors.reset}`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}Supply Chain Protection${colors.reset} - SHA256-pinned images (SLSA Level 2)`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}Container Hardening${colors.reset} - no-new-privileges, dropped capabilities`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}Resource Limits${colors.reset} - CPU/memory caps prevent DoS attacks`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}Read-Only Filesystem${colors.reset} - Immutable container security`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}OCI Metadata${colors.reset} - Automated security scanning ready`);
+  log(`  ${colors.green}✓${colors.reset} ${colors.bold}Security Headers Guide${colors.reset} - 850-line production documentation`);
+
+  log(`\n${colors.bold}Configuration & Optimization:${colors.reset}`);
+  log(`  ${colors.green}✓${colors.reset} Comprehensive .env.example (210 documented variables)`);
+  log(`  ${colors.green}✓${colors.reset} Health check endpoint aligned with app routes`);
+  log(`  ${colors.green}✓${colors.reset} HTTP compression with smart caching (serve.json)`);
+  log(`  ${colors.green}✓${colors.reset} Multi-stage builds with intelligent layer caching`);
 
   // Time savings summary
   log(`\n${colors.bold}Time Saved:${colors.reset}`);
@@ -1409,7 +1416,7 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
  * @returns {Promise<void>}
  */
 async function initializeWithTool(toolName, projectDir = '.', options = {}) {
-  log(`${colors.bold}${colors.blue}Vibe to Docker - Phase 3${colors.reset}`);
+  log(`${colors.bold}${colors.blue}vibe-to-docker${colors.reset}`);
   log(`${colors.dim}Universal Docker containerization for AI-generated projects${colors.reset}\n`);
 
   let tool = toolName;

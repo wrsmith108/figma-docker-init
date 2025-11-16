@@ -6,7 +6,7 @@ Optimized Docker configuration for Bolt (StackBlitz) projects with Remix + Vite 
 
 - **Multi-stage build** for minimal production image size
 - **Node 20 Alpine** base image for security and performance
-- **Port 5173** (Vite default)
+- **Port 3000** (production default, configurable)
 - **Remix routing** support with server-side rendering
 - **WebContainer compatibility** for StackBlitz workflows
 - **Health checks** for container orchestration
@@ -33,7 +33,7 @@ Edit `.env` with your configuration:
 
 ```env
 NODE_ENV=production
-PORT=5173
+PORT=3000
 ```
 
 ### 3. Build and Run
@@ -45,7 +45,7 @@ PORT=5173
 docker build -t my-bolt-app .
 
 # Run the container
-docker run -p 5173:5173 --env-file .env my-bolt-app
+docker run -p 3000:3000 --env-file .env my-bolt-app
 ```
 
 **Using Docker Compose:**
@@ -63,7 +63,7 @@ docker-compose down
 
 ### 4. Access Your Application
 
-Open your browser to: http://localhost:5173
+Open your browser to: http://localhost:3000
 
 ## Project Structure
 
@@ -88,7 +88,7 @@ Open your browser to: http://localhost:5173
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `PORT` | Application port | No | 5173 |
+| `PORT` | Application port (production) | No | 3000 |
 | `HOST` | Bind host | No | 0.0.0.0 |
 | `NODE_ENV` | Node environment | No | production |
 | `SESSION_SECRET` | Session encryption key | Recommended | - |
@@ -159,8 +159,10 @@ Common issues:
 
 Change the port mapping:
 ```bash
-docker run -p 3000:5173 --env-file .env my-bolt-app
+docker run -p 8080:3000 --env-file .env my-bolt-app
 ```
+
+**Note**: The production server runs on port 3000 by default. For local development with Vite dev server, use port 5173.
 
 ### Build fails
 
@@ -185,8 +187,14 @@ Bolt uses StackBlitz WebContainers. This Docker template replicates the runtime 
 
 ## Development vs Production
 
-This template is optimized for **production**. For development:
+This template is optimized for **production** and uses port **3000** by default.
 
+**Production (Docker):**
+- Port: 3000 (configurable via PORT env var)
+- Server: Remix SSR server
+- Build: Optimized production bundle
+
+**Development (Local):**
 ```bash
 # Run Remix dev server locally
 npm install
@@ -194,6 +202,7 @@ npm run dev
 ```
 
 The dev server includes:
+- Port: 5173 (Vite default for Remix)
 - Hot module replacement (HMR)
 - Instant feedback
 - Better error messages

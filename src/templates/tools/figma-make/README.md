@@ -6,7 +6,7 @@ Optimized Docker configuration for Figma Make exported projects with React + Vit
 
 - **Multi-stage build** for minimal production image size
 - **Node 20 Alpine** base image for security and performance
-- **Port 5173 or 3000** (configurable)
+- **Port 3000** (production default, configurable)
 - **React + TypeScript** with Vite build tool
 - **Component-based architecture** from Figma designs
 - **CSS Modules** support
@@ -34,7 +34,7 @@ Edit `.env` with your configuration:
 
 ```env
 NODE_ENV=production
-PORT=5173
+PORT=3000
 ```
 
 ### 3. Build and Run
@@ -46,7 +46,7 @@ PORT=5173
 docker build -t my-figma-make-app .
 
 # Run the container
-docker run -p 5173:5173 --env-file .env my-figma-make-app
+docker run -p 3000:3000 --env-file .env my-figma-make-app
 ```
 
 **Using Docker Compose:**
@@ -64,7 +64,7 @@ docker-compose down
 
 ### 4. Access Your Application
 
-Open your browser to: http://localhost:5173
+Open your browser to: http://localhost:3000
 
 ## Project Structure
 
@@ -91,7 +91,7 @@ Open your browser to: http://localhost:5173
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `PORT` | Application port | No | 5173 |
+| `PORT` | Application port (production) | No | 3000 |
 | `NODE_ENV` | Node environment | No | production |
 | `VITE_API_URL` | API endpoint URL | No | - |
 | `VITE_APP_TITLE` | Application title | No | - |
@@ -183,13 +183,15 @@ Common issues:
 
 Change the port mapping:
 ```bash
-docker run -p 3000:5173 --env-file .env my-figma-make-app
+docker run -p 8080:3000 --env-file .env my-figma-make-app
 ```
 
-Or update .env:
+Or update .env to change the internal port:
 ```env
-PORT=3000
+PORT=8080
 ```
+
+**Note**: The production server runs on port 3000 by default. For local development with Vite dev server, use port 5173.
 
 ### Build fails
 
@@ -245,8 +247,14 @@ export const Button = () => (
 
 ## Development vs Production
 
-This template is optimized for **production**. For development:
+This template is optimized for **production** and uses port **3000** by default.
 
+**Production (Docker):**
+- Port: 3000 (configurable via PORT env var)
+- Server: `serve` for static files
+- Build: Optimized production bundle
+
+**Development (Local):**
 ```bash
 # Run Vite dev server locally
 npm install
@@ -254,6 +262,7 @@ npm run dev
 ```
 
 The dev server includes:
+- Port: 5173 (Vite default)
 - Hot Module Replacement (HMR)
 - Instant feedback
 - Better error messages

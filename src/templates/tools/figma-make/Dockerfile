@@ -23,6 +23,12 @@ COPY . .
 # Build the Vite application
 RUN npm run build
 
+# Normalize build output directory to 'dist' for consistency
+# Handles custom vite.config.ts with build.outDir = "build"
+RUN if [ -d "build" ] && [ ! -d "dist" ]; then \
+      mv build dist; \
+    fi
+
 # Stage 2: Production
 FROM node:20-alpine AS production
 
@@ -32,7 +38,7 @@ WORKDIR /app
 # Install serve to run the production build
 RUN npm install -g serve@14
 
-# Copy built assets from builder (dist directory for Vite)
+# Copy built assets from builder (now always in dist/ directory)
 COPY --from=builder /app/dist ./dist
 
 # Create non-root user for security
