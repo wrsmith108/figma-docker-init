@@ -152,6 +152,32 @@ export async function validatePackageJson(projectRoot) {
       }
     }
 
+    // Check if build script needs TypeScript compilation
+    if (isTS && pkg.scripts?.build) {
+      const buildScript = pkg.scripts.build;
+
+      // Needs fix if: has 'vite build' but no 'tsc'
+      // Skip for Next.js and Remix (they handle TypeScript automatically)
+      const isNextJs = pkg.dependencies?.['next'] || pkg.devDependencies?.['next'];
+      const isRemix = pkg.dependencies?.['@remix-run/react'] || pkg.devDependencies?.['@remix-run/dev'];
+
+      if (!isNextJs && !isRemix && buildScript.includes('vite build') && !buildScript.includes('tsc')) {
+        issues.push({
+          type: 'missing_tsc',
+          severity: 'warning',
+          field: 'scripts.build',
+          message: 'TypeScript project should run tsc before vite build for type checking',
+          fix: {
+            action: 'update_script',
+            script: 'build',
+            value: 'tsc && vite build'
+          }
+        });
+
+        fixes.push('Update package.json build script to: "tsc && vite build"');
+      }
+    }
+
     return {
       valid: issues.length === 0,
       isTypeScript: isTS,
@@ -234,6 +260,17 @@ export async function fixPackageJson(projectRoot, options = {}) {
         package: issue.fix.package,
         version: issue.fix.version,
         type: 'devDependency'
+      });
+    } else if (issue.fix && issue.fix.action === 'update_script') {
+      if (!pkg.scripts) {
+        pkg.scripts = {};
+      }
+
+      pkg.scripts[issue.fix.script] = issue.fix.value;
+      applied.push({
+        script: issue.fix.script,
+        value: issue.fix.value,
+        type: 'script'
       });
     }
   }

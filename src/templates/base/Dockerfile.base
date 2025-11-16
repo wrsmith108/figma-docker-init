@@ -58,7 +58,8 @@ COPY *.config.ts ./
 
 # Copy source files
 COPY src ./src
-COPY public ./public
+# Copy public/ if exists (optional for some frameworks)
+COPY public ./public 2>/dev/null || mkdir -p ./public
 COPY index.html ./
 
 # Build application

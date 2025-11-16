@@ -140,7 +140,8 @@ export async function generateTsConfig(projectDir, options = {}) {
       resolveJsonModule: true,
       isolatedModules: true,
       noEmit: true,
-      jsx: framework === 'react' ? 'react-jsx' : 'preserve',
+      // Support React-based frameworks: react, react-vite, react-webpack, react-rollup, next.js
+      jsx: (framework?.includes('react') || framework === 'next.js') ? 'react-jsx' : 'preserve',
 
       /* Linting */
       strict,
