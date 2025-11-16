@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.0.1...v4.1.0) (2025-11-16)
+
+
+### Features
+
+* **cli:** improve install/uninstall messaging and flow ([c9c83d5](https://github.com/wrsmith108/vibe-to-docker/commit/c9c83d59d6f89c9ca43373e079506f47a8642ad3))
+
 ## [4.0.1](https://github.com/wrsmith108/vibe-to-docker/compare/v4.0.0...v4.0.1) (2025-11-16)
 
 
