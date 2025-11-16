@@ -1,3 +1,11 @@
+# [3.4.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.2...v3.4.0) (2025-11-16)
+
+
+### Features
+
+* **cli:** integrate automatic config generation and package fixes ([e2dfe68](https://github.com/wrsmith108/vibe-to-docker/commit/e2dfe68217f5009fd87eb5ebda339a87c23fc085))
+* **config:** add tool-specific automations and fix Windows test compatibility ([148db98](https://github.com/wrsmith108/vibe-to-docker/commit/148db98dc37fd47fb2cb495a878b39d77b26a7ad))
+
 ## [3.3.2](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.1...v3.3.2) (2025-11-16)
 
 
