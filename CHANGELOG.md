@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.0...v3.3.1) (2025-11-16)
+
+
+### Bug Fixes
+
+* **security:** comprehensive Docker security audit fixes ([24a964d](https://github.com/wrsmith108/vibe-to-docker/commit/24a964d6dda6008e8ed29afe3830deae1f121ffd))
+
 # [3.3.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.2.0...v3.3.0) (2025-11-15)
 
 
