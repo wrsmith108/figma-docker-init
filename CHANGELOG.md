@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.4.0...v3.4.1) (2025-11-16)
+
+
+### Bug Fixes
+
+* **qa:** resolve 3 critical Docker setup issues identified in QA review ([1e97679](https://github.com/wrsmith108/vibe-to-docker/commit/1e976797efaac4748f37ecefca789476140858de)), closes [#3](https://github.com/wrsmith108/vibe-to-docker/issues/3) [#5](https://github.com/wrsmith108/vibe-to-docker/issues/5) [#4](https://github.com/wrsmith108/vibe-to-docker/issues/4)
+
 # [3.4.0](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.2...v3.4.0) (2025-11-16)
 
 
