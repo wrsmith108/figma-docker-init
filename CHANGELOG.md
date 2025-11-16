@@ -1,3 +1,11 @@
+## [3.3.2](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.1...v3.3.2) (2025-11-16)
+
+
+### Bug Fixes
+
+* resolve 7 critical build blockers preventing Docker builds ([8211b4b](https://github.com/wrsmith108/vibe-to-docker/commit/8211b4b8e63506a1a090f72310e27c238e1753b1))
+* **tests:** relax flaky cache performance test for CI stability ([beab461](https://github.com/wrsmith108/vibe-to-docker/commit/beab461a4d038842d61ce16b9853c3b85485f963))
+
 ## [3.3.1](https://github.com/wrsmith108/vibe-to-docker/compare/v3.3.0...v3.3.1) (2025-11-16)
 
 
