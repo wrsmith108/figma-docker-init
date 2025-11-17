@@ -20,7 +20,7 @@ We take the security of vibe-to-docker seriously. If you discover a security vul
 Please report security vulnerabilities by:
 
 1. **Email**: Send details to the maintainers at the repository owner's email
-2. **GitHub Security Advisories**: Use the [Security Advisories](https://github.com/wrsmith108/figma-docker-init/security/advisories) feature
+2. **GitHub Security Advisories**: Use the [Security Advisories](https://github.com/wrsmith108/vibe-to-docker/security/advisories) feature
 3. **Private Disclosure**: For sensitive issues, please do NOT open a public issue
 
 ### What to Include

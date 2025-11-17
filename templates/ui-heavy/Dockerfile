@@ -27,7 +27,7 @@ ARG FIGMA_DOCKER_DIR={{FIGMA_DOCKER_DIR}}
 LABEL maintainer="{{PROJECT_NAME}} Team"
 LABEL description="React/Vite/TypeScript project with UI libraries build stage"
 LABEL version="1.0.0"
-LABEL figma-docker-init="ui-heavy"
+LABEL vibe-to-docker="ui-heavy"
 
 # Set working directory
 WORKDIR /app

@@ -321,7 +321,7 @@ export class TemplateComposer {
     }
 
     // Check if tool template exists, throw error if unknown tool
-    const validTools = ['lovable', 'bolt', 'v0', 'figma', 'figma-make'];
+    const validTools = ['lovable', 'bolt', 'v0', 'figma', 'figma-make', 'replit'];
     if (!validTools.includes(tool)) {
       throw new Error(`Template not found for unknown tool: ${tool}`);
     }
@@ -480,6 +480,8 @@ export class TemplateComposer {
       defaultPort = '3000'; // Next.js default
     } else if (tool === 'bolt') {
       defaultPort = '8080';
+    } else if (tool === 'replit') {
+      defaultPort = '3000'; // Replit default
     }
 
     // Determine default commands based on tool and framework
@@ -496,6 +498,9 @@ export class TemplateComposer {
     } else if (tool === 'figma') {
       defaultStartCommand = 'npm", "run", "dev';
       defaultBuildCommand = 'vite build'; // Use vite directly for Figma projects
+    } else if (tool === 'replit') {
+      defaultStartCommand = 'npm", "run", "start';
+      defaultBuildCommand = 'npm run build';
     }
 
     // Determine build type based on tool and framework
@@ -509,6 +514,7 @@ export class TemplateComposer {
 
     const isServerBuild = (
       tool === 'v0' ||
+      tool === 'replit' ||
       framework === 'next' ||
       framework === 'nextjs' ||
       (metadata.framework && (metadata.framework === 'next' || metadata.framework === 'nextjs'))
@@ -662,6 +668,8 @@ export class TemplateComposer {
     let port = '8080'; // default
     if (tool === 'v0') {
       port = '3000'; // Next.js default
+    } else if (tool === 'replit') {
+      port = '3000'; // Replit default
     } else if (tool === 'lovable' || tool === 'figma' || tool === 'bolt') {
       port = '8080';
     }
@@ -759,6 +767,8 @@ networks:
       envVars += `\n# Runtime Variables\nDATABASE_URL=\nAPI_SECRET=\n`;
     } else if (tool === 'figma' || tool === 'figma-make') {
       envVars += `\n# Build Configuration\nVITE_API_ENDPOINT=\n`;
+    } else if (tool === 'replit') {
+      envVars += `\n# Replit Configuration\nDATABASE_URL=\nAPI_URL=\n`;
     }
 
     return envVars;

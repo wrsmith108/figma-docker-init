@@ -93,6 +93,6 @@ storybook-static/
 .eslintcache
 .stylelintcache
 
-# Figma Docker Init tool files
-figma-docker-init.js
+# Vibe to Docker tool files
+vibe-to-docker.js
 templates/

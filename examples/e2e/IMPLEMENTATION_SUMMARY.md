@@ -308,7 +308,7 @@ When running `vibe-to-docker` on each example:
 
 ## Files Reference
 
-All created files are in `/home/user/figma-docker-init/examples/e2e/`:
+All created files are in `/home/user/vibe-to-docker/examples/e2e/`:
 
 ```bash
 examples/e2e/
@@ -334,5 +334,5 @@ Phase 3 Examples are **complete and ready for use**. All 4 examples demonstrate 
 
 **Implementation:** Example Creator Agent
 **Date:** 2025-11-12
-**Location:** `/home/user/figma-docker-init/examples/e2e/`
+**Location:** `/home/user/vibe-to-docker/examples/e2e/`
 **Total Files:** 41 files across 4 examples + documentation

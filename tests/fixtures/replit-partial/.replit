@@ -1,0 +1,5 @@
+run = "npm start"
+entrypoint = "server/index.ts"
+
+[languages.typescript]
+pattern = "**/*.ts"

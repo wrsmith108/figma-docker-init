@@ -9,7 +9,7 @@
 ## 📦 Version Information
 
 ### Current Version: v4.x (Universal Vibe-Coding)
-- ✅ **Supported**: Figma, Lovable, Bolt, V0
+- ✅ **Supported**: Figma, Lovable, Bolt, V0, Replit
 - ✅ **Maintained**: Active development
 - ✅ **License**: Apache 2.0
 - 📦 **Install**: `npm install -g vibe-to-docker`
@@ -166,6 +166,23 @@ cd .vibe-docker && docker-compose up -d --build
 
 **Features**: Design-to-code projects, TypeScript support
 
+### Replit (Full-Stack Node.js + PostgreSQL)
+
+```bash
+cd my-replit-project
+npx vibe-to-docker init --tool=replit
+
+# Configure database in .vibe-docker/.env
+# DATABASE_URL=postgresql://postgres:password@db:5432/mydb
+# POSTGRES_PASSWORD=password
+
+cd .vibe-docker && docker-compose up -d --build
+```
+
+**Features**: Full-stack projects, PostgreSQL integration, Express/React/Three.js support, TypeScript/JavaScript
+
+**Detection**: Auto-detects `.replit` and `replit.nix` files with 80-95% confidence
+
 ## Usage
 
 ### Commands
@@ -175,7 +192,7 @@ cd .vibe-docker && docker-compose up -d --build
 vibe-to-docker init
 
 # Specify tool explicitly
-vibe-to-docker init --tool=<lovable|bolt|v0|figma-make>
+vibe-to-docker init --tool=<lovable|bolt|v0|figma-make|replit>
 
 # Preview without writing files
 vibe-to-docker init --dry-run

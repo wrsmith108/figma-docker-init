@@ -20,14 +20,14 @@ FROM node:18-alpine AS builder
 
 # Set build arguments
 ARG NODE_ENV=production
-ARG PROJECT_ROOT=/Users/williamsmith/Documents/GitHub/figma-docker-init
-ARG FIGMA_DOCKER_DIR=/Users/williamsmith/Documents/GitHub/figma-docker-init/.figma-docker
+ARG PROJECT_ROOT=/Users/williamsmith/Documents/GitHub/vibe-to-docker
+ARG VIBE_DOCKER_DIR=/Users/williamsmith/Documents/GitHub/vibe-to-docker/.vibe-docker
 
 # Add metadata labels
 LABEL maintainer="my-app Team"
 LABEL description="React/Vite/TypeScript project build stage"
 LABEL version="1.0.0"
-LABEL figma-docker-init="basic"
+LABEL vibe-to-docker="basic"
 
 # Set working directory
 WORKDIR /app

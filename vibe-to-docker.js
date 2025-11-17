@@ -30,7 +30,8 @@ import { fixPackageJson } from './src/lib/package-fixer.js';
 import LovableDetector from './src/detectors/lovable-detector.js';
 import BoltDetector from './src/detectors/bolt-detector.js';
 import { V0Detector } from './src/detectors/v0-detector.js';
-import { FigmaDetector } from './src/detectors/figma-detector.js'; 
+import { FigmaDetector } from './src/detectors/figma-detector.js';
+import { ReplitDetector } from './src/detectors/replit-detector.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1146,7 +1147,8 @@ async function autoDetectToolType(projectDir) {
     new LovableDetector(validatedProjectDir),
     new BoltDetector(validatedProjectDir),
     new V0Detector(validatedProjectDir),
-    new FigmaDetector(validatedProjectDir)
+    new FigmaDetector(validatedProjectDir),
+    new ReplitDetector(validatedProjectDir)
   ];
 
   showProgress('DETECT', 25, 'Scanning project files...');
@@ -1529,7 +1531,7 @@ async function initializeWithTool(toolName, projectDir = '.', options = {}) {
       log(`${colors.red}Unable to automatically detect tool type.${colors.reset}`);
       log(`${colors.yellow}Confidence: ${(detection.confidence * 100).toFixed(1)}%${colors.reset}`);
       log(`\nPlease specify a tool explicitly using --tool=<tool-name>`);
-      log(`Available tools: lovable, bolt, v0, figma-make`);
+      log(`Available tools: lovable, bolt, v0, figma-make, replit`);
       process.exit(1);
     }
 
@@ -1546,7 +1548,7 @@ async function initializeWithTool(toolName, projectDir = '.', options = {}) {
   }
 
   // Validate tool name
-  const validTools = ['lovable', 'bolt', 'v0', 'figma-make'];
+  const validTools = ['lovable', 'bolt', 'v0', 'figma-make', 'replit'];
   if (!validTools.includes(tool)) {
     log(`${colors.red}Invalid tool: ${tool}${colors.reset}`);
     log(`Available tools: ${validTools.join(', ')}`);
@@ -1773,7 +1775,7 @@ async function main() {
     if (!toolArg) {
       log(`${colors.red}Error: --tool flag is required for init command${colors.reset}`);
       log(`\nUsage: ${colors.blue}npx vibe-to-docker init --tool=<tool-name>${colors.reset}`);
-      log(`Available tools: lovable, bolt, v0, figma-make, auto\n`);
+      log(`Available tools: lovable, bolt, v0, figma-make, replit, auto\n`);
       log(`Example: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}`);
       process.exit(1);
     }

@@ -9,10 +9,10 @@ FROM node:18-alpine AS builder
 ARG NODE_ENV=development
 
 # Add metadata labels
-LABEL maintainer="figma-docker-init Team"
+LABEL maintainer="vibe-to-docker Team"
 LABEL description="React/Vite/TypeScript project with UI libraries"
 LABEL version="1.0.0"
-LABEL figma-docker-init="ui-heavy"
+LABEL vibe-to-docker="ui-heavy"
 
 # Set working directory
 WORKDIR /app
@@ -44,7 +44,7 @@ USER nextjs
 FROM nginx:alpine AS production
 
 # Add metadata labels
-LABEL maintainer="figma-docker-init Team"
+LABEL maintainer="vibe-to-docker Team"
 LABEL description="Production nginx server for React SPA with UI libraries"
 LABEL stage="production"
 
