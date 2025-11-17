@@ -1,3 +1,11 @@
+## [4.3.1](https://github.com/wrsmith108/vibe-to-docker/compare/v4.3.0...v4.3.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* **cli:** default to auto-detection when --tool flag omitted ([09088f2](https://github.com/wrsmith108/vibe-to-docker/commit/09088f2c72a13210cd5a7ea24cf907118c279e70))
+* **validation:** change secret detection from error to warning ([efe2b00](https://github.com/wrsmith108/vibe-to-docker/commit/efe2b001b98943cc6618c45235f973bfe1b79774))
+
 # [4.3.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.2.0...v4.3.0) (2025-11-17)
 
 
