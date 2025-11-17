@@ -35,7 +35,7 @@ const PROJECT_ROOT_MARKERS = [
   'package.json',
   '.git',
   '.vibe-docker',
-  'figma-docker-init.config.js'
+  'vibe-to-docker.config.js'
 ];
 
 // ============================================================================
@@ -295,14 +295,14 @@ export function ensureDirectory(dirPath, projectRoot) {
  * Gets the templates directory path
  *
  * Returns the absolute path to the templates directory within
- * the figma-docker-init package installation.
+ * the vibe-to-docker package installation.
  *
- * @param {string} [packageRoot] - Package root path (where figma-docker-init is installed)
+ * @param {string} [packageRoot] - Package root path (where vibe-to-docker is installed)
  * @returns {string} Absolute path to templates directory
  *
  * @example
  * const templatesPath = getTemplatesDir();
- * console.log(templatesPath); // '/path/to/node_modules/figma-docker-init/templates'
+ * console.log(templatesPath); // '/path/to/node_modules/vibe-to-docker/templates'
  */
 export function getTemplatesDir(packageRoot) {
   // If packageRoot is provided, use it; otherwise find the package root
@@ -618,7 +618,7 @@ export class DirectoryManager {
           });
 
         const npmGlobalRoot = stdout.trim();
-        const npmLegacyPath = path.join(npmGlobalRoot, 'figma-docker-init');
+        const npmLegacyPath = path.join(npmGlobalRoot, 'vibe-to-docker');
 
         if (await this.exists(npmLegacyPath)) {
           detection.hasLegacyInstallation = true;
@@ -781,7 +781,7 @@ npm run docker:up
 
 ## Documentation
 
-For more information, see: https://github.com/wrsmith108/figma-docker-init
+For more information, see: https://github.com/wrsmith108/vibe-to-docker
 `;
 
     await fs.writeFile(

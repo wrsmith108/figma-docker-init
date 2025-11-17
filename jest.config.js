@@ -43,5 +43,10 @@ export default {
       statements: 62
     }
   },
+  modulePathIgnorePatterns: [
+    '/node_modules/',
+    '/.swarm/',
+    '/dist/'
+  ],
   verbose: true
 };

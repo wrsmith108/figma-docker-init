@@ -260,7 +260,7 @@ Time:        6.195 s
 ## Files Location
 
 ```
-/home/user/figma-docker-init/
+/home/user/vibe-to-docker/
 ├── src/
 │   └── detectors/
 │       └── detector-chain.js      (268 lines)

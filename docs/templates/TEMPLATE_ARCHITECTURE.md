@@ -2558,9 +2558,9 @@ class Phase1Adapter {
 **Next Review**: Before Phase 2 implementation
 
 **Related Documents**:
-- [Phase 1 Retrospective](/home/user/figma-docker-init/docs/retrospectives/PHASE_1_RETROSPECTIVE.md)
-- [Migration Plan](/home/user/figma-docker-init/docs/VIBE_TO_DOCKER_MIGRATION_PLAN.md)
-- [Detector Chain Specification](/home/user/figma-docker-init/src/detectors/detector-chain.js)
+- [Phase 1 Retrospective](/home/user/vibe-to-docker/docs/retrospectives/PHASE_1_RETROSPECTIVE.md)
+- [Migration Plan](/home/user/vibe-to-docker/docs/VIBE_TO_DOCKER_MIGRATION_PLAN.md)
+- [Detector Chain Specification](/home/user/vibe-to-docker/src/detectors/detector-chain.js)
 
 **Change Log**:
 - 2025-11-12: Initial architecture design (v1.0.0)

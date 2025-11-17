@@ -1,0 +1,5 @@
+run = "npm start"
+entrypoint = "server/index.js"
+
+[nix]
+channel = "stable-22_11"
