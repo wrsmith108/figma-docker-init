@@ -1772,15 +1772,8 @@ async function main() {
 
   // Phase 3: New tool-based workflow
   if (command === 'init' || toolArg) {
-    if (!toolArg) {
-      log(`${colors.red}Error: --tool flag is required for init command${colors.reset}`);
-      log(`\nUsage: ${colors.blue}npx vibe-to-docker init --tool=<tool-name>${colors.reset}`);
-      log(`Available tools: lovable, bolt, v0, figma-make, replit, auto\n`);
-      log(`Example: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}`);
-      process.exit(1);
-    }
-
-    const toolName = toolArg.split('=')[1];
+    // Default to auto-detection if no --tool flag provided
+    const toolName = toolArg ? toolArg.split('=')[1] : 'auto';
 
     if (!toolName) {
       log(`${colors.red}Error: Please specify a tool name${colors.reset}`);
