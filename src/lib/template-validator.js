@@ -120,9 +120,11 @@ export class TemplateValidator {
         errors.push(`Line ${i + 1}: Instruction '${instruction}' missing arguments`);
       }
 
-      // Check for secrets in ENV (but not template variables)
-      if (instruction === 'ENV' && /password|secret|key|token/i.test(line) && !line.includes('TEMPLATE_VAR')) {
-        errors.push(`Line ${i + 1}: Potential secret in ENV instruction`);
+      // Check for secrets in ENV (but not template variables like {{KEY}})
+      // Only warn if it looks like a hardcoded secret, not a template variable
+      if (instruction === 'ENV' && /password|secret|key|token/i.test(line) &&
+          !line.includes('{{') && !line.includes('$') && !/^ENV\s+\w+\s*=?\s*$/i.test(line)) {
+        warnings.push(`Line ${i + 1}: Potential hardcoded secret in ENV instruction - use template variables instead`);
       }
 
       // Check for latest tag
