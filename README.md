@@ -86,6 +86,9 @@ cd your-project
 
 # Initialize Docker configuration (auto-detects project type)
 npx vibe-to-docker init
+
+# Or specify tool explicitly
+npx vibe-to-docker init --tool=replit
 ```
 
 **Automated setup includes:**
