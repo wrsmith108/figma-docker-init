@@ -156,7 +156,8 @@ temp-npm-test-*/
 claude-flow.config.json
 .swarm/
 .hive-mind/
-.claude-flow/
+# Ignore .claude-flow contents except docs and hooks
+.claude-flow/*
 !.claude-flow/docs/
 !.claude-flow/hooks/
 memory/
