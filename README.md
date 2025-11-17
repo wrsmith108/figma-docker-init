@@ -6,6 +6,23 @@
 [![Tests](https://img.shields.io/badge/tests-1%2C231%20passing-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 [![Coverage](https://img.shields.io/badge/coverage-99.4%25-brightgreen.svg)](https://github.com/wrsmith108/vibe-to-docker)
 
+## 📦 Version Information
+
+### Current Version: v4.x (Universal Vibe-Coding)
+- ✅ **Supported**: Figma, Lovable, Bolt, V0
+- ✅ **Maintained**: Active development
+- ✅ **License**: Apache 2.0
+- 📦 **Install**: `npm install -g vibe-to-docker`
+
+### Legacy Version: v3.x (Figma Only)
+- ⚠️ **Deprecated**: No longer maintained (November 2025)
+- ⚠️ **Limited**: Figma Make projects only
+- 📦 **Install**: `npm install -g vibe-to-docker@3.4.1` (not recommended)
+- 📖 **Migration**: See [Migration Guide](docs/MIGRATION_V3_TO_V4.md)
+- 🗄️ **Archive**: [v3.x source code](https://github.com/wrsmith108/vibe-to-docker/tree/archive/v3-figma-only)
+
+**Recommendation**: Use v4.x for all new and existing projects.
+
 Universal Docker containerization tool for AI-generated UX prototypes with **fully automated setup**. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
 
 **One-command setup** automatically handles Docker containers, dependency installation, and security fixes.
