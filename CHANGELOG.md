@@ -1,3 +1,10 @@
+# [4.3.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.2.0...v4.3.0) (2025-11-17)
+
+
+### Features
+
+* **replit:** add Replit project detection and Docker templates ([#23](https://github.com/wrsmith108/vibe-to-docker/issues/23)) ([ba42342](https://github.com/wrsmith108/vibe-to-docker/commit/ba4234209cf3d84b60aaec12c97574cbfb9058d4))
+
 # [4.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.1.0...v4.2.0) (2025-11-16)
 
 
