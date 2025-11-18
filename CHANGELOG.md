@@ -1,3 +1,41 @@
+# [5.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.3.1...v5.0.0) (2025-11-18)
+
+
+### Bug Fixes
+
+* **detector:** lower Figma Make detection threshold to 30% and require explicit --tool flag ([5a73bae](https://github.com/wrsmith108/vibe-to-docker/commit/5a73bae18e0a1b25b2619bfb41ff25acf50722e9))
+
+
+### BREAKING CHANGES
+
+* **detector:** Default behavior now requires explicit --tool selection instead of auto-detection
+
+- Lower FigmaDetector confidence threshold from 45% to 30%
+  - Enables detection of minimal Figma Make projects (React+Vite+TS only)
+  - User's project scored 31.9% which was below previous 45% threshold
+  - Safe since detector chain picks highest confidence result
+
+- Update CLI to require explicit --tool flag for init command
+  - Removed auto-detection as default behavior
+  - Users must specify --tool=figma-make, lovable, bolt, v0, or replit
+  - Auto-detection still available via --tool=auto (experimental)
+
+- Update help text to prioritize explicit tool selection
+  - Quick Start now shows tool-specific examples first
+  - Auto-detection marked as experimental feature
+  - Clear guidance on which tool to use for each AI platform
+
+- Add test for minimal Figma Make project detection
+  - Verifies 30%+ confidence for React+Vite+TypeScript stack
+  - Ensures low-setup projects are properly identified
+
+This resolves the issue where 'npx vibe-to-docker init' failed to detect
+Figma Make projects without comprehensive setup (README, CSS modules, etc).
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+
 ## [4.3.1](https://github.com/wrsmith108/vibe-to-docker/compare/v4.3.0...v4.3.1) (2025-11-17)
 
 
