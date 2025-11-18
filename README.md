@@ -8,7 +8,7 @@
 
 ## 📦 Version Information
 
-### Current Version: v4.x (Universal Vibe-Coding)
+### Current Version: v5.0.0 (Universal Vibe-Coding)
 - ✅ **Supported**: Figma, Lovable, Bolt, V0, Replit
 - ✅ **Maintained**: Active development
 - ✅ **License**: Apache 2.0
@@ -21,7 +21,7 @@
 - 📖 **Migration**: See [Migration Guide](docs/MIGRATION_V3_TO_V4.md)
 - 🗄️ **Archive**: [v3.x source code](https://github.com/wrsmith108/vibe-to-docker/tree/archive/v3-figma-only)
 
-**Recommendation**: Use v4.x for all new and existing projects.
+**Recommendation**: Use v5.0.0 for all new and existing projects.
 
 Universal Docker containerization tool for AI-generated UX prototypes with **fully automated setup**. While `docker init` handles 60-70% of generic containerization, vibe-to-docker adds **AI tool-specific failure pattern mitigation** through 24 features addressing the documented failure modes in AI-generated code: 82% dependency conflicts, 60-70% environment mismatches, and 48% hardcoded secrets.
 
@@ -84,11 +84,16 @@ Docker init optimizes for human-written code. Vibe-to-docker optimizes for **AI 
 # Navigate to your AI-generated project
 cd your-project
 
-# Initialize Docker configuration (auto-detects project type)
-npx vibe-to-docker init
+# Initialize Docker configuration (specify your tool)
+npx vibe-to-docker init --tool=<lovable|bolt|v0|figma-make|replit>
 
-# Or specify tool explicitly
+# Examples:
+npx vibe-to-docker init --tool=lovable
 npx vibe-to-docker init --tool=replit
+npx vibe-to-docker init --tool=figma-make
+
+# Auto-detection available (may require confirmation)
+npx vibe-to-docker init
 ```
 
 **Automated setup includes:**
@@ -103,6 +108,10 @@ Your application will be available at `http://localhost:3000`.
 ### One-Time Use (Recommended)
 
 ```bash
+# Specify tool explicitly (recommended)
+npx vibe-to-docker init --tool=<lovable|bolt|v0|figma-make|replit>
+
+# Or use auto-detection
 npx vibe-to-docker init
 ```
 
@@ -110,7 +119,7 @@ npx vibe-to-docker init
 
 ```bash
 npm install -g vibe-to-docker
-vibe-to-docker init
+vibe-to-docker init --tool=<lovable|bolt|v0|figma-make|replit>
 ```
 
 ### Local Development
@@ -191,11 +200,11 @@ cd .vibe-docker && docker-compose up -d --build
 ### Commands
 
 ```bash
-# Initialize with auto-detection
-vibe-to-docker init
-
-# Specify tool explicitly
+# Specify tool explicitly (recommended)
 vibe-to-docker init --tool=<lovable|bolt|v0|figma-make|replit>
+
+# Initialize with auto-detection (may require confirmation)
+vibe-to-docker init
 
 # Preview without writing files
 vibe-to-docker init --dry-run
