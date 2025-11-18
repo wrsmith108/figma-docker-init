@@ -821,27 +821,33 @@ Universal Docker containerization for AI-generated projects
 
 ${colors.bold}${colors.yellow}⚡ Quick Start for New Users:${colors.reset}
   This tool uses ${colors.bold}npx${colors.reset} (Node Package Execute) - no installation needed!
-  Just run: ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
+
+  ${colors.bold}Specify your AI tool explicitly:${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=figma-make${colors.reset}  ${colors.dim}# For Figma Make projects${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}     ${colors.dim}# For Lovable projects${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=bolt${colors.reset}        ${colors.dim}# For Bolt.new projects${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=v0${colors.reset}          ${colors.dim}# For V0 (Vercel) projects${colors.reset}
 
   ${colors.dim}Note: If you see "command not found", use npx in front of every command.${colors.reset}
   ${colors.dim}Global install (optional): npm install -g vibe-to-docker${colors.reset}
 
 ${colors.bold}Usage:${colors.reset}
+  ${colors.blue}npx vibe-to-docker${colors.reset} init --tool=<tool-name>  ${colors.dim}(recommended)${colors.reset}
   ${colors.blue}npx vibe-to-docker${colors.reset} [command] [options]
-  ${colors.blue}npx vibe-to-docker${colors.reset} init --tool=<tool-name>
   ${colors.blue}npx vibe-to-docker${colors.reset} [template]  ${colors.dim}(legacy mode)${colors.reset}
 
 ${colors.bold}Commands:${colors.reset}
-  init           Initialize Docker setup with tool detection
+  init           Initialize Docker setup with tool-specific configuration
   uninstall      Remove .vibe-docker directory and clean up Docker configuration
 
-${colors.bold}Tool Options (Phase 3):${colors.reset}
-  --tool=<name>  Specify AI tool type:
-                   lovable     Lovable (formerly GPT Engineer)
-                   bolt        Bolt (StackBlitz)
-                   v0          V0 (Vercel)
-                   figma-make  Figma Make (Figma)
-                   auto        Automatic detection
+${colors.bold}Tool Options:${colors.reset}
+  --tool=<name>  ${colors.bold}Specify your AI tool (RECOMMENDED):${colors.reset}
+                   ${colors.green}figma-make${colors.reset}  Figma Make (React + Vite projects)
+                   ${colors.green}lovable${colors.reset}     Lovable (formerly GPT Engineer)
+                   ${colors.green}bolt${colors.reset}        Bolt (StackBlitz WebContainers)
+                   ${colors.green}v0${colors.reset}          V0 (Vercel Next.js projects)
+                   ${colors.green}replit${colors.reset}      Replit (Nix-based projects)
+                   ${colors.yellow}auto${colors.reset}        Automatic detection ${colors.dim}(experimental)${colors.reset}
 
 ${colors.bold}Legacy Templates (Backward Compatible):${colors.reset}
   basic          Basic Docker setup with minimal configuration
@@ -853,12 +859,13 @@ ${colors.bold}Options:${colors.reset}
   --list         List available templates
 
 ${colors.bold}Examples:${colors.reset}
-  ${colors.dim}# Automatic detection (recommended for first time)${colors.reset}
-  ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
-
-  ${colors.dim}# Specific tool${colors.reset}
+  ${colors.dim}# Recommended: Specify your tool explicitly${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=figma-make${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=bolt${colors.reset}
+
+  ${colors.dim}# Experimental: Try auto-detection (may require manual override)${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
 
   ${colors.dim}# Uninstall (remove .vibe-docker directory)${colors.reset}
   ${colors.blue}npx vibe-to-docker uninstall${colors.reset}
@@ -869,16 +876,17 @@ ${colors.bold}Examples:${colors.reset}
 
 ${colors.bold}${colors.yellow}🔄 Upgrading from Previous Version?${colors.reset}
   1. Delete old setup: ${colors.blue}npx vibe-to-docker uninstall${colors.reset}
-  2. Run fresh setup: ${colors.blue}npx vibe-to-docker@latest init --tool=auto${colors.reset}
+  2. Run fresh setup: ${colors.blue}npx vibe-to-docker@latest init --tool=figma-make${colors.reset}
 
-  ${colors.dim}(This ensures you get the latest fixes and template improvements)${colors.reset}
+  ${colors.dim}(Replace 'figma-make' with your actual tool: lovable, bolt, v0, or replit)${colors.reset}
 
 ${colors.bold}Features:${colors.reset}
-  ✓ Automatic tool detection (Lovable, Bolt, V0, Figma Make)
+  ✓ Tool-specific Docker configurations
   ✓ Smart environment variable detection
   ✓ Multi-stage Docker builds
   ✓ Framework-specific optimizations
   ✓ Security best practices validation
+  ✓ Automatic detection (experimental)
 `);
 }
 
@@ -1772,12 +1780,26 @@ async function main() {
 
   // Phase 3: New tool-based workflow
   if (command === 'init' || toolArg) {
-    // Default to auto-detection if no --tool flag provided
-    const toolName = toolArg ? toolArg.split('=')[1] : 'auto';
+    // Require explicit --tool flag (no default to auto)
+    if (!toolArg) {
+      log(`${colors.red}Error: Please specify a tool using --tool=<name>${colors.reset}\n`);
+      log(`${colors.bold}Available tools:${colors.reset}`);
+      log(`  ${colors.green}--tool=figma-make${colors.reset}  For Figma Make projects`);
+      log(`  ${colors.green}--tool=lovable${colors.reset}     For Lovable projects`);
+      log(`  ${colors.green}--tool=bolt${colors.reset}        For Bolt.new projects`);
+      log(`  ${colors.green}--tool=v0${colors.reset}          For V0 (Vercel) projects`);
+      log(`  ${colors.green}--tool=replit${colors.reset}      For Replit projects`);
+      log(`  ${colors.yellow}--tool=auto${colors.reset}        Try auto-detection (experimental)\n`);
+      log(`${colors.bold}Example:${colors.reset}`);
+      log(`  ${colors.blue}npx vibe-to-docker init --tool=figma-make${colors.reset}\n`);
+      process.exit(1);
+    }
+
+    const toolName = toolArg.split('=')[1];
 
     if (!toolName) {
-      log(`${colors.red}Error: Please specify a tool name${colors.reset}`);
-      log(`\nExample: ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}`);
+      log(`${colors.red}Error: Tool name cannot be empty${colors.reset}`);
+      log(`\nExample: ${colors.blue}npx vibe-to-docker init --tool=figma-make${colors.reset}`);
       process.exit(1);
     }
 

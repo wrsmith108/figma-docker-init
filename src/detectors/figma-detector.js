@@ -60,7 +60,7 @@ export class FigmaDetector extends BaseDetector {
     const uiLibrary = this.detectUILibrary(pkg);
 
     return {
-      tool: normalizedConfidence >= 0.45 ? this.tool : null,
+      tool: normalizedConfidence >= 0.30 ? this.tool : null,
       confidence: normalizedConfidence,
       evidence,
       metadata: {

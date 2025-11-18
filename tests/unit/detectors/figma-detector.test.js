@@ -549,6 +549,49 @@ describe('FigmaDetector', () => {
       fs.rmSync(projectDir, { recursive: true, force: true });
     });
 
+    it('should detect minimal Figma Make project with 30%+ confidence', async () => {
+      const projectDir = path.join(testDir, 'minimal-figma');
+      fs.mkdirSync(path.join(projectDir, 'src'), { recursive: true });
+
+      // Minimal Figma project: React + Vite + TypeScript only (no README, no components, no CSS modules)
+      const pkg = {
+        name: 'minimal-figma-app',
+        dependencies: {
+          react: '^18.2.0',
+          'react-dom': '^18.2.0'
+        },
+        devDependencies: {
+          vite: '^5.0.0',
+          typescript: '^5.3.0',
+          '@types/react': '^18.2.0'
+        },
+        scripts: {
+          dev: 'vite'
+        }
+      };
+
+      fs.writeFileSync(
+        path.join(projectDir, 'package.json'),
+        JSON.stringify(pkg, null, 2)
+      );
+
+      fs.writeFileSync(
+        path.join(projectDir, 'vite.config.ts'),
+        'export default { plugins: [] }'
+      );
+
+      const detector = new FigmaDetector();
+      const result = await detector.detect(projectDir);
+
+      // Should be detected despite minimal setup (30% threshold)
+      expect(result.tool).toBe('figma');
+      expect(result.confidence).toBeGreaterThanOrEqual(0.30);
+      expect(result.confidence).toBeLessThan(0.50); // But not high confidence
+      expect(result.evidence.some(e => /React.*Vite.*TypeScript|stack/i.test(e))).toBe(true);
+
+      fs.rmSync(projectDir, { recursive: true, force: true });
+    });
+
     it('should achieve high confidence for complete Figma Make project', async () => {
       const projectDir = path.join(testDir, 'complete-figma');
       fs.mkdirSync(path.join(projectDir, 'src', 'components'), {
