@@ -1,6 +1,6 @@
 {
   "name": "vibe-to-docker",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Fully automated Docker containerization for AI-generated projects. One command handles container setup, dependency installation, and security fixes. 24 features addressing 82% dependency conflicts, 60-70% environment mismatches, 48% hardcoded secrets in Lovable/Bolt/V0/Figma code.",
   "main": "vibe-to-docker.js",
   "type": "module",

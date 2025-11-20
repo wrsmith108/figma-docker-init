@@ -1,3 +1,11 @@
+## [5.0.2](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.1...v5.0.2) (2025-11-20)
+
+
+### Bug Fixes
+
+* **bolt:** detect Angular projects and provide correct build commands ([#25](https://github.com/wrsmith108/vibe-to-docker/issues/25)) ([c4dfb2e](https://github.com/wrsmith108/vibe-to-docker/commit/c4dfb2eed1bcbad8d7ee2a369930acab61aedbd1))
+* **bolt:** reduce confidence for React+Vite to avoid FigmaDetector conflicts ([ffe99b2](https://github.com/wrsmith108/vibe-to-docker/commit/ffe99b2cbf0c522fa7161940df2a2e57273b3447))
+
 # [5.0.0](https://github.com/wrsmith108/vibe-to-docker/compare/v4.3.1...v5.0.0) (2025-11-18)
 
 
