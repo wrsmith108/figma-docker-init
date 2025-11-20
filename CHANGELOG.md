@@ -1,3 +1,10 @@
+## [5.0.5](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.4...v5.0.5) (2025-11-20)
+
+
+### Bug Fixes
+
+* **bolt:** read package.json scripts for accurate command suggestion ([22d53bc](https://github.com/wrsmith108/vibe-to-docker/commit/22d53bc2e20b8f7d7bcb533aae53fa72934334c5))
+
 ## [5.0.4](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.3...v5.0.4) (2025-11-20)
 
 
