@@ -157,10 +157,11 @@ temp-test-*/
 claude-flow.config.json
 .swarm/
 .hive-mind/
-# Ignore .claude-flow contents except docs and hooks
+# Ignore .claude-flow contents except docs, hooks, and metrics
 .claude-flow/*
 !.claude-flow/docs/
 !.claude-flow/hooks/
+!.claude-flow/metrics/
 memory/
 coordination/
 memory/claude-flow-data.json
