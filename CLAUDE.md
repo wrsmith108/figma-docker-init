@@ -509,6 +509,22 @@ tar -tzf $PACKAGE_FILE | head -20 || true
 ```
 **Commit**: `31932d1` - Add detectOpenHandles and runInBand for clean test exit
 
+**6. Coverage Threshold Failure - Untested Code**
+```javascript
+// ❌ PROBLEM: New code without tests drops coverage below thresholds
+// Added 631 lines (version-checker.js + version-fixer.js) without tests
+// Result: statements 60.58% (need 62%), all 1,431 tests passed
+
+// ✅ SOLUTION: Write comprehensive tests for new utilities
+// tests/unit/version-checker.test.js - 12 tests
+// tests/unit/version-fixer.test.js - 11 tests
+// Result: statements 62.06%, all 1,453 tests passed
+```
+**Root Cause**: Violated TDD principle - implemented code before writing tests
+**Prevention**: Always run `npm test -- --coverage` locally before committing
+**Commit**: `516b79d` - Add comprehensive tests for version checking utilities
+**AgentDB**: Episodes #24 (failure), #25 (success)
+
 #### ⚠️ Identified Issues (Not Yet Fixed)
 
 **1. Cache Errors**
