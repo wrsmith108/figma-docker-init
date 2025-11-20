@@ -78,12 +78,10 @@
     "LICENSE",
     "package-lock.json"
   ],
-  "dependencies": {
+  "devDependencies": {
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
-    "sql.js": "^1.10.3"
-  },
-  "devDependencies": {
+    "sql.js": "^1.10.3",
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
     "@semantic-release/changelog": "^6.0.3",

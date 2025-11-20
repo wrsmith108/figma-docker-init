@@ -82,14 +82,14 @@ export class MetricsCollector {
    * Initialize database schema
    */
   async initializeSchema() {
-    const schemaPath = path.join(__dirname, '../../.claude-flow/metrics/schema.sql');
+    const schemaPath = path.join(process.cwd(), '.claude-flow', 'metrics', 'schema.sql');
 
     if (fs.existsSync(schemaPath)) {
       const schema = fs.readFileSync(schemaPath, 'utf8');
       this.db.run(schema);
       this.save();
     } else {
-      throw new Error('Database schema file not found');
+      throw new Error(`Database schema file not found at: ${schemaPath}`);
     }
   }
 
