@@ -21,7 +21,10 @@
     "ai:learn": "node scripts/ai-validate.js --learn-only",
     "ai:setup": "chmod +x scripts/ai-validate.js .claude-flow/hooks/* && git config core.hooksPath .claude-flow/hooks && echo '✅ AI validation hooks installed'",
     "ai:metrics": "npx agentdb@latest reflexion synthesize --filter 'ci-failure-*' --max-episodes 20 --format json | jq '{total: length, success_rate: ([.[] | select(.is_correct)] | length / length * 100)}'",
-    "ai:patterns": "npx agentdb@latest memory-search --namespace 'ci-cd/failures' --query 'all patterns' --top-k 10 --format json"
+    "ai:patterns": "npx agentdb@latest memory-search --namespace 'ci-cd/failures' --query 'all patterns' --top-k 10 --format json",
+    "agentdb:consolidate": "npx agentdb@latest skill consolidate 3 0.7 7 true",
+    "agentdb:report": "bash scripts/weekly-retrieval-report.sh",
+    "agentdb:retrieve": "bash scripts/agentdb-retrieve-tracked.sh"
   },
   "keywords": [
     "vibe-coding",

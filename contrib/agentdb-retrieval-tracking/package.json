@@ -1,0 +1,52 @@
+{
+  "name": "agentdb-retrieval-tracking",
+  "version": "1.0.0",
+  "description": "Automatic retrieval tracking and analytics for AgentDB - solve the problem of storing knowledge but never retrieving it",
+  "keywords": [
+    "agentdb",
+    "retrieval",
+    "analytics",
+    "knowledge-management",
+    "reflexion",
+    "machine-learning",
+    "tracking",
+    "metrics"
+  ],
+  "author": {
+    "name": "Vibe to Docker Team",
+    "url": "https://github.com/wrsmith108/vibe-to-docker"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wrsmith108/vibe-to-docker.git",
+    "directory": "contrib/agentdb-retrieval-tracking"
+  },
+  "bugs": {
+    "url": "https://github.com/wrsmith108/vibe-to-docker/issues"
+  },
+  "homepage": "https://github.com/wrsmith108/vibe-to-docker/tree/main/contrib/agentdb-retrieval-tracking",
+  "main": "bin/agentdb-retrieve-tracked.sh",
+  "bin": {
+    "agentdb-retrieve-tracked": "bin/agentdb-retrieve-tracked.sh",
+    "agentdb-retrieval-report": "bin/weekly-retrieval-report.sh"
+  },
+  "scripts": {
+    "test": "bash bin/agentdb-retrieve-tracked.sh 'test query' 1",
+    "report": "bash bin/weekly-retrieval-report.sh"
+  },
+  "files": [
+    "bin/",
+    "docs/",
+    "examples/",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "agentdb": ">=1.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
