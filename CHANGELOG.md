@@ -1,3 +1,10 @@
+## [5.0.3](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.2...v5.0.3) (2025-11-20)
+
+
+### Bug Fixes
+
+* **bolt:** correct metadata reference in generateWithComposer ([31b7a87](https://github.com/wrsmith108/vibe-to-docker/commit/31b7a87a39de6b0b743524c2dfdc7d73b124a1a7))
+
 ## [5.0.2](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.1...v5.0.2) (2025-11-20)
 
 
