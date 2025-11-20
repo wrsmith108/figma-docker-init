@@ -1,6 +1,6 @@
 # Internal Documentation Index
 
-**Last Updated**: November 17, 2025
+**Last Updated**: November 20, 2025
 **Location**: `.claude-flow/docs/` (gitignored)
 **Purpose**: Institutional knowledge for vibe-to-docker development
 
@@ -10,6 +10,16 @@
 - **[RETROSPECTIVE_INTEGRATION_SUMMARY.md](RETROSPECTIVE_INTEGRATION_SUMMARY.md)** - Overview of retrospective integration
 - **[AGENTDB_SYNTHESIS.md](AGENTDB_SYNTHESIS.md)** - Key learnings from all 17 AgentDB episodes
 - **[ROADMAP.md](ROADMAP.md)** - Project roadmap and future priorities
+
+### 🏗️ Architecture Documentation
+Located in `architecture/` (moved from `/docs` for organization):
+- **[SYSTEM_ARCHITECTURE.md](architecture/SYSTEM_ARCHITECTURE.md)** - Complete system architecture (31KB)
+- **[INITIALIZATION_SYSTEM_ARCHITECTURE.md](architecture/INITIALIZATION_SYSTEM_ARCHITECTURE.md)** - Init system architecture (49KB)
+- **[INIT_ANALYSIS.md](architecture/INIT_ANALYSIS.md)** - Comprehensive init objective analysis (635 lines)
+- **[COMPONENT_INTERACTIONS.md](architecture/COMPONENT_INTERACTIONS.md)** - Component interaction diagrams
+- **[TEST_FRAMEWORK.md](architecture/TEST_FRAMEWORK.md)** - Testing strategy and framework (15KB)
+- **[ADR-008-initialization-system.md](architecture/ADR-008-initialization-system.md)** - ADR for init system
+- See [architecture/](architecture/) for 11 total architecture documents
 
 ### 📊 Retrospectives
 Located in `retrospectives/`:
@@ -43,6 +53,7 @@ Located in `qa/`:
 1. Read **[AGENTDB_SYNTHESIS.md](AGENTDB_SYNTHESIS.md)** - Success patterns
 2. Review **[ROADMAP.md](ROADMAP.md)** - Current priorities
 3. Check **[REPLIT_FEATURE_RETROSPECTIVE.md](retrospectives/REPLIT_FEATURE_RETROSPECTIVE.md)** - Template for execution
+4. Reference **[architecture/SYSTEM_ARCHITECTURE.md](architecture/SYSTEM_ARCHITECTURE.md)** - System design
 
 ### Implementing a Feature?
 1. Follow **8-Point QA Checklist** in [AGENTDB_SYNTHESIS.md](AGENTDB_SYNTHESIS.md#qa-validation-checklist-prevents-ci-failures)
@@ -65,6 +76,7 @@ Located in `qa/`:
 ### Documentation Volume
 - **Total Lines**: 5,991+
 - **Retrospectives**: 127,207 lines (5 documents)
+- **Architecture Docs**: 11 documents (moved from `/docs`)
 - **Technical Docs**: 23,444 lines
 - **Implementation Plans**: 2,000+ lines
 

@@ -52,43 +52,78 @@ function exec(command, silent = false) {
 async function queryLearnedPatterns() {
   log('\n🧠 Querying learned CI/CD failure patterns from AgentDB...', 'cyan');
 
-  // Get all CI/CD failure episodes
-  const reflexionResult = exec(
-    'npx agentdb@latest reflexion synthesize --filter "ci-failure-*" --max-episodes 20 --format json',
+  // Use tracked retrieval script (outputs markdown, not JSON)
+  const retrievalResult = exec(
+    './scripts/agentdb-retrieve-tracked.sh "CI/CD failure patterns" 20',
     true
   );
 
-  if (!reflexionResult.success) {
+  if (!retrievalResult.success) {
     log('⚠️  No learned patterns found in AgentDB (first run)', 'yellow');
     return { patterns: [], confidence: 0 };
   }
 
   let patterns = [];
   try {
-    const episodes = JSON.parse(reflexionResult.output || '[]');
-    patterns = episodes.map(ep => ({
-      type: ep.trajectory_analysis?.failure_type || 'unknown',
-      pattern: ep.self_reflection,
-      fix: ep.self_correction?.learned_fix,
-      confidence: 1 - ep.verdict  // Lower verdict = higher confidence in failure pattern
-    }));
+    // Parse markdown output from tracked retrieval
+    const output = retrievalResult.output || '';
+
+    // Extract episodes using regex patterns
+    // Format: Episode #X (ID: episode-name) - Reward: 0.XX
+    const episodePattern = /Episode #(\d+).*?Reward: ([\d.]+).*?Reflection: (.*?)(?=Episode #|\n\n|$)/gs;
+    const matches = [...output.matchAll(episodePattern)];
+
+    patterns = matches.map(match => {
+      const episodeNum = match[1];
+      const reward = parseFloat(match[2]);
+      const reflection = match[3]?.trim() || '';
+
+      // Extract failure type from episode context
+      const typeMatch = reflection.match(/\[(.*?)\]/);
+      const type = typeMatch ? typeMatch[1] : 'unknown';
+
+      return {
+        type,
+        pattern: reflection,
+        fix: null,  // Not directly available in markdown format
+        confidence: reward  // Higher reward = higher confidence (successes)
+      };
+    });
+
+    // If regex parsing didn't work, try simpler episode counting
+    if (patterns.length === 0) {
+      const episodeCount = (output.match(/Episode #/g) || []).length;
+      if (episodeCount > 0) {
+        log(`  Found ${episodeCount} episode(s) but couldn't parse details`, 'yellow');
+        // Create generic pattern entries
+        patterns = Array(Math.min(episodeCount, 5)).fill(null).map((_, i) => ({
+          type: 'ci-failure',
+          pattern: 'Historical CI/CD failure pattern',
+          fix: null,
+          confidence: 0.5
+        }));
+      }
+    }
   } catch (e) {
-    log(`⚠️  Error parsing reflexion data: ${e.message}`, 'yellow');
+    log(`⚠️  Error parsing retrieval data: ${e.message}`, 'yellow');
   }
 
-  // Get memory-stored patterns
+  // Get memory-stored patterns using tracked retrieval
   const memoryResult = exec(
-    'npx agentdb@latest memory-search --namespace "ci-cd/failures" --query "test coverage platform security" --top-k 10 --format json',
+    './scripts/agentdb-retrieve-tracked.sh "test coverage platform security failures" 10',
     true
   );
 
   if (memoryResult.success && memoryResult.output) {
     try {
-      const memoryPatterns = JSON.parse(memoryResult.output || '[]');
-      patterns.push(...memoryPatterns.map(m => ({
-        type: m.metadata?.type || 'unknown',
-        pattern: m.content,
-        confidence: m.score || 0.5
+      // Parse additional patterns from memory retrieval
+      const memoryOutput = memoryResult.output || '';
+      const memoryMatches = [...memoryOutput.matchAll(/Episode #(\d+).*?Reward: ([\d.]+)/g)];
+
+      patterns.push(...memoryMatches.slice(0, 5).map(match => ({
+        type: 'memory-stored',
+        pattern: 'Previously stored failure pattern',
+        confidence: parseFloat(match[2]) || 0.5
       })));
     } catch (e) {
       // Silent fail for memory search

@@ -138,6 +138,7 @@ dist/
 test-results/
 coverage/
 temp-npm-test-*/
+temp-test-*/
 .test-cache/
 
 # Deployment artifacts

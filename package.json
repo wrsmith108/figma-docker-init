@@ -5,7 +5,8 @@
   "main": "vibe-to-docker.js",
   "type": "module",
   "bin": {
-    "vibe-to-docker": "vibe-to-docker.js"
+    "vibe-to-docker": "vibe-to-docker.js",
+    "vibe-metrics": "src/cli/metrics.js"
   },
   "scripts": {
     "start": "node vibe-to-docker.js",
@@ -68,13 +69,20 @@
   "files": [
     "vibe-to-docker.js",
     "src/lib/",
+    "src/cli/",
     "src/detectors/",
     "src/templates/",
     "templates/",
+    ".claude-flow/metrics/",
     "README.md",
     "LICENSE",
     "package-lock.json"
   ],
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "sql.js": "^1.10.3"
+  },
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
