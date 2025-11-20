@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Post-Failure Hook: Learn from CI/CD Failures
+#
+# Stores failure patterns in AgentDB for future prevention.
+# Trains neural networks on failure data.
+#
+# Usage: .claude-flow/hooks/post-failure <failure-type> <details>
+#
+# Example:
+#   .claude-flow/hooks/post-failure "test" "Cross-platform path failure in figma-detector.test.js"
+#
+
+set -e
+
+FAILURE_TYPE=$1
+FAILURE_DETAILS=$2
+
+if [ -z "$FAILURE_TYPE" ] || [ -z "$FAILURE_DETAILS" ]; then
+  echo "Usage: $0 <failure-type> <details>"
+  echo "Example: $0 test 'Path resolution failure on Windows'"
+  exit 1
+fi
+
+FAILURE_ID=$(date +%s)
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+echo ""
+echo "🧠 Storing CI/CD failure pattern in AgentDB..."
+echo "   Type: $FAILURE_TYPE"
+echo "   Time: $TIMESTAMP"
+echo ""
+
+# Store in ReflexION for episodic learning
+npx agentdb@latest reflexion store \
+  "ci-failure-$FAILURE_ID" \
+  "$FAILURE_TYPE failure in CI/CD pipeline" \
+  0.2 \
+  false \
+  "$FAILURE_DETAILS" \
+  "{\"type\": \"$FAILURE_TYPE\", \"stage\": \"ci\", \"timestamp\": \"$TIMESTAMP\"}" \
+  "{\"learned_fix\": \"Review git diff and identify root cause\", \"prevention\": \"Add to pre-deployment validation\"}" \
+  600000 \
+  120000
+
+echo "✅ Stored as episode: ci-failure-$FAILURE_ID"
+
+# Store in memory for quick retrieval
+npx claude-flow@alpha memory store \
+  "ci-cd/failures/$FAILURE_TYPE/$FAILURE_ID" \
+  "$FAILURE_DETAILS" \
+  --namespace "learning" \
+  --ttl 7776000  # 90 days
+
+echo "✅ Stored in memory namespace: learning"
+
+# Train neural pattern (optional, comment out if too slow)
+if [ "$TRAIN_NEURAL" = "true" ]; then
+  echo ""
+  echo "🧠 Training neural pattern..."
+  npx claude-flow@alpha neural train \
+    --pattern-type optimization \
+    --training-data "{\"failure\": \"$FAILURE_TYPE\", \"details\": \"$FAILURE_DETAILS\"}" \
+    --epochs 50
+  echo "✅ Neural pattern trained"
+fi
+
+echo ""
+echo "📊 Current failure statistics:"
+npx agentdb@latest reflexion synthesize \
+  --filter "ci-failure-*" \
+  --max-episodes 5 \
+  --format json | \
+  jq '{total: length, types: [.[].trajectory_analysis.failure_type] | group_by(.) | map({type: .[0], count: length})}'
+
+echo ""
+echo "✅ Failure pattern stored successfully"
+echo "   Next pre-deployment validation will check against this pattern"
+echo ""
