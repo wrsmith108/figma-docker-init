@@ -1137,7 +1137,12 @@ function displayToolBenefits(tool, framework) {
   log(`${colors.bold}Next Steps:${colors.reset}`);
   log(`1. Review and customize the generated Docker configuration files`);
   log(`2. Update environment variables in .vibe-docker/.env if needed`);
-  log(`3. Use npm run dev to build the application locally\n`);
+
+  // Determine correct build command based on project type
+  const buildCmd = tool === 'angular' || (metadata && metadata.buildTool === 'angular-cli')
+    ? 'npm start'
+    : 'npm run dev';
+  log(`3. Use ${buildCmd} to run the application locally\n`);
 }
 
 /**
@@ -1498,8 +1503,17 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
       log(`   ${colors.blue}cd .vibe-docker && docker-compose down${colors.reset}`);
 
       log(`\n${colors.bold}${colors.yellow}📝 Local Development:${colors.reset}`);
-      log(`   ${colors.blue}npm run build${colors.reset}  ${colors.dim}# Build your project locally${colors.reset}`);
-      log(`   ${colors.blue}npm run dev${colors.reset}    ${colors.dim}# Run development server locally${colors.reset}`);
+
+      // Determine correct commands based on detected tool/framework
+      const devCmd = tool === 'angular' || (detection && detection.metadata && detection.metadata.buildTool === 'angular-cli')
+        ? 'npm start'
+        : 'npm run dev';
+      const buildCmd = tool === 'angular' || (detection && detection.metadata && detection.metadata.buildTool === 'angular-cli')
+        ? 'npm run build'
+        : 'npm run build';
+
+      log(`   ${colors.blue}${buildCmd}${colors.reset}  ${colors.dim}# Build your project locally${colors.reset}`);
+      log(`   ${colors.blue}${devCmd}${colors.reset}    ${colors.dim}# Run development server locally${colors.reset}`);
 
       log(`\n${colors.dim}💡 Tip: All vibe-to-docker commands use: ${colors.blue}npx vibe-to-docker${colors.reset}${colors.dim} [options]${colors.reset}`);
     } catch (dockerError) {
