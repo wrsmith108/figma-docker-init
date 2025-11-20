@@ -1060,8 +1060,10 @@ function showProgress(stage, percentage, message) {
  * Based on vibe_to_docker_benefits.md - shows only relevant benefits for the detected tool.
  * @param {string} tool - Tool name (figma-make, lovable, bolt, v0, auto)
  * @param {string} framework - Detected framework (react-vite, next.js, etc.)
+ * @param {Object} detection - Detection result with metadata
+ * @param {string} projectDir - Project directory to read package.json
  */
-function displayToolBenefits(tool, framework) {
+function displayToolBenefits(tool, framework, detection = {}, projectDir = '.') {
   log(`\n${colors.bold}${colors.green}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
   log(`${colors.bold}${colors.green}✓ What You Just Got:${colors.reset}`);
   log(`${colors.bold}${colors.green}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`);
@@ -1138,8 +1140,42 @@ function displayToolBenefits(tool, framework) {
   log(`1. Review and customize the generated Docker configuration files`);
   log(`2. Update environment variables in .vibe-docker/.env if needed`);
 
-  // Determine correct build command based on project type
-  const buildCmd = tool === 'angular' ? 'npm start' : 'npm run dev';
+  // Determine correct build command based on detection metadata or package.json
+  let buildCmd = 'npm run dev'; // default
+
+  // Check if Angular CLI project
+  const isAngularCLI = tool === 'angular' ||
+    (detection && detection.metadata && detection.metadata.buildTool === 'angular-cli');
+
+  if (isAngularCLI) {
+    buildCmd = 'npm start';
+  } else {
+    // Read package.json to check available scripts
+    try {
+      const packageJsonPath = path.join(projectDir, 'package.json');
+      const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
+      const packageJson = JSON.parse(packageJsonContent);
+
+      if (packageJson.scripts) {
+        // Prefer scripts in this order: dev, start, serve
+        if (packageJson.scripts.dev) {
+          buildCmd = 'npm run dev';
+        } else if (packageJson.scripts.start) {
+          // Check if start script uses Angular CLI
+          if (packageJson.scripts.start.includes('ng serve')) {
+            buildCmd = 'npm start';
+          } else {
+            buildCmd = 'npm start';
+          }
+        } else if (packageJson.scripts.serve) {
+          buildCmd = 'npm run serve';
+        }
+      }
+    } catch (error) {
+      // If can't read package.json, use default
+    }
+  }
+
   log(`3. Use ${buildCmd} to run the application locally\n`);
 }
 
@@ -1519,7 +1555,7 @@ async function generateWithComposer(tool, projectDir, detection = {}) {
     }
 
     // Display tool-specific benefits summary
-    displayToolBenefits(tool, variables.FRAMEWORK);
+    displayToolBenefits(tool, variables.FRAMEWORK, detection, validatedProjectDir);
 
   } catch (error) {
     log(`${colors.red}Error during template composition: ${error.message}${colors.reset}`);
