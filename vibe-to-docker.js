@@ -22,6 +22,9 @@ import { TemplateComposer } from './src/lib/template-composer.js';
 import { EnvManager } from './src/lib/env-manager.js';
 import { TemplateValidator } from './src/lib/template-validator.js';
 
+// Version Compatibility Checker
+import { runAllChecks, formatWarnings } from './src/lib/version-checker.js';
+
 // Configuration generators and package fixers
 import { runAllConfigFixes } from './src/lib/config-generators.js';
 import { fixPackageJson } from './src/lib/package-fixer.js';
@@ -837,8 +840,10 @@ ${colors.bold}Usage:${colors.reset}
   ${colors.blue}npx vibe-to-docker${colors.reset} [template]  ${colors.dim}(legacy mode)${colors.reset}
 
 ${colors.bold}Commands:${colors.reset}
-  init           Initialize Docker setup with tool-specific configuration
-  uninstall      Remove .vibe-docker directory and clean up Docker configuration
+  init            Initialize Docker setup with tool-specific configuration
+  fix-versions    ${colors.green}Auto-fix version compatibility issues${colors.reset} ${colors.dim}(NEW)${colors.reset}
+  check-versions  ${colors.green}Check for version compatibility issues${colors.reset} ${colors.dim}(NEW)${colors.reset}
+  uninstall       Remove .vibe-docker directory and clean up Docker configuration
 
 ${colors.bold}Tool Options:${colors.reset}
   --tool=<name>  ${colors.bold}Specify your AI tool (RECOMMENDED):${colors.reset}
@@ -859,10 +864,19 @@ ${colors.bold}Options:${colors.reset}
   --list         List available templates
 
 ${colors.bold}Examples:${colors.reset}
+  ${colors.dim}# Check for version issues (Angular, Node.js, etc.)${colors.reset}
+  ${colors.blue}npx vibe-to-docker check-versions${colors.reset}
+
+  ${colors.dim}# Auto-fix version issues (recommended for Bolt/Angular projects)${colors.reset}
+  ${colors.blue}npx vibe-to-docker fix-versions${colors.reset}
+
   ${colors.dim}# Recommended: Specify your tool explicitly${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=figma-make${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=lovable${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=bolt${colors.reset}
+
+  ${colors.dim}# Skip version checks (not recommended)${colors.reset}
+  ${colors.blue}npx vibe-to-docker init --tool=bolt --skip-version-check${colors.reset}
 
   ${colors.dim}# Experimental: Try auto-detection (may require manual override)${colors.reset}
   ${colors.blue}npx vibe-to-docker init --tool=auto${colors.reset}
@@ -882,6 +896,8 @@ ${colors.bold}${colors.yellow}🔄 Upgrading from Previous Version?${colors.rese
 
 ${colors.bold}Features:${colors.reset}
   ✓ Tool-specific Docker configurations
+  ✓ ${colors.green}Automatic version compatibility checking${colors.reset} ${colors.dim}(NEW in v5.0.6)${colors.reset}
+  ✓ ${colors.green}Auto-fix Angular/Node.js version mismatches${colors.reset} ${colors.dim}(NEW)${colors.reset}
   ✓ Smart environment variable detection
   ✓ Multi-stage Docker builds
   ✓ Framework-specific optimizations
@@ -1822,6 +1838,26 @@ async function main() {
     return;
   }
 
+  if (args[0] === 'fix-versions') {
+    const { autoFixVersions } = await import('./src/lib/version-fixer.js');
+    await autoFixVersions(process.cwd());
+    return;
+  }
+
+  if (args[0] === 'check-versions') {
+    const versionResults = await runAllChecks(process.cwd());
+    if (versionResults.allWarnings.length > 0) {
+      log(formatWarnings(versionResults.allWarnings));
+      if (versionResults.hasErrors) {
+        log(`${colors.red}❌ Critical issues found. Run: ${colors.blue}npx vibe-to-docker fix-versions${colors.reset}\n`);
+        process.exit(1);
+      }
+    } else {
+      log(`${colors.green}✅ No version compatibility issues detected!${colors.reset}\n`);
+    }
+    return;
+  }
+
   // Parse --tool flag for Phase 3 integration
   const toolArg = args.find(arg => arg.startsWith('--tool='));
   const command = args[0];
@@ -1855,6 +1891,33 @@ async function main() {
     if (!fs.existsSync('./package.json')) {
       log(`${colors.yellow}Warning: No package.json found in current directory.${colors.reset}`);
       log(`${colors.yellow}Make sure you're in the root of your project.${colors.reset}\n`);
+    }
+
+    // Pre-flight version compatibility checks (unless explicitly skipped)
+    const skipVersionCheck = args.includes('--skip-version-check');
+    if (!skipVersionCheck) {
+      try {
+        const versionResults = await runAllChecks(process.cwd());
+
+        if (versionResults.allWarnings.length > 0) {
+          log(formatWarnings(versionResults.allWarnings));
+
+          // Block on errors, warn on warnings
+          if (versionResults.hasErrors) {
+            log(`${colors.red}❌ Critical version issues detected. Please fix before continuing.${colors.reset}\n`);
+            log(`${colors.bold}Auto-fix command:${colors.reset}`);
+            log(`  ${colors.blue}npx vibe-to-docker fix-versions${colors.reset}\n`);
+            log(`${colors.dim}Or skip checks (not recommended): ${colors.yellow}--skip-version-check${colors.reset}\n`);
+            process.exit(1);
+          }
+        } else {
+          log(`${colors.green}✅ No version compatibility issues detected${colors.reset}\n`);
+        }
+      } catch (error) {
+        // Don't block on version check errors, just warn
+        log(`${colors.yellow}⚠️  Version check failed: ${error.message}${colors.reset}`);
+        log(`${colors.dim}Continuing with initialization...${colors.reset}\n`);
+      }
     }
 
     try {

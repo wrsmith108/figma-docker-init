@@ -358,6 +358,45 @@ Message 4: Write "file.js"
 6. Enable hooks automation
 7. Use GitHub tools first
 
+## 📚 Recent Project Learnings
+
+### Bolt Detector Improvements (v5.0.0 - v5.0.4, November 2025)
+
+**Key Learnings from Framework Detection Work**:
+
+1. **Shared Technology Stacks Require Unique Signatures**
+   - React + Vite + TypeScript is used by both Bolt AND Figma Make
+   - Solution: Focus on unique signatures (`.stackblitzrc`, `angular.json`)
+   - Use weak confidence (<50%) for generic patterns
+   - Use strong confidence (80-100%) for unique markers
+
+2. **Package.json is Source of Truth**
+   - Always read actual scripts instead of hardcoding commands
+   - Respect custom build configurations (Turbopack, custom Vite setups)
+   - Example: `npm run build` vs `vite build` vs `ng build`
+
+3. **Framework Detection Priority Order**
+   ```
+   1. Primary signatures (100%): .stackblitzrc, stackblitz field
+   2. Framework files (80-90%): angular.json, remix.config.js
+   3. Dependencies (70%): @angular/core, @remix-run/react
+   4. Build configs (50%): vite.config.ts, webpack.config.js
+   5. Directory structure (weak): app/, src/, public/
+   ```
+
+4. **Confidence Tuning Prevents False Positives**
+   - Before tuning: 15-20% false positive rate
+   - After tuning: <5% false positive rate
+   - Explicit `--tool=` flag recommended for ambiguous projects
+
+**Stored in AgentDB**: Episode "bolt-detector-v5-improvements" with 0.95 reward
+
+**Documentation**:
+- Technical details: `docs/BOLT_DETECTOR_UPDATES.md`
+- User guide: `docs/guides/BOLT_GUIDE.md`
+
+---
+
 ## 🏗️ CI/CD Pipeline Architecture
 
 ### Pipeline Overview

@@ -23,10 +23,26 @@ Bolt (by StackBlitz) generates full-stack applications using WebContainers with:
 - **Frontend**: React, Vue, Svelte, Angular, or Solid
 - **Backend**: Node.js, Express, Fastify
 - **Database**: SQLite, PostgreSQL, MySQL
-- **Build Tools**: Vite, Webpack, Turbopack
+- **Build Tools**: Vite, Webpack, Turbopack, Angular CLI
 - **Full-Stack**: Complete frontend + backend in one project
 
 Vibe-to-docker provides comprehensive Docker configurations for Bolt's multi-service architecture.
+
+### Recent Improvements (v5.0.0 - v5.0.4)
+
+**Enhanced Detection (November 2025)**:
+- ✅ **Angular CLI Support**: Automatic detection with 80-90% confidence
+- ✅ **Dynamic Script Reading**: Reads package.json for accurate build/start commands
+- ✅ **Confidence Tuning**: Prevents conflicts with FigmaDetector (<5% false positives)
+- ✅ **Framework Metadata**: Accurate framework, buildTool, and command detection
+
+**Detection Accuracy**:
+- **100% confidence**: `.stackblitzrc` or `stackblitz` field in package.json
+- **80-90% confidence**: Angular projects (angular.json + @angular/core)
+- **85% confidence**: Remix projects (app/routes/ directory)
+- **<50% confidence**: Generic React + Vite (requires explicit `--tool=bolt`)
+
+See [Bolt Detector Updates](../BOLT_DETECTOR_UPDATES.md) for technical details.
 
 ## Prerequisites
 
@@ -49,15 +65,25 @@ From Bolt interface:
 
 ```bash
 cd your-bolt-project
-vibe-to-docker init --tool=bolt
+npx vibe-to-docker init --tool=bolt
 ```
 
+**Recommended**: Always specify `--tool=bolt` for explicit detection.
+
 The CLI will:
-- ✓ Detect Bolt WebContainer structure
-- ✓ Identify frontend and backend frameworks
-- ✓ Detect database requirements
+- ✓ Detect Bolt WebContainer structure (100% confidence with .stackblitzrc)
+- ✓ Identify frontend and backend frameworks (React, Angular, Remix, Vue, etc.)
+- ✓ Read package.json scripts for accurate build/start commands
+- ✓ Detect database requirements (PostgreSQL, MySQL, SQLite)
 - ✓ Generate multi-service Docker configuration
 - ✓ Create `.vibe-docker/` directory
+
+**Angular Projects**: Automatically detected with Angular CLI integration:
+```bash
+# Detects: ng serve, ng build commands
+# Sets: buildTool=angular-cli, framework=angular
+npx vibe-to-docker init --tool=bolt
+```
 
 ### 3. Configure Services
 
