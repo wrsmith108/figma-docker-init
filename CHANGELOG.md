@@ -1,3 +1,10 @@
+## [5.0.4](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.3...v5.0.4) (2025-11-20)
+
+
+### Bug Fixes
+
+* **bolt:** simplify Angular detection in displayToolBenefits ([fcb5b3b](https://github.com/wrsmith108/vibe-to-docker/commit/fcb5b3beb753c19b774d6c5ac471bb10e94f7433))
+
 ## [5.0.3](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.2...v5.0.3) (2025-11-20)
 
 
