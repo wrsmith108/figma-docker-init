@@ -347,11 +347,11 @@ describe('Initialization Integration', () => {
       const result = await integrationFlow(testProjectDir, { tool: 'auto' });
 
       expect(result.success).toBe(true);
-      expect(result.flow).toHaveLength(21); // 1 + 1 + 1 + (6*2) + 1 + 1 + 1
+      expect(result.flow).toHaveLength(18); // CLI(2) + pre-task(1) + phases(6*2) + post-task(1) + Lifecycle(1) + CLI(1)
 
       // Verify component interactions
       expect(result.flow[0].component).toBe('CLI');
-      expect(result.flow.filter(f => f.component === 'Orchestrator')).toHaveLength(13);
+      expect(result.flow.filter(f => f.component === 'Orchestrator')).toHaveLength(14); // pre-task + (6 phases * 2) + post-task
       expect(result.flow.filter(f => f.component === 'Lifecycle')).toHaveLength(1);
     });
 
