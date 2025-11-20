@@ -1,3 +1,10 @@
+# [5.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.5...v5.1.0) (2025-11-20)
+
+
+### Features
+
+* **cli:** add automated version compatibility checking and fixing ([7a1b185](https://github.com/wrsmith108/vibe-to-docker/commit/7a1b1850153b8a4d5647530e515eeab8987bc54c))
+
 ## [5.0.5](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.4...v5.0.5) (2025-11-20)
 
 
