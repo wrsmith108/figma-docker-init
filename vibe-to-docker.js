@@ -1139,9 +1139,7 @@ function displayToolBenefits(tool, framework) {
   log(`2. Update environment variables in .vibe-docker/.env if needed`);
 
   // Determine correct build command based on project type
-  const buildCmd = tool === 'angular' || (detection && detection.metadata && detection.metadata.buildTool === 'angular-cli')
-    ? 'npm start'
-    : 'npm run dev';
+  const buildCmd = tool === 'angular' ? 'npm start' : 'npm run dev';
   log(`3. Use ${buildCmd} to run the application locally\n`);
 }
 
