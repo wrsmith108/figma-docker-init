@@ -221,23 +221,23 @@ class BoltDetector {
             buildTool
           });
         } else if (deps['vite']) {
+          // Only claim Vite projects with weak confidence to avoid conflicts with FigmaDetector
+          // Figma Make also uses React+Vite+TypeScript stack
           buildTool = 'vite';
-          this.indicators.strong += 5;
+          this.indicators.weak += 2;
           this.findings.push({
-            type: 'medium',
-            confidence: 0.75,
-            message: `${primaryFramework} + Vite project detected (75% Bolt confidence)`,
+            type: 'weak',
+            message: `${primaryFramework} + Vite project detected (WebContainer compatible)`,
             file: 'package.json',
             framework: primaryFramework,
             buildTool
           });
         } else {
           // Other frameworks (React, Vue, etc.)
-          this.indicators.medium += 2;
+          this.indicators.weak += 1;
           this.findings.push({
-            type: 'medium',
-            confidence: 0.70,
-            message: `${primaryFramework} project detected (70% Bolt confidence)`,
+            type: 'weak',
+            message: `${primaryFramework} project detected (WebContainer compatible)`,
             file: 'package.json',
             framework: primaryFramework
           });
