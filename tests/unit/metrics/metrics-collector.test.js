@@ -5,7 +5,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { MetricsCollector, parseTimeString } from '../../../src/lib/metrics-collector.js';
+import { MetricsCollector, parseTimeString, getMetricsCollector, resetMetricsCollector } from '../../../src/lib/metrics-collector.js';
 
 // Mock environment
 const TEST_DB_PATH = path.join(process.cwd(), 'tests', 'fixtures', 'test-metrics.db');
@@ -71,6 +71,61 @@ describe('MetricsCollector', () => {
       expect(fs.existsSync(TEST_DB_PATH)).toBe(false);
 
       process.env.VIBE_DOCKER_DISABLE_METRICS = originalEnv;
+    });
+
+    it('should reset singleton instance', async () => {
+      // Get initial instance
+      const instance1 = getMetricsCollector(TEST_DB_PATH);
+      await instance1.initialize();
+
+      // Reset
+      resetMetricsCollector();
+
+      // Get new instance - should be different
+      const instance2 = getMetricsCollector(TEST_DB_PATH);
+
+      expect(instance2).not.toBe(instance1);
+      expect(instance2.initialized).toBe(false);
+
+      // Cleanup
+      if (instance2) instance2.close();
+    });
+
+    it('should recreate singleton when dbPath changes', async () => {
+      const dbPath1 = path.join(process.cwd(), 'tests', 'fixtures', 'test-db-1.db');
+      const dbPath2 = path.join(process.cwd(), 'tests', 'fixtures', 'test-db-2.db');
+
+      try {
+        // Get instance with first path
+        const instance1 = getMetricsCollector(dbPath1);
+        await instance1.initialize();
+        expect(instance1.dbPath).toBe(dbPath1);
+
+        // Get instance with different path - should recreate
+        const instance2 = getMetricsCollector(dbPath2);
+        expect(instance2.dbPath).toBe(dbPath2);
+        expect(instance2.initialized).toBe(false);
+
+        // Cleanup
+        if (instance2) instance2.close();
+        if (fs.existsSync(dbPath1)) fs.unlinkSync(dbPath1);
+        if (fs.existsSync(dbPath2)) fs.unlinkSync(dbPath2);
+      } finally {
+        resetMetricsCollector();
+      }
+    });
+
+    it('should return same singleton when dbPath unchanged', async () => {
+      const instance1 = getMetricsCollector(TEST_DB_PATH);
+      await instance1.initialize();
+
+      const instance2 = getMetricsCollector(TEST_DB_PATH);
+
+      expect(instance2).toBe(instance1);
+      expect(instance2.initialized).toBe(true);
+
+      // Cleanup
+      resetMetricsCollector();
     });
   });
 
