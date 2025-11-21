@@ -7,7 +7,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { MetricsCollector } from '../../../src/lib/metrics-collector.js';
+import { MetricsCollector, resetMetricsCollector } from '../../../src/lib/metrics-collector.js';
 import {
   generateDashboard,
   generateDetectionReport,
@@ -41,6 +41,9 @@ describe('Metrics Integration Tests', () => {
       collector.close();
     }
 
+    // Reset singleton for next test
+    resetMetricsCollector();
+
     if (fs.existsSync(TEST_DB_PATH)) {
       fs.unlinkSync(TEST_DB_PATH);
     }
@@ -71,7 +74,8 @@ describe('Metrics Integration Tests', () => {
       // Generate reports
       const dashboard = await generateDashboard({
         since: '1d',
-        format: 'json'
+        format: 'json',
+        dbPath: TEST_DB_PATH
       });
 
       expect(dashboard.detection.length).toBeGreaterThan(0);
@@ -137,7 +141,7 @@ describe('Metrics Integration Tests', () => {
         retryCount: 1
       });
 
-      const report = await generateBuildReport({ since: '1d' });
+      const report = await generateBuildReport({ since: '1d', dbPath: TEST_DB_PATH });
       const uiHeavy = report.find(r => r.template === 'ui-heavy');
 
       expect(uiHeavy).toBeDefined();
@@ -168,7 +172,7 @@ describe('Metrics Integration Tests', () => {
         });
       }
 
-      const report = await generateDetectionReport({ since: '1d' });
+      const report = await generateDetectionReport({ since: '1d', dbPath: TEST_DB_PATH });
 
       expect(report.length).toBe(5);
 
@@ -308,7 +312,7 @@ describe('Metrics Integration Tests', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '1d' });
+      const insights = await generateInsights({ since: '1d', dbPath: TEST_DB_PATH });
 
       // Should identify low detection success
       const detectionIssue = insights.detection.find(

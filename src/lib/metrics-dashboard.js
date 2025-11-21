@@ -15,10 +15,11 @@ export async function generateDashboard(options = {}) {
   const {
     since = '7d',
     format = 'console',
-    export: exportPath = null
+    export: exportPath = null,
+    dbPath = null
   } = options;
 
-  const collector = getMetricsCollector();
+  const collector = getMetricsCollector(dbPath);
 
   if (!collector.isEnabled()) {
     return {
@@ -126,10 +127,11 @@ function displayConsoleDashboard(summary, since) {
 export async function generateDetectionReport(options = {}) {
   const {
     since = '30d',
-    framework = null
+    framework = null,
+    dbPath = null
   } = options;
 
-  const collector = getMetricsCollector();
+  const collector = getMetricsCollector(dbPath);
   await collector.initialize();
 
   const sinceTimestamp = parseTimeString(since);
@@ -169,10 +171,11 @@ export async function generateDetectionReport(options = {}) {
 export async function generateBuildReport(options = {}) {
   const {
     since = '30d',
-    template = null
+    template = null,
+    dbPath = null
   } = options;
 
-  const collector = getMetricsCollector();
+  const collector = getMetricsCollector(dbPath);
   await collector.initialize();
 
   const sinceTimestamp = parseTimeString(since);
@@ -212,10 +215,11 @@ export async function generateBuildReport(options = {}) {
 export async function generateErrorTrends(options = {}) {
   const {
     since = '30d',
-    limit = 10
+    limit = 10,
+    dbPath = null
   } = options;
 
-  const collector = getMetricsCollector();
+  const collector = getMetricsCollector(dbPath);
   await collector.initialize();
 
   const sinceTimestamp = parseTimeString(since);
@@ -248,9 +252,9 @@ export async function generateErrorTrends(options = {}) {
  * Generate insights and recommendations
  */
 export async function generateInsights(options = {}) {
-  const { since = '7d' } = options;
+  const { since = '7d', dbPath = null } = options;
 
-  const collector = getMetricsCollector();
+  const collector = getMetricsCollector(dbPath);
   await collector.initialize();
 
   const insights = {
@@ -261,7 +265,7 @@ export async function generateInsights(options = {}) {
   };
 
   // Detection insights
-  const detectionReport = await generateDetectionReport({ since });
+  const detectionReport = await generateDetectionReport({ since, dbPath });
 
   detectionReport.forEach(metric => {
     const successRate = (metric.successful / metric.total) * 100;
@@ -276,7 +280,7 @@ export async function generateInsights(options = {}) {
       });
     }
 
-    if (avgConfidence < 0.7) {
+    if (avgConfidence < 70) {
       insights.detection.push({
         severity: 'info',
         framework: metric.framework,
@@ -296,7 +300,7 @@ export async function generateInsights(options = {}) {
   });
 
   // Build insights
-  const buildReport = await generateBuildReport({ since });
+  const buildReport = await generateBuildReport({ since, dbPath });
 
   buildReport.forEach(metric => {
     const successRate = (metric.successful / metric.total) * 100;

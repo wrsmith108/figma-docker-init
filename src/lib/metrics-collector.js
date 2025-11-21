@@ -506,12 +506,27 @@ let instance = null;
 
 /**
  * Get metrics collector instance
+ * If dbPath is provided and different from current instance, reset and create new instance
  */
-export function getMetricsCollector() {
+export function getMetricsCollector(dbPath) {
   if (!instance) {
-    instance = new MetricsCollector();
+    instance = new MetricsCollector(dbPath);
+  } else if (dbPath && instance.dbPath !== dbPath) {
+    // dbPath changed, reset and create new instance
+    instance.close();
+    instance = new MetricsCollector(dbPath);
   }
   return instance;
+}
+
+/**
+ * Reset singleton instance (for testing)
+ */
+export function resetMetricsCollector() {
+  if (instance) {
+    instance.close();
+    instance = null;
+  }
 }
 
 /**

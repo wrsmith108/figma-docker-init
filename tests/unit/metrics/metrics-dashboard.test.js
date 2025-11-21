@@ -5,7 +5,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { MetricsCollector } from '../../../src/lib/metrics-collector.js';
+import { MetricsCollector, resetMetricsCollector } from '../../../src/lib/metrics-collector.js';
 import {
   generateDashboard,
   generateDetectionReport,
@@ -44,6 +44,9 @@ describe('Metrics Dashboard', () => {
       collector.close();
     }
 
+    // Reset singleton for next test
+    resetMetricsCollector();
+
     if (fs.existsSync(TEST_DB_PATH)) {
       fs.unlinkSync(TEST_DB_PATH);
     }
@@ -53,7 +56,8 @@ describe('Metrics Dashboard', () => {
     it('should generate dashboard summary', async () => {
       const result = await generateDashboard({
         since: '30d',
-        format: 'json'
+        format: 'json',
+        dbPath: TEST_DB_PATH
       });
 
       expect(result).toBeDefined();
@@ -67,7 +71,7 @@ describe('Metrics Dashboard', () => {
       const originalEnv = process.env.VIBE_DOCKER_DISABLE_METRICS;
       process.env.VIBE_DOCKER_DISABLE_METRICS = '1';
 
-      const result = await generateDashboard({ format: 'json' });
+      const result = await generateDashboard({ format: 'json' , dbPath: TEST_DB_PATH });
 
       expect(result.error).toBeDefined();
       expect(result.error).toContain('disabled');
@@ -81,7 +85,8 @@ describe('Metrics Dashboard', () => {
       await generateDashboard({
         since: '30d',
         format: 'json',
-        export: exportPath
+        export: exportPath,
+        dbPath: TEST_DB_PATH
       });
 
       expect(fs.existsSync(exportPath)).toBe(true);
@@ -97,7 +102,8 @@ describe('Metrics Dashboard', () => {
   describe('generateDetectionReport', () => {
     it('should generate detection accuracy report', async () => {
       const report = await generateDetectionReport({
-        since: '30d'
+        since: '30d',
+        dbPath: TEST_DB_PATH
       });
 
       expect(report).toBeInstanceOf(Array);
@@ -113,7 +119,8 @@ describe('Metrics Dashboard', () => {
     it('should filter by framework', async () => {
       const report = await generateDetectionReport({
         since: '30d',
-        framework: 'vue'
+        framework: 'vue',
+        dbPath: TEST_DB_PATH
       });
 
       expect(report).toBeInstanceOf(Array);
@@ -127,7 +134,8 @@ describe('Metrics Dashboard', () => {
 
     it('should include confidence metrics', async () => {
       const report = await generateDetectionReport({
-        since: '30d'
+        since: '30d',
+        dbPath: TEST_DB_PATH
       });
 
       const firstMetric = report[0];
@@ -142,7 +150,8 @@ describe('Metrics Dashboard', () => {
   describe('generateBuildReport', () => {
     it('should generate build performance report', async () => {
       const report = await generateBuildReport({
-        since: '30d'
+        since: '30d',
+        dbPath: TEST_DB_PATH
       });
 
       expect(report).toBeInstanceOf(Array);
@@ -158,7 +167,8 @@ describe('Metrics Dashboard', () => {
     it('should filter by template', async () => {
       const report = await generateBuildReport({
         since: '30d',
-        template: 'advanced'
+        template: 'advanced',
+        dbPath: TEST_DB_PATH
       });
 
       expect(report).toBeInstanceOf(Array);
@@ -172,7 +182,8 @@ describe('Metrics Dashboard', () => {
 
     it('should include duration metrics', async () => {
       const report = await generateBuildReport({
-        since: '30d'
+        since: '30d',
+        dbPath: TEST_DB_PATH
       });
 
       const firstMetric = report[0];
@@ -188,7 +199,8 @@ describe('Metrics Dashboard', () => {
     it('should generate error patterns report', async () => {
       const errors = await generateErrorTrends({
         since: '30d',
-        limit: 10
+        limit: 10,
+        dbPath: TEST_DB_PATH
       });
 
       expect(errors).toBeInstanceOf(Array);
@@ -204,7 +216,8 @@ describe('Metrics Dashboard', () => {
     it('should limit results', async () => {
       const errors = await generateErrorTrends({
         since: '30d',
-        limit: 3
+        limit: 3,
+        dbPath: TEST_DB_PATH
       });
 
       expect(errors.length).toBeLessThanOrEqual(3);
@@ -213,7 +226,8 @@ describe('Metrics Dashboard', () => {
     it('should order by frequency', async () => {
       const errors = await generateErrorTrends({
         since: '30d',
-        limit: 10
+        limit: 10,
+        dbPath: TEST_DB_PATH
       });
 
       if (errors.length > 1) {
@@ -227,7 +241,8 @@ describe('Metrics Dashboard', () => {
   describe('generateInsights', () => {
     it('should generate insights and recommendations', async () => {
       const insights = await generateInsights({
-        since: '7d'
+        since: '7d',
+        dbPath: TEST_DB_PATH
       });
 
       expect(insights).toBeDefined();
@@ -249,7 +264,7 @@ describe('Metrics Dashboard', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       const angularIssue = insights.detection.find(
         i => i.framework === 'angular' && i.severity === 'warning'
@@ -271,7 +286,7 @@ describe('Metrics Dashboard', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       const svelteIssue = insights.detection.find(
         i => i.framework === 'svelte'
@@ -294,7 +309,7 @@ describe('Metrics Dashboard', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       const nextjsIssue = insights.detection.find(
         i => i.framework === 'nextjs'
@@ -314,7 +329,7 @@ describe('Metrics Dashboard', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       const complexIssue = insights.build.find(
         i => i.template === 'complex'
@@ -335,7 +350,7 @@ describe('Metrics Dashboard', () => {
         });
       }
 
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       const errorIssue = insights.errors.find(
         e => e.errorType === 'TestError'
@@ -347,7 +362,7 @@ describe('Metrics Dashboard', () => {
     });
 
     it('should provide overall recommendations', async () => {
-      const insights = await generateInsights({ since: '7d' });
+      const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
       expect(insights.recommendations.length).toBeGreaterThan(0);
 
