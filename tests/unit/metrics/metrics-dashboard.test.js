@@ -276,25 +276,26 @@ describe('Metrics Dashboard', () => {
 
     it('should identify low confidence scores', async () => {
       // Add low confidence data with high success rate to trigger confidence warning
-      for (let i = 0; i < 10; i++) {
+      // Use significantly lower confidence (0.4-0.5) to ensure average stays below 70%
+      for (let i = 0; i < 20; i++) {
         await collector.recordDetection({
-          framework: 'svelte',
-          confidence: 0.65, // Below 70% threshold but enough detections
+          framework: 'ember', // Use different framework to avoid mixing with seed data
+          confidence: 0.45,   // Very low confidence (45%) to ensure avgConfidence < 70%
           sourceTool: 'detector',
-          success: true,    // High success rate (100%) to avoid success rate warning
+          success: true,      // High success rate (100%) to avoid success rate warning
           detectionTimeMs: 100
         });
       }
 
       const insights = await generateInsights({ since: '7d' , dbPath: TEST_DB_PATH });
 
-      const svelteIssue = insights.detection.find(
-        i => i.framework === 'svelte' && i.message.includes('confidence')
+      const emberIssue = insights.detection.find(
+        i => i.framework === 'ember' && i.message.includes('confidence')
       );
 
-      expect(svelteIssue).toBeDefined();
-      expect(svelteIssue.message).toContain('confidence');
-      expect(svelteIssue.severity).toBe('info');
+      expect(emberIssue).toBeDefined();
+      expect(emberIssue.message).toContain('confidence');
+      expect(emberIssue.severity).toBe('info');
     });
 
     it('should identify high explicit flag usage', async () => {

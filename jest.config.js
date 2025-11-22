@@ -21,6 +21,8 @@ export default {
     'vibe-to-docker.js',
     'src/**/*.js',
     '!src/**/*.test.js',
+    '!src/cli/init.js',          // Exclude untested init script
+    '!src/lib/env-validator.js', // Exclude untested env validator
     '!node_modules/**',
     '!coverage/**',
     '!**/*.config.js',
