@@ -1,3 +1,24 @@
+# [5.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v5.1.0...v5.2.0) (2025-11-22)
+
+
+### Bug Fixes
+
+* add metrics schema.sql to git (was ignored) ([aa5df68](https://github.com/wrsmith108/vibe-to-docker/commit/aa5df68e0e07eecfaf4aeefb6a4dc74be4bbc83f))
+* adjust integration test expectations and add Phase 1 completion report ([042b9db](https://github.com/wrsmith108/vibe-to-docker/commit/042b9db5e3981d9d51ae98b81cc95bf0ab6f6913))
+* disable AI validation hooks for CI/CD stability (Option 3) ([d0957db](https://github.com/wrsmith108/vibe-to-docker/commit/d0957db3b793f81aa48378ff9ace3a7c60e59404)), closes [#3573](https://github.com/wrsmith108/vibe-to-docker/issues/3573) [#185](https://github.com/wrsmith108/vibe-to-docker/issues/185)
+* resolve CI test failures + add missing init test suite ([1f383c0](https://github.com/wrsmith108/vibe-to-docker/commit/1f383c046993afc038c9710ce3076dcb30a81847)), closes [#145](https://github.com/wrsmith108/vibe-to-docker/issues/145)
+* resolve CI/CD failures in metrics system ([d58f3a5](https://github.com/wrsmith108/vibe-to-docker/commit/d58f3a5f25f7ba190d27d76d02f55debdd4afd50))
+* resolve CI/CD test failures - Attempt 1 of 2 ([9bf0ee9](https://github.com/wrsmith108/vibe-to-docker/commit/9bf0ee9ea83de3e5199a8b9d8a378cd8fe554cda))
+* resolve CI/CD test failures with environment-aware testing ([4faa7f1](https://github.com/wrsmith108/vibe-to-docker/commit/4faa7f1f05530c4f3b2fec31b89095057b7ac40e))
+* resolve metrics test suite singleton pattern issues ([5d14791](https://github.com/wrsmith108/vibe-to-docker/commit/5d14791669cc1af764193b468397e71ac4d633cf))
+* skip all hook execution tests in CI to prevent timeouts ([466ed9a](https://github.com/wrsmith108/vibe-to-docker/commit/466ed9a9025a9caa525d643a16d295d8f4cd1408))
+
+
+### Features
+
+* add development environment initialization system ([bcd1662](https://github.com/wrsmith108/vibe-to-docker/commit/bcd16623caa727ce3bcfc0541f0fc27616dc9556))
+* complete Phase 1 foundation tasks - AgentDB hooks, file organization, metrics system, checklist ([c486aa4](https://github.com/wrsmith108/vibe-to-docker/commit/c486aa46adfdbe9c315a3ed550baa30cfb5f63db))
+
 # [5.1.0](https://github.com/wrsmith108/vibe-to-docker/compare/v5.0.5...v5.1.0) (2025-11-20)
 
 
