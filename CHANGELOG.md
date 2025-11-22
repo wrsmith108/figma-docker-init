@@ -1,3 +1,10 @@
+## [5.2.1](https://github.com/wrsmith108/vibe-to-docker/compare/v5.2.0...v5.2.1) (2025-11-22)
+
+
+### Bug Fixes
+
+* regenerate package-lock.json for npm 11 (Node 24) compatibility ([45274f2](https://github.com/wrsmith108/vibe-to-docker/commit/45274f244c0e59642832a6859f2258c657698d86)), closes [#26](https://github.com/wrsmith108/vibe-to-docker/issues/26)
+
 # [5.2.0](https://github.com/wrsmith108/vibe-to-docker/compare/v5.1.0...v5.2.0) (2025-11-22)
 
 
