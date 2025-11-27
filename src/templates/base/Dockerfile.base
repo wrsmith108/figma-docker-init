@@ -60,7 +60,18 @@ COPY *.config.ts ./
 COPY src ./src
 # Create public/ directory (for frameworks that need it)
 RUN mkdir -p ./public
-COPY index.html ./
+
+# Create placeholder files for optional COPY commands (prevents build failures)
+RUN touch index.html serve.json
+
+# Copy optional files - overwrites placeholders if files exist in project
+# index.html - required for Vite/React SPAs, optional for Next.js
+COPY index.htm[l] ./
+# serve.json - configuration for static file server (compression, caching, SPA routing)
+COPY serve.jso[n] ./
+
+# Ensure serve.json has valid content for static builds (default SPA config if empty)
+RUN if [ ! -s serve.json ]; then echo '{"rewrites":[{"source":"**","destination":"/index.html"}],"cleanUrls":true}' > serve.json; fi
 
 # Build application
 {{#if BUILD_ENV_VARS}}

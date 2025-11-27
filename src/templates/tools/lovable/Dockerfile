@@ -20,6 +20,9 @@ RUN npm ci --only=production=false
 # Copy source code
 COPY . .
 
+# Ensure serve.json exists for static file serving (create default SPA config if missing)
+RUN if [ ! -f serve.json ]; then echo '{"rewrites":[{"source":"**","destination":"/index.html"}],"cleanUrls":true}' > serve.json; fi
+
 # Build the application
 RUN npm run build
 
@@ -35,6 +38,8 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy built assets from builder
 COPY --from=builder /app/dist ./dist
+# Copy serve.json for static file server configuration (compression, caching, SPA routing)
+COPY --from=builder /app/serve.json ./serve.json
 
 # Install serve to run the production build
 RUN npm install -g serve
@@ -54,5 +59,5 @@ EXPOSE {{PORT}}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:{{PORT}}/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start the application
-CMD ["serve", "-s", "dist", "-l", "{{PORT}}"]
+# Start the application (using serve.json for compression, caching, SPA routing)
+CMD ["serve", "-s", "dist", "-l", "{{PORT}}", "-c", "serve.json"]

@@ -20,6 +20,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Ensure serve.json exists for static file serving (create default SPA config if missing)
+RUN if [ ! -f serve.json ]; then echo '{"rewrites":[{"source":"**","destination":"/index.html"}],"cleanUrls":true}' > serve.json; fi
+
 # Build the Vite application
 RUN npm run build
 
@@ -40,6 +43,8 @@ RUN npm install -g serve@14
 
 # Copy built assets from builder (now always in dist/ directory)
 COPY --from=builder /app/dist ./dist
+# Copy serve.json for static file server configuration (compression, caching, SPA routing)
+COPY --from=builder /app/serve.json ./serve.json
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -56,5 +61,5 @@ EXPOSE {{PORT}}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:{{PORT}}/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start the application with serve
-CMD ["serve", "-s", "dist", "-l", "{{PORT}}"]
+# Start the application with serve (using serve.json for compression, caching, SPA routing)
+CMD ["serve", "-s", "dist", "-l", "{{PORT}}", "-c", "serve.json"]
