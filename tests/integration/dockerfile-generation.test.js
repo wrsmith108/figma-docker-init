@@ -273,7 +273,8 @@ describe('Dockerfile Generation Integration Tests', () => {
       expect(dockerfile).toContain('COPY src ./src');
       // Create public/ directory (fixed in v4.0.0 - was causing Docker build failures)
       expect(dockerfile).toContain('RUN mkdir -p ./public');
-      expect(dockerfile).toContain('COPY index.html ./');
+      // Optional file handling using bracket notation (fixed in v5.2.1 - handles missing index.html gracefully)
+      expect(dockerfile).toContain('COPY index.htm[l] ./');
 
       // Should NOT have absolute paths
       expect(dockerfile).not.toContain('COPY /.vibe-docker');
