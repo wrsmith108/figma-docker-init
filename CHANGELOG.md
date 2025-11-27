@@ -1,3 +1,10 @@
+## [5.2.2](https://github.com/wrsmith108/vibe-to-docker/compare/v5.2.1...v5.2.2) (2025-11-27)
+
+
+### Bug Fixes
+
+* **docker:** resolve Dockerfile template COPY failures for serve.json and index.html ([4e176f3](https://github.com/wrsmith108/vibe-to-docker/commit/4e176f3872d781f2c881b92cddea53f2e0b1d6fa)), closes [#48](https://github.com/wrsmith108/vibe-to-docker/issues/48) [#116](https://github.com/wrsmith108/vibe-to-docker/issues/116)
+
 ## [5.2.1](https://github.com/wrsmith108/vibe-to-docker/compare/v5.2.0...v5.2.1) (2025-11-22)
 
 
